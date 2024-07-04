@@ -4,7 +4,9 @@
     "esModuleInterop": true,
     "target": "ES6",
     "moduleResolution": "NodeNext",
-    "outDir": "bin"
+    "outDir": "bin",
+    "strictNullChecks": true,
+    "resolveJsonModule": true
   },
   "lib": ["es2015"],
   "include": ["src"]

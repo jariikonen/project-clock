@@ -1,5 +1,6 @@
 // rollup.config.js
 import typescript from '@rollup/plugin-typescript';
+import json from '@rollup/plugin-json';
 
 export default {
   input: './src/pclock.ts',
@@ -8,5 +9,5 @@ export default {
     format: 'es',
   },
   external: 'node:child_process',
-  plugins: [typescript()],
+  plugins: [typescript(), json()],
 };

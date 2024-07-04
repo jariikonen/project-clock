@@ -10,7 +10,12 @@ module.exports = {
     'airbnb-typescript',
     'prettier',
   ],
-  ignorePatterns: ['bin', '.eslintrc.cjs', 'rollup.config.js'],
+  ignorePatterns: [
+    'bin',
+    '.eslintrc.cjs',
+    'rollup.config.js',
+    'jest.config.mjs',
+  ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaVersion: 'latest',
