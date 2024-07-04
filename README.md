@@ -35,7 +35,7 @@ or just start the clock using the `start` command:
 pclock start
 ```
 
-If there is no timesheet file in the directory, a new one is created and the prompt asking for the project name is shown.
+If there is no timesheet file in the directory, a new one is created and a prompt asking for the project name is shown.
 
 A timesheet is essentially a json file with a name following this pattern: _pclock-<project_name>.json_.
 
@@ -107,4 +107,4 @@ pclock edit-task oa91ksdkj8
 
 which continues the task specified by
 
-## Options
+### Listing tasks and project statistics

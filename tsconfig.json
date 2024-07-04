@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "module": "NodeNext",
+    "esModuleInterop": true,
+    "target": "ES6",
+    "moduleResolution": "NodeNext",
+    "outDir": "bin"
+  },
+  "lib": ["es2015"],
+  "include": ["src"]
+}
