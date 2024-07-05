@@ -44,67 +44,91 @@ A timesheet is essentially a json file with a name following this pattern: _pclo
 Use the `start` command to start the clock:
 
 ```sh
-pclock start
+pclock start [<subject>]
 ```
 
-This starts a new task (or record), which is reported as a single unit on the timesheet. A short heading describing the task can be specified using the `--task` option:
+With `start` wtihout any parameters, current timestamp is used as the subject for the task. You may also write the subject directly after the `start` command in quotes:
 
 ```sh
-pclock start --task 'Implement clock functions'
+pclock start 'Implement clock functions'
 ```
 
-After starting a task, the heading can be set with the `set-task` command:
+After a task is started, its subject can be set with the `set-subject` command:
 
 ```sh
-pclock set-task 'Implement clock functions'
+pclock set-subject 'Implement clock functions'
 ```
 
 When the work is done, the clock can be stopped with the `stop` command:
 
 ```sh
-pclock stop
+pclock stop [<task>]
 ```
 
-A longer message describing the task can be specified using the `--message` option, which can be used with the stop or the start command:
+Stop command marks the task as complete. Clock can also be paused with the `pause` (alias `suspend`) command:
 
 ```sh
-pclock stop --message 'Create a skeleton with empty function definitions.'
+pclock pause [<task>]
 ```
 
-There is also a `set-message` command that can be used for setting the message of the currently active or the last stopped task:
+This suspends the task, meaning it is not shown complete in the listings of the timesheet. Paused clock can be unpaused with `unpause` (alias `resume`) command:
 
 ```sh
-pclock set-message 'Create a skeleton with empty function definitions.'
+pclock unpause [<task>]
 ```
 
-New lines can be added to the message of the currently active or the last stopped task with the `append` command:
+The task being stopped, paused or unpaused can be specified with a regular expression that matches the tasks subject. If task is not specified the command affects the last started or the last stopped task (in this order).
+
+A longer description of the task can be specified using the `--description` option, which can also be used with start and stop commands:
 
 ```sh
-pclock append 'Create a test for start function and implement the function.'
+pclock stop --description 'Create a skeleton with empty function definitions.'
 ```
 
-The last stopped task can be continued with the `resume` command:
+There is also a `set-description` command that can be used for setting the message of the last started or the last stopped task:
 
 ```sh
-pclock resume
+pclock set-description 'Create a skeleton with empty function definitions.'
 ```
 
-When using the `resume` command, the new time period is reported as part of the previous task.
+New lines can be appended to the description with the `append` command:
+
+```sh
+pclock append [--paragraph] 'Create a test for start function and implement the function.'
+```
+
+If the `--paragraph` option is used two line breaks are added before the new string.
 
 ### Editing older task descriptions
 
-As described above, the task headings (specified with the `--task` option) and the task messages (specified with the `--message` option) can be reset by reaplying the same options, or with the `set-task` and the `set-message` commands. New lines can also be added to the messages using the `append` command. These can, however, only be applied to the currently active or the last stopped task. To edit tasks even further back the history, the `edit-task` command can be used.
+`Stop`, `pause` and `unpause` commands accept a task specifier as a parameter. Without it they will affect the last started (not complete) or last completed task. It is also possible to specify the task for commands like `set-subject` or `set-description` that do not accept a task specifier as parameter, with the `--task` option:
 
 ```sh
-pclock edit-task 'Creating the basic structure' --task
+pclock set-subject 'Designing the basic structure' --task 'Creating the basic structure'
 ```
 
-which continues the task specified by the tasks heading, or
+Sets the subject for a task whose previous subject matches with "Creating the basic structure". Following command appends new text as a new paragraph to the description of a task with a subject starting with "Creating the":
 
 ```sh
-pclock edit-task oa91ksdkj8
+pclock set-description -p --task '^Creating the' 'Defining the basic structure of the project using key user stories ...'
 ```
-
-which continues the task specified by
 
 ### Listing tasks and project statistics
+
+Command `ls-tasks` (alias `lst`) lists the tasks on the timesheet along with the times spent on them:
+
+```sh
+pclock ls-tasks [--complete | --started | --not-started]
+```
+
+Options can be used for narrowing the set of listed tasks.
+
+### Getting current status
+
+The tasks that have been started but are still incomplete, along with some other status information, can be listed with the `status` command:
+
+```sh
+pclock status
+```
+
+The other status information consists of, e.g., the number of complete and incomplete tasks on the timesheet.
