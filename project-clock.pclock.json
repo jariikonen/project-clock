@@ -51,7 +51,12 @@
       "end": "2024-07-05T10:21:33.749Z"
     },
     {
-      "subject": "A project timesheet can be created"
+      "subject": "A new project timesheet can be created",
+      "description": "Create tests for testing that the command 'new' works and edit the code so that the tests are passed. Use the commander library for the implementation and study how the library is used. Previous test for argumentless call had to be rewritten too.",
+      "begin": "2024-07-05T10:24:35.655Z",
+      "suspend": ["2024-07-05T12:48:14.935Z", "2024-07-06T08:26:23.033Z"],
+      "resume": ["2024-07-06T05:42:52.001Z", "2024-07-06T08:45:43.944Z"],
+      "end": "2024-07-06T12:24:58.481Z"
     },
     {
       "subject": "Clock can be started and stopped"

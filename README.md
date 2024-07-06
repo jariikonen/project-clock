@@ -37,7 +37,7 @@ pclock start
 
 If there is no timesheet file in the directory, a new one is created and a prompt asking for the project name is shown.
 
-A timesheet is essentially a json file with a name following this pattern: _pclock-<project_name>.json_.
+A timesheet is essentially a json file with a name following this pattern: _<project_name>.pclock.json_.
 
 ### Starting and stopping the clock and describing the tasks
 

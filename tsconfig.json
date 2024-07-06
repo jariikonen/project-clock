@@ -1,9 +1,9 @@
 {
   "compilerOptions": {
-    "module": "NodeNext",
+    "module": "ESNext",
     "esModuleInterop": true,
     "target": "ES6",
-    "moduleResolution": "NodeNext",
+    "moduleResolution": "bundler",
     "outDir": "bin",
     "strictNullChecks": true,
     "resolveJsonModule": true
