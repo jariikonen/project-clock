@@ -10,7 +10,7 @@ const program = new Command();
 program
   .name('pclock')
   .description('CLI app to clock time spent on a project')
-  .version(version);
+  .version(version, '-v, --version', 'output the version number');
 
 program.addHelpText('beforeAll', `pclock (Project Clock) v${version}\n`);
 
