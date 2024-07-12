@@ -59,7 +59,37 @@
       "end": "2024-07-06T12:24:58.481Z"
     },
     {
-      "subject": "Clock can be started and stopped"
+      "subject": "Clock can be started and stopped",
+      "description": "Create tests for testing the new functionality and edit the code so that the tests are passed.\n\n'Start' command without any arguments creates a new task with current timestamp as 'subject' and 'begin' value. If the task descriptor (regexp matcher) is passed as an argument, a task is created with this string as 'subject' and current timestamp as the 'begin' value. Command exits with an error if the task already exists.\n\n'Stop' command without any arguments stops an active (started but not stopped) task if there is only one of such tasks, by setting the 'end' value of the task to current timestamp. 'Stop' with a task descriptor as argument stops a task with matching 'subject'. If the descriptor matches more than one task, command returns with an error.",
+      "begin": "2024-07-07T07:54:44.918Z",
+      "suspend": [
+        "2024-07-07T08:02:21.348Z",
+        "2024-07-07T11:56:39.640Z",
+        "2024-07-08T08:19:43.315Z",
+        "2024-07-08T15:00:59.904Z",
+        "2024-07-11T08:57:00.705Z",
+        "2024-07-11T09:53:05.129Z",
+        "2024-07-11T13:34:57.427Z",
+        "2024-07-11T16:34:26.100Z",
+        "2024-07-12T07:45:34.091Z",
+        "2024-07-12T13:17:19.244Z"
+      ],
+      "resume": [
+        "2024-07-07T11:18:53.125Z",
+        "2024-07-08T06:55:07.976Z",
+        "2024-07-08T09:32:16.544Z",
+        "2024-07-11T08:09:09.080Z",
+        "2024-07-11T09:22:00.000Z",
+        "2024-07-11T12:54:08.122Z",
+        "2024-07-11T15:39:30.261Z",
+        "2024-07-12T06:39:57.032Z",
+        "2024-07-12T09:33:05.155Z",
+        "2024-07-12T14:27:29.453Z"
+      ],
+      "end": "2024-07-12T15:26:42.277Z"
+    },
+    {
+      "subject": "A new project timesheet can be created by starting the clock without other arguments"
     },
     {
       "subject": "Clock can be paused and unpaused"
@@ -75,6 +105,10 @@
     },
     {
       "subject": "Tasks can be added without starting the clock"
+    },
+    {
+      "subject": "Command 'new' prompts for project name if it is not given as argument",
+      "description": "Create tests for testing the new functionality and edit the code so that the tests are passed. Default value for the project name is the name of the parent directory."
     }
   ]
 }

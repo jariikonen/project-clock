@@ -7,6 +7,10 @@ export interface Task {
   end?: string;
 }
 
+export const emptyTask: Task = {
+  subject: '',
+};
+
 export interface ProjectClockData {
   projectName: string;
   tasks: Task[];
