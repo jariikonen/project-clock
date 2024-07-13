@@ -94,7 +94,9 @@
       "end": "2024-07-13T06:00:21.532Z"
     },
     {
-      "subject": "Edit tests testing error conditions so that they test that the error is not thrown with a stack listing"
+      "subject": "Edit tests testing error conditions so that they test that the error is not thrown with a stack listing",
+      "begin": "2024-07-13T10:29:44.788Z",
+      "end": "2024-07-13T10:34:51.514Z"
     },
     {
       "subject": "Fix 'start' command claiming that a task has been started when it isn't and add a test for testing this condition"

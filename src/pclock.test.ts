@@ -95,6 +95,8 @@ describe('Basic functions', () => {
         error = e.message;
       }
       expect(error).toMatch('ERROR: timesheet file already exists');
+      expect(error).not.toMatch('throw');
+      expect(error).not.toMatch('ProjectClockError');
     });
   });
 
@@ -177,6 +179,8 @@ describe('Basic functions', () => {
         expect(error).toMatch(
           `ERROR: task '${taskName}' has already been started`
         );
+        expect(error).not.toMatch('throw');
+        expect(error).not.toMatch('ProjectClockError');
       });
 
       test('An error is returned if the "start" command is run with task descriptor that matches more than one task', () => {
@@ -210,6 +214,8 @@ describe('Basic functions', () => {
         expect(error).toMatch(
           'ERROR: more than one task matches the descriptor'
         );
+        expect(error).not.toMatch('throw');
+        expect(error).not.toMatch('ProjectClockError');
       });
     });
 
@@ -282,6 +288,8 @@ describe('Basic functions', () => {
           error = e.message;
         }
         expect(error).toMatch('ERROR: more than one active task');
+        expect(error).not.toMatch('throw');
+        expect(error).not.toMatch('ProjectClockError');
       });
 
       test('"Stop" command with task descriptor as an argument stops the clock for matching task', () => {
@@ -356,6 +364,8 @@ describe('Basic functions', () => {
         expect(error).toMatch(
           'ERROR: more than one task matches the descriptor'
         );
+        expect(error).not.toMatch('throw');
+        expect(error).not.toMatch('ProjectClockError');
       });
     });
   });
