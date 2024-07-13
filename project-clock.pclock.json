@@ -89,7 +89,18 @@
       "end": "2024-07-12T15:26:42.277Z"
     },
     {
-      "subject": "A new project timesheet can be created by starting the clock without other arguments"
+      "subject": "Fix app throwing full errors with stack listings when stopping an already stopped task or a task that hasn't been started",
+      "begin": "2024-07-13T05:47:52.608Z",
+      "end": "2024-07-13T06:00:21.532Z"
+    },
+    {
+      "subject": "Edit tests testing error conditions so that they test that the error is not thrown with a stack listing"
+    },
+    {
+      "subject": "Fix 'start' command claiming that a task has been started when it isn't and add a test for testing this condition"
+    },
+    {
+      "subject": "A new project timesheet can be created by starting the clock"
     },
     {
       "subject": "Clock can be paused and unpaused"
@@ -98,7 +109,7 @@
       "subject": "Subject and description of the task can be set and edited"
     },
     {
-      "subject": "Tasks can be listed"
+      "subject": "Tasks can be listed and the listing shows time spent on each task"
     },
     {
       "subject": "Command 'status' lists started but incomplete tasks and number of complete and incomplete tasks"

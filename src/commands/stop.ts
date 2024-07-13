@@ -60,9 +60,18 @@ export default function stop(taskDescriptor: string | undefined) {
   const timesheetData = getTimesheetData();
   const { tasks } = timesheetData;
 
-  const activeTask = taskDescriptor
-    ? getMatchingActiveTask(tasks, taskDescriptor)
-    : getActiveTask(tasks);
+  let activeTask = emptyTask;
+  try {
+    activeTask = taskDescriptor
+      ? getMatchingActiveTask(tasks, taskDescriptor)
+      : getActiveTask(tasks);
+  } catch (error) {
+    if (error instanceof ProjectClockError) {
+      console.log(error.message);
+      process.exit(1);
+    }
+    throw error;
+  }
 
   const newTimesheetData = { ...timesheetData };
   const index = newTimesheetData.tasks.indexOf(activeTask);
