@@ -99,7 +99,35 @@
       "end": "2024-07-13T10:34:51.514Z"
     },
     {
-      "subject": "Fix 'start' command claiming that a task has been started when it isn't and add a test for testing this condition"
+      "subject": "Edit the 'start' command functionality",
+      "description": "Change the functionality of the 'start' command so that it first looks for unstarted tasks and confirmes from the user that this is the correct task to start. If there are many unstarted tasks, user is asked which one of them to start. If there are no unstarted tasks, user is prompted for a task subject and current timestamp is offered as default subject. If task argument is provided, a task with a matching string as the subject is started, or if such task doesn't exist a new task is created with parameter value as the subject of the task. Before creation of the task, it is confirmed from the user that this is what was intended. If many tasks match with the descriptor, user is prompted which of them to start.",
+      "begin": "2024-07-13T10:38:27.995Z",
+      "suspend": [
+        "2024-07-13T12:33:34.000Z",
+        "2024-07-13T14:52:59.372Z",
+        "2024-07-14T07:38:49.703Z",
+        "2024-07-15T08:30:33.989Z",
+        "2024-07-15T10:54:38.428Z",
+        "2024-07-15T12:19:26.646Z",
+        "2024-07-15T15:33:20.133Z",
+        "2024-07-16T9:00:33.845Z"
+      ],
+      "resume": [
+        "2024-07-13T13:36:34.237Z",
+        "2024-07-14T06:20:02.782Z",
+        "2024-07-15T06:33:15.743Z",
+        "2024-07-15T09:15:33.989Z",
+        "2024-07-15T11:45:23.284Z",
+        "2024-07-15T14:49:57.848Z",
+        "2024-07-16T06:41:52.795Z",
+        "2024-07-16T10:25:24.410Z"
+      ],
+      "end": "2024-07-16T10:30:23.265Z"
+    },
+    {
+      "subject": "Explore different prompt libraries",
+      "begin": "2024-07-13T12:33:34.041Z",
+      "end": "2024-07-13T13:03:34.141Z"
     },
     {
       "subject": "A new project timesheet can be created by starting the clock"

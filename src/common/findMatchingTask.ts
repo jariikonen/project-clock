@@ -2,7 +2,7 @@ import { Task } from '../types/ProjectClockData';
 import ProjectClockError from './ProjectClockError';
 
 /**
- * Returns tasks whose 'subject' matches the taskDescriptor parameter.
+ * Returns a single task whose 'subject' matches the taskDescriptor parameter.
  * @param tasks Array of Task objects from which to search.
  * @param taskDescriptor RegEx matcher that should match the 'subject' of the
  *    task.
@@ -14,7 +14,7 @@ import ProjectClockError from './ProjectClockError';
 export default function findMatchingTask(
   tasks: Task[],
   taskDescriptor: string
-) {
+): Task {
   const matchingTasks = tasks.filter((task) =>
     task.subject.match(taskDescriptor)
   );
