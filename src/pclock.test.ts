@@ -115,26 +115,6 @@ describe('Basic functions', () => {
 
     const taskSubject = 'Test task';
 
-    function testTaskIsStarted(index: number, subjectIsTimestamp = false) {
-      const currentTimestamp = new Date().toISOString();
-      const projectClockDataObj = getTestFileDataObj();
-      const { subject, begin } = projectClockDataObj.tasks[index];
-      if (subjectIsTimestamp) {
-        expect(subject.substring(0, 15)).toEqual(
-          currentTimestamp.substring(0, 15)
-        );
-      } else {
-        expect(subject).toEqual(taskSubject);
-      }
-      expect(begin).toBeDefined();
-      if (begin) {
-        expect(isValidTimestamp(begin)).toBeTruthy();
-        expect(begin.substring(0, 15)).toEqual(
-          currentTimestamp.substring(0, 15)
-        );
-      }
-    }
-
     function testTaskIsNotCreated(subject = taskSubject) {
       const projectClockDataObj = getTestFileDataObj();
       const found = projectClockDataObj.tasks.find(
@@ -143,16 +123,36 @@ describe('Basic functions', () => {
       expect(found).toBeFalsy();
     }
 
-    function testTaskIsNotStarted(subject = taskSubject) {
-      const projectClockDataObj = getTestFileDataObj();
-      const found = projectClockDataObj.tasks.find(
-        (task) => task.subject === subject
-      );
-      expect(found?.subject).toEqual(subject);
-      expect(found?.begin).not.toBeDefined();
-    }
-
     describe('Starting the clock', () => {
+      function testTaskIsStarted(index: number, subjectIsTimestamp = false) {
+        const currentTimestamp = new Date().toISOString();
+        const projectClockDataObj = getTestFileDataObj();
+        const { subject, begin } = projectClockDataObj.tasks[index];
+        if (subjectIsTimestamp) {
+          expect(subject.substring(0, 15)).toEqual(
+            currentTimestamp.substring(0, 15)
+          );
+        } else {
+          expect(subject).toEqual(taskSubject);
+        }
+        expect(begin).toBeDefined();
+        if (begin) {
+          expect(isValidTimestamp(begin)).toBeTruthy();
+          expect(begin.substring(0, 15)).toEqual(
+            currentTimestamp.substring(0, 15)
+          );
+        }
+      }
+
+      function testTaskIsNotStarted(subject = taskSubject) {
+        const projectClockDataObj = getTestFileDataObj();
+        const found = projectClockDataObj.tasks.find(
+          (task) => task.subject === subject
+        );
+        expect(found?.subject).toEqual(subject);
+        expect(found?.begin).not.toBeDefined();
+      }
+
       test('"Start" command without any arguments asks user subject for the task (no tasks on the timesheet)', () => {
         const response = execSync(
           `cd ${subDirPath} && node ${rootDir}/bin/pclock.js start`,
@@ -177,7 +177,6 @@ describe('Basic functions', () => {
           { encoding: 'utf8' }
         );
         expect(response).toMatch('enter subject for the task');
-
         testTaskIsStarted(0);
       });
 
@@ -231,7 +230,6 @@ describe('Basic functions', () => {
         expect(response).toMatch(
           `there is one unstarted task on the timesheet (${taskSubject}); start this task`
         );
-
         testTaskIsStarted(1);
       });
 
@@ -292,7 +290,6 @@ describe('Basic functions', () => {
           'there are more than one unstarted task on the timesheet; select the task to'
         );
         expect(response).toMatch(`started task '${taskSubject}'`);
-
         testTaskIsStarted(1);
       });
 
@@ -348,7 +345,6 @@ describe('Basic functions', () => {
         expect(response).toMatch(
           `no matching unstarted task found; create a new task '${taskSubject}'`
         );
-
         testTaskIsStarted(2);
       });
 
@@ -377,7 +373,6 @@ describe('Basic functions', () => {
         expect(response).toMatch(
           `no matching unstarted task found; create a new task '${taskSubject}'`
         );
-
         testTaskIsNotCreated();
       });
 
@@ -439,7 +434,6 @@ describe('Basic functions', () => {
         expect(response).toMatch(
           `there is one matching unstarted task on the timesheet (${taskSubject}); start this`
         );
-
         testTaskIsStarted(1);
       });
 
@@ -471,7 +465,6 @@ describe('Basic functions', () => {
         expect(response).toMatch(
           `there is one matching unstarted task on the timesheet (${taskSubject}); start this`
         );
-
         testTaskIsNotStarted(taskSubject);
       });
 
@@ -503,6 +496,33 @@ describe('Basic functions', () => {
           'there are more than one matching task on the timesheet; select the task to'
         );
       });
+
+      test('"Start" command does not throw an exception with stack trace when command is force stopped with CTRL+C', () => {
+        // initialize test environment
+        createTestFile({
+          projectName,
+          tasks: [
+            {
+              subject: taskSubject,
+            },
+            {
+              subject: 'second unstarted task',
+            },
+          ],
+        });
+
+        // test
+        const response = execSync(
+          `cd ${subDirPath} && printf '^C' | node ${rootDir}/bin/pclock.js start`,
+          {
+            encoding: 'utf8',
+            stdio: 'pipe',
+          }
+        );
+        expect(response).toMatch('exiting; user force closed the process');
+        expect(response).not.toMatch('throw');
+        expect(response).not.toMatch('ProjectClockError');
+      });
     });
 
     describe('Stopping the clock', () => {
@@ -513,7 +533,60 @@ describe('Basic functions', () => {
         );
       });
 
-      test('"Stop" command without any arguments stops the clock of the only active (started but not stopped) task', () => {
+      function testTaskIsStopped(subject = taskSubject) {
+        const projectClockDataObj = getTestFileDataObj();
+        const found = projectClockDataObj.tasks.find(
+          (task) => task.subject === subject
+        );
+        const currentTimestamp = new Date().toISOString();
+        expect(found?.subject).toEqual(subject);
+        expect(found?.end).toBeDefined();
+        if (found?.end) {
+          expect(isValidTimestamp(found.end)).toBeTruthy();
+          expect(found.end.substring(0, 15)).toEqual(
+            currentTimestamp.substring(0, 15)
+          );
+        }
+      }
+
+      function testTaskIsNotSopped(subject = taskSubject) {
+        const projectClockDataObj = getTestFileDataObj();
+        const found = projectClockDataObj.tasks.find(
+          (task) => task.subject === subject
+        );
+        expect(found?.subject).toEqual(subject);
+        expect(found?.end).not.toBeDefined();
+      }
+
+      test('"Stop" command without any arguments exits with an error when no active (started but not stopped) tasks are found', () => {
+        // initialize test environment
+        createTestFile({
+          projectName,
+          tasks: [
+            {
+              subject: 'closed task (i.e., started and stopped task)',
+              begin: new Date().toISOString(),
+              end: new Date().toISOString(),
+            },
+          ],
+        });
+
+        // test
+        let error = '';
+        try {
+          execSync(`cd ${subDirPath} && node ${rootDir}/bin/pclock.js stop`, {
+            stdio: 'pipe',
+          });
+        } catch (err) {
+          const e = err as Error;
+          error = e.message;
+        }
+        expect(error).toMatch('ERROR: no active tasks found; nothing to stop');
+        expect(error).not.toMatch('throw');
+        expect(error).not.toMatch('ProjectClockError');
+      });
+
+      test('"Stop" command without any arguments asks user whether the only active (started but not stopped) task is to be stopped', () => {
         // initialize test environment
         createTestFile({
           projectName,
@@ -533,21 +606,70 @@ describe('Basic functions', () => {
         // test
         const response = execSync(
           `cd ${subDirPath} && node ${rootDir}/bin/pclock.js stop`,
-          { encoding: 'utf8' }
+          { encoding: 'utf8', stdio: 'pipe' }
         );
-        expect(response).toMatch("stopped task '");
-
-        const projectClockDataObj = getTestFileDataObj();
-        const testTask = projectClockDataObj.tasks[1];
-        expect(testTask.subject).toMatch(taskSubject);
-        expect(testTask.begin).toBeDefined();
-        expect(testTask.end).toBeDefined();
-        if (testTask.end) {
-          expect(testTask.end).toMatch(new Date(testTask.end).toISOString());
-        }
+        expect(response).toMatch(
+          `there is one active task on the timesheet (${taskSubject}); stop this`
+        );
       });
 
-      test('"Stop" command without any arguments returns an error if there are more than one active task', () => {
+      test('"Stop" command without any arguments stops the only active task if user answers yes', () => {
+        // initialize test environment
+        createTestFile({
+          projectName,
+          tasks: [
+            {
+              subject: 'closed task (i.e., started and stopped task)',
+              begin: new Date().toISOString(),
+              end: new Date().toISOString(),
+            },
+            {
+              subject: taskSubject,
+              begin: new Date().toISOString(),
+            },
+          ],
+        });
+
+        // test
+        const response = execSync(
+          `cd ${subDirPath} && printf 'Y\n' | node ${rootDir}/bin/pclock.js stop`,
+          { encoding: 'utf8' }
+        );
+        expect(response).toMatch(
+          `there is one active task on the timesheet (${taskSubject}); stop this`
+        );
+        testTaskIsStopped();
+      });
+
+      test('"Stop" command without any arguments exits without stopping any tasks if user answers no', () => {
+        // initialize test environment
+        createTestFile({
+          projectName,
+          tasks: [
+            {
+              subject: 'closed task (i.e., started and stopped task)',
+              begin: new Date().toISOString(),
+              end: new Date().toISOString(),
+            },
+            {
+              subject: taskSubject,
+              begin: new Date().toISOString(),
+            },
+          ],
+        });
+
+        // test
+        const response = execSync(
+          `cd ${subDirPath} && printf 'n\n' | node ${rootDir}/bin/pclock.js stop`,
+          { encoding: 'utf8' }
+        );
+        expect(response).toMatch(
+          `there is one active task on the timesheet (${taskSubject}); stop this`
+        );
+        testTaskIsNotSopped();
+      });
+
+      test('"Stop" command without any arguments asks which of the many active tasks to stop', () => {
         // initialize test environment
         createTestFile({
           projectName,
@@ -564,21 +686,74 @@ describe('Basic functions', () => {
         });
 
         // test
+        const response = execSync(
+          `cd ${subDirPath} && node ${rootDir}/bin/pclock.js stop`,
+          { encoding: 'utf8' }
+        );
+        expect(response).toMatch(
+          'there are more than one active task on the timesheet; select the task to stop'
+        );
+      });
+
+      test('"Stop" command without any arguments stops correct task when the first of many active tasks is selected', () => {
+        // initialize test environment
+        createTestFile({
+          projectName,
+          tasks: [
+            {
+              subject: 'first active task',
+              begin: new Date().toISOString(),
+            },
+            {
+              subject: 'second active task',
+              begin: new Date().toISOString(),
+            },
+          ],
+        });
+
+        // test
+        const response = execSync(
+          `cd ${subDirPath} && printf 'y\n' | node ${rootDir}/bin/pclock.js stop`,
+          { encoding: 'utf8', stdio: 'pipe' }
+        );
+        expect(response).toMatch(
+          'there are more than one active task on the timesheet; select the task to stop'
+        );
+        testTaskIsStopped('first active task');
+      });
+
+      test('"Stop" command with task descriptor exits with an error when no matching active task is found', () => {
+        // initialize test environment
+        createTestFile({
+          projectName,
+          tasks: [
+            {
+              subject: 'closed task (i.e., started and stopped task)',
+              begin: new Date().toISOString(),
+              end: new Date().toISOString(),
+            },
+          ],
+        });
+
+        // test
         let error = '';
         try {
-          execSync(`cd ${subDirPath} && node ${rootDir}/bin/pclock.js stop `, {
-            stdio: 'pipe',
-          });
+          execSync(
+            `cd ${subDirPath} && node ${rootDir}/bin/pclock.js stop ${taskSubject}`,
+            {
+              stdio: 'pipe',
+            }
+          );
         } catch (err) {
           const e = err as Error;
           error = e.message;
         }
-        expect(error).toMatch('ERROR: more than one active task');
+        expect(error).toMatch('ERROR: no matching active tasks found');
         expect(error).not.toMatch('throw');
         expect(error).not.toMatch('ProjectClockError');
       });
 
-      test('"Stop" command with task descriptor as an argument stops the clock for matching task', () => {
+      test('"Stop" command with task descriptor argument confirms whether the only matching task is to be stopped', () => {
         // initialize test environment
         createTestFile({
           projectName,
@@ -600,19 +775,68 @@ describe('Basic functions', () => {
           `cd ${subDirPath} && node ${rootDir}/bin/pclock.js stop ${taskSubject}`,
           { encoding: 'utf8' }
         );
-        expect(response).toMatch(`stopped task '${taskSubject}'`);
-
-        const projectClockDataObj = getTestFileDataObj();
-        const testTask = projectClockDataObj.tasks[1];
-        expect(testTask.subject).toMatch(taskSubject);
-        expect(testTask.begin).toBeDefined();
-        expect(testTask.end).toBeDefined();
-        if (testTask.end) {
-          expect(testTask.end).toMatch(new Date(testTask.end).toISOString());
-        }
+        expect(response).toMatch(
+          `there is one matching active task on the timesheet (${taskSubject}); stop this`
+        );
       });
 
-      test('"Stop" command with task descriptor as an argument returns an error if there are more than one matching tasks', () => {
+      test('"Stop" command with task descriptor argument stops correct task when the user answers yes', () => {
+        // initialize test environment
+        createTestFile({
+          projectName,
+          tasks: [
+            {
+              subject: 'closed task (i.e., started and stopped task)',
+              begin: new Date().toISOString(),
+              end: new Date().toISOString(),
+            },
+            {
+              subject: taskSubject,
+              begin: new Date().toISOString(),
+            },
+          ],
+        });
+
+        // test
+        const response = execSync(
+          `cd ${subDirPath} && printf 'y\n' | node ${rootDir}/bin/pclock.js stop ${taskSubject}`,
+          { encoding: 'utf8' }
+        );
+        expect(response).toMatch(
+          `there is one matching active task on the timesheet (${taskSubject}); stop this`
+        );
+        testTaskIsStopped();
+      });
+
+      test('"Stop" command with task descriptor argument exits without stopping any task when the user answers no', () => {
+        // initialize test environment
+        createTestFile({
+          projectName,
+          tasks: [
+            {
+              subject: 'closed task (i.e., started and stopped task)',
+              begin: new Date().toISOString(),
+              end: new Date().toISOString(),
+            },
+            {
+              subject: taskSubject,
+              begin: new Date().toISOString(),
+            },
+          ],
+        });
+
+        // test
+        const response = execSync(
+          `cd ${subDirPath} && printf 'n\n' | node ${rootDir}/bin/pclock.js stop ${taskSubject}`,
+          { encoding: 'utf8' }
+        );
+        expect(response).toMatch(
+          `there is one matching active task on the timesheet (${taskSubject}); stop this`
+        );
+        testTaskIsNotSopped();
+      });
+
+      test('"Stop" command with task descriptor argument asks which of many matching active tasks to stop', () => {
         // initialize test environment
         createTestFile({
           projectName,
@@ -634,24 +858,79 @@ describe('Basic functions', () => {
         });
 
         // test
-        let error = '';
         const matcher = 'active task';
-        try {
-          execSync(
-            `cd ${subDirPath} && node ${rootDir}/bin/pclock.js stop ${matcher}`,
-            {
-              stdio: 'pipe',
-            }
-          );
-        } catch (err) {
-          const e = err as Error;
-          error = e.message;
-        }
-        expect(error).toMatch(
-          'ERROR: more than one task matches the descriptor'
+        const response = execSync(
+          `cd ${subDirPath} && node ${rootDir}/bin/pclock.js stop ${matcher}`,
+          { encoding: 'utf8' }
         );
-        expect(error).not.toMatch('throw');
-        expect(error).not.toMatch('ProjectClockError');
+        expect(response).toMatch(
+          'there are more than one matching active task on the timesheet; select the task'
+        );
+      });
+
+      test('"Stop" command with task descriptor argument stops correct task when first of many matching active tasks is selected', () => {
+        // initialize test environment
+        createTestFile({
+          projectName,
+          tasks: [
+            {
+              subject: 'closed task (i.e., started and stopped task)',
+              begin: new Date().toISOString(),
+              end: new Date().toISOString(),
+            },
+            {
+              subject: 'first active task',
+              begin: new Date().toISOString(),
+            },
+            {
+              subject: 'second active task',
+              begin: new Date().toISOString(),
+            },
+          ],
+        });
+
+        // test
+        const matcher = 'active task';
+        const response = execSync(
+          `cd ${subDirPath} && printf '\n' | node ${rootDir}/bin/pclock.js stop ${matcher}`,
+          {
+            encoding: 'utf8',
+            stdio: 'pipe',
+          }
+        );
+        expect(response).toMatch(
+          'there are more than one matching active task on the timesheet; select the task'
+        );
+        testTaskIsStopped('first active task');
+      });
+
+      test('"Stop" command does not throw an exception with stack trace when command is force stopped with CTRL+C', () => {
+        // initialize test environment
+        createTestFile({
+          projectName,
+          tasks: [
+            {
+              subject: taskSubject,
+              begin: new Date().toISOString(),
+            },
+            {
+              subject: 'second active task',
+              begin: new Date().toISOString(),
+            },
+          ],
+        });
+
+        // test
+        const response = execSync(
+          `cd ${subDirPath} && printf '^C' | node ${rootDir}/bin/pclock.js stop`,
+          {
+            encoding: 'utf8',
+            stdio: 'pipe',
+          }
+        );
+        expect(response).toMatch('exiting; user force closed the process');
+        expect(response).not.toMatch('throw');
+        expect(response).not.toMatch('ProjectClockError');
       });
     });
   });

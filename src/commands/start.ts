@@ -1,63 +1,10 @@
-import confirm from '@inquirer/confirm';
 import input from '@inquirer/input';
-import { ExitPromptError } from '@inquirer/core';
-import select, { Separator } from '@inquirer/select';
+import confirmTask from '../common/confirmTask';
+import selectTask from '../common/selectTask';
 import getTimesheetData from '../common/getTimesheetData';
 import writeTimesheet from '../common/writeTimesheet';
-import { emptyTask, Task } from '../types/ProjectClockData';
-
-type SelectChoices = (
-  | {
-      value: string;
-      name?: string;
-      description?: string;
-      disabled?: boolean | string;
-    }
-  | Separator
-)[];
-
-async function confirmTask(message: string): Promise<boolean> {
-  const answer = await confirm({
-    message,
-  });
-  return answer;
-}
-
-function createChoices(tasks: Task[]): SelectChoices {
-  return tasks.map((task, index) => {
-    const name =
-      task.subject.length > 15
-        ? `${task.subject.substring(0, 15)}...`
-        : task.subject;
-    const value = index.toString();
-    const description = task.subject;
-    return {
-      name,
-      value,
-      description,
-    };
-  });
-}
-
-async function promptForUnstartedTask(unstartedTasks: Task[]): Promise<Task> {
-  const choices = createChoices(unstartedTasks);
-  const selectedUnstartedTask = await select({
-    message:
-      'there are more than one unstarted task on the timesheet; select the task to start',
-    choices,
-  });
-  return unstartedTasks[parseInt(selectedUnstartedTask, 10)];
-}
-
-async function promptForMatchingTask(matchingTasks: Task[]): Promise<Task> {
-  const choices = createChoices(matchingTasks);
-  const selectedMatchingTask = await select({
-    message:
-      'there are more than one matching task on the timesheet; select the task to start',
-    choices,
-  });
-  return matchingTasks[parseInt(selectedMatchingTask, 10)];
-}
+import { emptyTask, ProjectClockData, Task } from '../types/ProjectClockData';
+import handleInquirerError from '../common/handleInquirerError';
 
 async function getUnstartedTask(tasks: Task[]): Promise<Task | null> {
   const unstartedTasks = tasks.filter((task) => !task.begin);
@@ -72,7 +19,10 @@ async function getUnstartedTask(tasks: Task[]): Promise<Task | null> {
     return null;
   }
   if (unstartedTasks.length > 1) {
-    const selectedUnstartedTask = await promptForUnstartedTask(unstartedTasks);
+    const selectedUnstartedTask = await selectTask(
+      unstartedTasks,
+      'there are more than one unstarted task on the timesheet; select the task to start:'
+    );
     return selectedUnstartedTask;
   }
   return null;
@@ -104,18 +54,54 @@ async function getMatchingUnstartedTask(
     return null;
   }
   if (matchingTasks.length > 1) {
-    const selectedMatchingTask = await promptForMatchingTask(matchingTasks);
+    const selectedMatchingTask = await selectTask(
+      matchingTasks,
+      'there are more than one matching task on the timesheet; select the task to start:'
+    );
     return selectedMatchingTask;
   }
   return null;
 }
 
-function handleInquirerError(error: unknown) {
-  if (!(error instanceof ExitPromptError)) {
-    throw error;
+function writeNewTimesheet(
+  tasks: Task[],
+  timesheetData: ProjectClockData,
+  foundTask: Task | null,
+  taskDescriptor: string
+) {
+  const newTimesheetData = { ...timesheetData };
+  let taskToStart: Task = foundTask ?? emptyTask;
+  let newTaskCreated = false;
+
+  if (!taskToStart.subject && taskDescriptor) {
+    const alreadyExists = tasks.find((task) => task.subject === taskDescriptor);
+    if (alreadyExists) {
+      console.error(
+        `ERROR: cannot create task; task '${taskDescriptor}' already exists`
+      );
+      process.exit(1);
+    }
+    taskToStart = {
+      subject: taskDescriptor,
+      begin: new Date().toISOString(),
+    };
+    newTimesheetData.tasks.push(taskToStart);
+    newTaskCreated = true;
+  } else if (taskToStart.begin) {
+    console.error(
+      `ERROR: task '${taskToStart.subject}' has already been started`
+    );
+    process.exit(1);
+  } else {
+    taskToStart.begin = new Date().toISOString();
   }
-  console.log('exiting; user force closed the process');
-  process.exit(0);
+
+  writeTimesheet(newTimesheetData);
+  if (newTaskCreated) {
+    console.log(`created and started a new task '${taskToStart.subject}'`);
+  } else {
+    console.log(`started task '${taskToStart.subject}'`);
+  }
 }
 
 /**
@@ -144,7 +130,7 @@ export default async function start(taskDescriptor: string | undefined) {
       unstartedTask = await getUnstartedTask(tasks);
       if (!unstartedTask) {
         taskDescriptorToUse = await promptForTaskDescriptor(
-          'no unstarted tasks found; enter subject for the task'
+          'no unstarted tasks found; enter subject for the task:'
         );
       }
     } catch (error) {
@@ -159,7 +145,7 @@ export default async function start(taskDescriptor: string | undefined) {
       if (!matchingTask) {
         if (
           await confirmTask(
-            `no matching unstarted task found; create a new task '${taskDescriptor}'`
+            `no matching unstarted task found; create a new task '${taskDescriptor}'?`
           )
         ) {
           taskDescriptorToUse = taskDescriptor;
@@ -173,40 +159,6 @@ export default async function start(taskDescriptor: string | undefined) {
     }
   }
 
-  const newTimesheetData = { ...timesheetData };
   const foundTask = unstartedTask ?? matchingTask;
-  let taskToStart: Task = foundTask ?? emptyTask;
-  let newTaskCreated = false;
-
-  if (!taskToStart.subject && taskDescriptorToUse) {
-    const alreadyExists = tasks.find(
-      (task) => task.subject === taskDescriptorToUse
-    );
-    if (alreadyExists) {
-      console.error(
-        `ERROR: cannot create task; task '${taskDescriptorToUse}' already exists`
-      );
-      process.exit(1);
-    }
-    taskToStart = {
-      subject: taskDescriptorToUse,
-      begin: new Date().toISOString(),
-    };
-    newTimesheetData.tasks.push(taskToStart);
-    newTaskCreated = true;
-  } else if (taskToStart.begin) {
-    console.error(
-      `ERROR: task '${taskToStart.subject}' has already been started`
-    );
-    process.exit(1);
-  } else {
-    taskToStart.begin = new Date().toISOString();
-  }
-
-  writeTimesheet(newTimesheetData);
-  if (newTaskCreated) {
-    console.log(`created and started a new task '${taskToStart.subject}'`);
-  } else {
-    console.log(`started task '${taskToStart.subject}'`);
-  }
+  writeNewTimesheet(tasks, timesheetData, foundTask, taskDescriptorToUse);
 }

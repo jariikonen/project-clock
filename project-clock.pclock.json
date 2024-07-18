@@ -130,13 +130,20 @@
       "end": "2024-07-13T13:03:34.141Z"
     },
     {
-      "subject": "A new project timesheet can be created by starting the clock"
-    },
-    {
-      "subject": "Clock can be paused and unpaused"
-    },
-    {
-      "subject": "Subject and description of the task can be set and edited"
+      "subject": "Edit functionality of the 'stop' command",
+      "description": "Change the functionality of the 'stop' command so that it first looks for active tasks (started but not stopped) and confirms from the user that this is the correct task to stop. If there are many active tasks, user is asked which one of them to stop. If there are no active tasks, the function still exits with error. If task argument is provided, a task with a matching string as the subject is stopped. Before stopping the task, it is confirmed from the user that it is what was intended. If many tasks match with the descriptor, user is prompted which of them to stop.",
+      "begin": "2024-07-16T12:08:29.422Z",
+      "suspend": [
+        "2024-07-16T13:33:45.878Z",
+        "2024-07-17T08:03:25.749Z",
+        "2024-07-17T13:10:11.420Z"
+      ],
+      "resume": [
+        "2024-07-17T07:18:20.192Z",
+        "2024-07-17T11:17:20.963Z",
+        "2024-07-18T09:33:50.858Z"
+      ],
+      "end": "2024-07-18T09:55:49.083Z"
     },
     {
       "subject": "Tasks can be listed and the listing shows time spent on each task"
@@ -146,6 +153,15 @@
     },
     {
       "subject": "Tasks can be added without starting the clock"
+    },
+    {
+      "subject": "Clock can be paused and unpaused"
+    },
+    {
+      "subject": "Subject and description of the task can be set and edited"
+    },
+    {
+      "subject": "A new project timesheet can be created by starting the clock"
     },
     {
       "subject": "Command 'new' prompts for project name if it is not given as argument",
