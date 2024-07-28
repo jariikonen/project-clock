@@ -5,13 +5,14 @@ import { version } from '../package.json';
 import newTimesheet from './commands/new';
 import start from './commands/start';
 import stop from './commands/stop';
+import status from './commands/status';
 
 const program = new Command();
 
 program
   .name('pclock')
   .description('CLI app to clock time spent on a project')
-  .version(version, '-v, --version', 'output the version number');
+  .version(version, '-V, --version', 'output the version number');
 
 program.addHelpText('beforeAll', `pclock (Project Clock) v${version}\n`);
 
@@ -38,5 +39,12 @@ program
   )
   .argument('[task_name]', 'name of the task')
   .action((taskName) => stop(taskName));
+
+program.option('-v, --verbose', 'The command prints more verbose output.');
+
+program
+  .command('status [-v]')
+  .description('Output status information. ')
+  .action(() => status(program.opts()));
 
 program.parse();

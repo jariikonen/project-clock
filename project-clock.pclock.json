@@ -110,7 +110,7 @@
         "2024-07-15T10:54:38.428Z",
         "2024-07-15T12:19:26.646Z",
         "2024-07-15T15:33:20.133Z",
-        "2024-07-16T9:00:33.845Z"
+        "2024-07-16T09:00:33.845Z"
       ],
       "resume": [
         "2024-07-13T13:36:34.237Z",
@@ -131,7 +131,7 @@
     },
     {
       "subject": "Edit functionality of the 'stop' command",
-      "description": "Change the functionality of the 'stop' command so that it first looks for active tasks (started but not stopped) and confirms from the user that this is the correct task to stop. If there are many active tasks, user is asked which one of them to stop. If there are no active tasks, the function still exits with error. If task argument is provided, a task with a matching string as the subject is stopped. Before stopping the task, it is confirmed from the user that it is what was intended. If many tasks match with the descriptor, user is prompted which of them to stop.",
+      "description": "Change the functionality of the 'stop' command so that it first looks for active (started but not stopped) tasks and confirms from the user that this is the correct task to stop. If there are many active tasks, user is asked which one of them to stop. If there are no active tasks, the function still exits with error. If task argument is provided, a task with a matching string as the subject is stopped. Before stopping the task, it is confirmed from the user that it is what was intended. If many tasks match with the descriptor, user is prompted which of them to stop.",
       "begin": "2024-07-16T12:08:29.422Z",
       "suspend": [
         "2024-07-16T13:33:45.878Z",
@@ -146,10 +146,53 @@
       "end": "2024-07-18T09:55:49.083Z"
     },
     {
-      "subject": "Tasks can be listed and the listing shows time spent on each task"
+      "subject": "Command 'status' prints current status report",
+      "description": "Command 'status' lists currently active tasks with the time spent on each task so far, total amount of time spent on tasks, and number of complete and incomplete tasks.\n\nI tried to implement the task duration reporting using FormatJS's Intl.DurationFormat polyfill (https://formatjs.io/docs/polyfills/intl-durationformat), but I didn't get it to work. In the end, I decided to look at the localization of the app later, and implement a simple duration formatting in English for now.",
+      "begin": "2024-07-18T10:07:15.029Z",
+      "suspend": [
+        "2024-07-18T10:51:07.177Z",
+        "2024-07-19T07:54:11.409Z",
+        "2024-07-19T10:49:19.875Z",
+        "2024-07-19T11:59:21.255Z",
+        "2024-07-20T08:24:10.941Z",
+        "2024-07-20T12:10:10.330Z",
+        "2024-07-21T08:06:38.457Z",
+        "2024-07-22T06:05:32.734Z",
+        "2024-07-22T08:14:07.870Z",
+        "2024-07-22T11:58:59.607Z",
+        "2024-07-22T15:24:32.015Z",
+        "2024-07-23T08:15:05.789Z",
+        "2024-07-23T10:22:21.278Z",
+        "2024-07-27T06:11:00.158Z",
+        "2024-07-27T07:49:05.814Z"
+      ],
+      "resume": [
+        "2024-07-19T06:58:26.418Z",
+        "2024-07-19T09:58:16.902Z",
+        "2024-07-19T11:38:52.079Z",
+        "2024-07-20T07:45:36.038Z",
+        "2024-07-20T09:35:58.887Z",
+        "2024-07-21T06:18:05.159Z",
+        "2024-07-22T05:07:29.399Z",
+        "2024-07-22T06:46:00.697Z",
+        "2024-07-22T10:03:19.593Z",
+        "2024-07-22T13:57:02.868Z",
+        "2024-07-23T06:44:45.791Z",
+        "2024-07-23T09:26:40.585Z",
+        "2024-07-27T05:48:40.167Z",
+        "2024-07-27T07:04:43.564Z",
+        "2024-07-28T03:32:19.504Z"
+      ]
     },
     {
-      "subject": "Command 'status' lists started but incomplete tasks and number of complete and incomplete tasks"
+      "subject": "Explore the i18n library options",
+      "begin": "2024-07-20T08:35:19.321Z",
+      "suspend": ["2024-07-20T08:49:09.485Z"],
+      "resume": ["2024-07-20T09:03:44.690Z"],
+      "end": "2024-07-20T09:35:58.887Z"
+    },
+    {
+      "subject": "Add missing TSDoc comments"
     },
     {
       "subject": "Tasks can be added without starting the clock"
@@ -166,6 +209,13 @@
     {
       "subject": "Command 'new' prompts for project name if it is not given as argument",
       "description": "Create tests for testing the new functionality and edit the code so that the tests are passed. Default value for the project name is the name of the parent directory."
+    },
+    {
+      "subject": "See if the TypeScript configuration should be changed",
+      "description": "Is there a better way to build the code than with Rollup? How to get the FormatJS Intl.DurationFormat working?"
+    },
+    {
+      "subject": "Decide whether the app should be localized"
     }
   ]
 }
