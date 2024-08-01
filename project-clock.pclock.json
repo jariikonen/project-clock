@@ -242,25 +242,28 @@
       "end": "2024-07-29T14:51:10.420Z"
     },
     {
-      "subject": "Modify start and stop commands so that they handle the file errors correctly"
+      "subject": "Fix calculateTimes() not testing if the suspend and resume fiedls are arrays or not",
+      "begin": "2024-08-01T12:02:25.311Z",
+      "end": "2024-08-01T12:13:18.433Z"
     },
     {
-      "subject": "Modify TimePeriod class so that the number of hours in a day can be changed (24 or workday length)"
+      "subject": "Modify 'start' and 'stop' commands so that they report timesheet file errors in a user friendly manner"
     },
     {
-      "subject": "Modify calculateTimes() so that it creates a list of the times spent on each day"
-    },
-    {
-      "subject": "Add missing TSDoc comments"
+      "subject": "Modify TimePeriod class so that the number of hours in a day and the number of days in a week and in a month can be customized",
+      "description": "TimePeriod class is modified so that the way the larger units are calculated from the smaller units can be customized. For example the number of hours in a day can be set to the normal 24 or, for example, to the length of the workday. Number of days in a week can as well be set to the 7 of a calender week or to some other number, such as the length of the working week. The number of days in a month and the number of days in a year must also be customizable."
     },
     {
       "subject": "Timesheet file can be selected"
     },
     {
-      "subject": "Tasks can be added without starting the clock"
+      "subject": "Clock can be paused and unpaused"
     },
     {
-      "subject": "Clock can be paused and unpaused"
+      "subject": "Modify calculateTimes() so that it creates a list of the times spent on each day"
+    },
+    {
+      "subject": "Tasks can be added without starting the clock"
     },
     {
       "subject": "Subject and description of the task can be set and edited"
@@ -273,11 +276,10 @@
       "description": "Create tests for testing the new functionality and edit the code so that the tests are passed. Default value for the project name is the name of the parent directory."
     },
     {
-      "subject": "See if the TypeScript configuration should be changed",
-      "description": "Is there a better way to build the code than with Rollup?"
-    },
-    {
-      "subject": "Decide whether the app should be localized"
+      "subject": "Task list editing",
+      "description": "All time used for editing the task list.",
+      "begin": "2024-08-01T11:10:17.959Z",
+      "suspend": ["2024-08-01T12:01:52.258Z"]
     }
   ]
 }

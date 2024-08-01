@@ -16,8 +16,8 @@ export interface TaskStatus {
 const emptyTaskStatus = { task: '', status: undefined, timeSpent: 0 };
 
 function getTaskSubjectStr(task: Task) {
-  return task.subject.length > 15
-    ? `${task.subject.slice(0, 15)}...`
+  return task.subject.length > 25
+    ? `${task.subject.slice(0, 22)}...`
     : task.subject;
 }
 
@@ -98,6 +98,16 @@ function handleSuspendAndResume(
 
 function checkTask(task: Task) {
   const { begin, suspend, resume, end } = task;
+  if (suspend && !Array.isArray(suspend)) {
+    throw new ProjectClockError(
+      `ERROR: invalid task '${getTaskSubjectStr(task)}'; suspend field is not an array`
+    );
+  }
+  if (resume && !Array.isArray(resume)) {
+    throw new ProjectClockError(
+      `ERROR: invalid task '${getTaskSubjectStr(task)}'; resume field is not an array`
+    );
+  }
   if (end && !begin) {
     throw new ProjectClockError(
       `ERROR: invalid task '${getTaskSubjectStr(task)}'; end date without begin date`
