@@ -13,15 +13,25 @@ import ProjectClockError from './ProjectClockError';
  * @returns Absolute path to a timesheet file if such is found.
  * @throws ProjectClockError with a descriptive error message ('ERROR: no
  *    timesheet file in the directory', 'ERROR: more than one timesheet file in
- *    the directory') or an fs error if file is not found.
+ *    the directory', or `ERROR: timesheet file 'FILE_PATH' does not exist`).
  */
-export default function getTimesheetPath(file: string | undefined) {
+export default function getTimesheetPath(file = '') {
   let filePath = '';
   if (file) {
     if (path.isAbsolute(file)) {
+      if (!fs.existsSync(file)) {
+        throw new ProjectClockError(
+          `ERROR: timesheet file '${file}' does not exist`
+        );
+      }
       filePath = file;
     } else {
       filePath = path.join(process.cwd(), file);
+      if (!fs.existsSync(filePath)) {
+        throw new ProjectClockError(
+          `ERROR: timesheet file '${filePath}' does not exist`
+        );
+      }
     }
   } else {
     const dirContents = fs.readdirSync(process.cwd(), { encoding: 'utf8' });

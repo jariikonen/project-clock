@@ -1,7 +1,10 @@
-import CliTable3 from 'cli-table3';
 import getTimesheetData from '../common/getTimesheetData';
-import calculateTimes from '../common/calculateTimes';
+import calculateTimes, { TaskStatus } from '../common/calculateTimes';
 import TimePeriod from '../common/TimePeriod';
+import ProjectClockError from '../common/ProjectClockError';
+import { ProjectClockData } from '../types/ProjectClockData';
+import calculateTotalTime from '../common/calculateTotalTime';
+import getTaskListString from '../common/getTaskListString';
 
 interface StatusOptions {
   verbose?: true | undefined;
@@ -14,80 +17,77 @@ function multiple(term: string, number: number) {
   return number === 1 ? [`${term}`, '1'] : [`${term}s`, `${number}`];
 }
 
+function getTimesheet() {
+  let timesheetData: ProjectClockData;
+  try {
+    timesheetData = getTimesheetData();
+  } catch (error) {
+    if (error instanceof ProjectClockError) {
+      console.error(error.message);
+      process.exit(1);
+    }
+    throw error;
+  }
+  return timesheetData;
+}
+
+function getActiveTaskListStr(
+  activeTimes: TaskStatus[],
+  includeSeconds: boolean
+) {
+  const consoleWidth = process.stdout.columns;
+  const taskTable = getTaskListString(
+    activeTimes,
+    consoleWidth,
+    includeSeconds,
+    'simple'
+  );
+
+  const [term, counter] = multiple('task', activeTimes.length);
+  if (activeTimes.length > 0) {
+    return `${counter} active ${term}:\n${taskTable.toString()}\n`;
+  }
+  return `${counter} active ${term}\n`;
+}
+
 /**
  * Outputs current status information.
  * @param options The CLI options from the user.
  */
 export default function status(options: StatusOptions) {
-  const timesheetData = getTimesheetData();
+  const timesheetData = getTimesheet();
+
   const { projectName, tasks } = timesheetData;
 
   const activeTasks = tasks.filter((task) => task.begin && !task.end);
   const incompleteTasks = tasks.filter((task) => !task.end);
   const completeTasks = tasks.filter((task) => task.end);
 
-  const activeTimes = calculateTimes(activeTasks);
-  const allTimes = calculateTimes(tasks);
-
-  const consoleWidth = process.stdout.columns;
-
-  const taskTable = new CliTable3({
-    chars: {
-      top: '',
-      'top-mid': '',
-      'top-left': '',
-      'top-right': '',
-      bottom: '',
-      'bottom-mid': '',
-      'bottom-left': '',
-      'bottom-right': '',
-      left: '',
-      'left-mid': '',
-      mid: '',
-      'mid-mid': '',
-      right: '',
-      'right-mid': '',
-      middle: ' ',
-    },
-    style: { 'padding-left': 2, 'padding-right': 0 },
-    head: ['Task', 'Time', 'Status'],
-    colWidths: [
-      Math.floor((consoleWidth - 1) * 0.65),
-      Math.floor((consoleWidth - 1) * 0.15),
-      Math.floor((consoleWidth - 1) * 0.1),
-    ],
-    wordWrap: true,
-  });
+  let activeTimes: TaskStatus[] = [];
+  let allTimes: TaskStatus[] = [];
+  try {
+    activeTimes = calculateTimes(activeTasks);
+    allTimes = calculateTimes(tasks);
+  } catch (error) {
+    if (error instanceof ProjectClockError) {
+      console.error(`Timesheet file is faulty (${error.message})`);
+      process.exit(1);
+    }
+    throw error;
+  }
+  const totalTime = calculateTotalTime(allTimes);
+  const totalTimePeriod = new TimePeriod(totalTime);
 
   const includeSeconds = !!options.verbose;
-
-  activeTimes.forEach((task) => {
-    taskTable.push([
-      task.task,
-      new TimePeriod(task.timeSpent).narrowStr(includeSeconds),
-      task.status,
-    ]);
-  });
+  const activeTaskListStr = getActiveTaskListStr(activeTimes, includeSeconds);
 
   console.log(`Project: '${projectName}'\n`);
-
   console.log(
     `Tasks (complete/incomplete/total): ${completeTasks.length}/${incompleteTasks.length}/${tasks.length}\n`
   );
-
-  const [term, counter] = multiple('task', activeTimes.length);
-  if (activeTimes.length > 0) {
-    console.log(`${counter} active ${term}:\n`);
-    console.log(`${taskTable.toString()}\n`);
-  } else {
-    console.log(`${counter} active ${term}\n`);
+  if (activeTaskListStr) {
+    console.log(activeTaskListStr);
   }
-
-  const totalTimeSpent = allTimes.reduce(
-    (accum, task) => accum + task.timeSpent,
-    0
-  );
-  const totalTimePeriod = new TimePeriod(totalTimeSpent);
   console.log(
     `total time spent: ${totalTimePeriod.hoursAndMinutes(includeSeconds)} (${totalTimePeriod.narrowStr(includeSeconds)})`
   );

@@ -1,14 +1,14 @@
 import { Task } from '../types/ProjectClockData';
 import ProjectClockError from './ProjectClockError';
 
-interface TaskStatus {
+export interface TaskStatus {
   task: string;
   status:
     | 'not started'
     | 'started'
     | 'suspended'
     | 'resumed'
-    | 'complete'
+    | 'completed'
     | undefined;
   timeSpent: number;
 }
@@ -28,7 +28,7 @@ function calculateDifference(
 ): number {
   if (startDate > endDate) {
     throw new ProjectClockError(
-      `ERROR: invalid time period ${startDate.toLocaleString()}-${endDate.toLocaleString()} (${getTaskSubjectStr(task)}); start date is bigger than end date`
+      `ERROR: invalid time period '${startDate.toISOString()}' => '${endDate.toISOString()}' (${getTaskSubjectStr(task)}); start date is later than end date`
     );
   }
   return endDate.getTime() - startDate.getTime();
@@ -51,7 +51,23 @@ function handleSuspendAndResume(
       task
     );
   }
-  if (suspend.length > 1 && resume) {
+  if (suspend.length === 1 && resume?.length === 1) {
+    if (!end) {
+      taskStatus.status = 'resumed';
+      taskStatus.timeSpent += calculateDifference(
+        new Date(resume[0]),
+        new Date(),
+        task
+      );
+    } else {
+      taskStatus.status = 'completed';
+      taskStatus.timeSpent += calculateDifference(
+        new Date(resume[0]),
+        new Date(end),
+        task
+      );
+    }
+  } else if (suspend.length > 1 && resume) {
     resume.forEach((resumeDateStr, i) => {
       if (suspend[i + 1]) {
         taskStatus.status = 'suspended';
@@ -61,7 +77,7 @@ function handleSuspendAndResume(
           task
         );
       } else if (end) {
-        taskStatus.status = 'complete';
+        taskStatus.status = 'completed';
         taskStatus.timeSpent += calculateDifference(
           new Date(resumeDateStr),
           new Date(end),
@@ -80,6 +96,54 @@ function handleSuspendAndResume(
   return taskStatus;
 }
 
+function checkTask(task: Task) {
+  const { begin, suspend, resume, end } = task;
+  if (end && !begin) {
+    throw new ProjectClockError(
+      `ERROR: invalid task '${getTaskSubjectStr(task)}'; end date without begin date`
+    );
+  }
+  if (suspend && !begin) {
+    throw new ProjectClockError(
+      `ERROR: invalid task '${getTaskSubjectStr(task)}'; suspend date(s) without begin date`
+    );
+  }
+  const resumeNumber = resume ? resume.length : 0;
+  if (suspend && end && resumeNumber !== suspend.length) {
+    throw new ProjectClockError(
+      `ERROR: invalid task '${getTaskSubjectStr(task)}'; suspend and end without enough resumes`
+    );
+  }
+  if (resume && !begin) {
+    throw new ProjectClockError(
+      `ERROR: invalid task '${getTaskSubjectStr(task)}'; resume date(s) without begin date`
+    );
+  }
+  if (resume && !suspend) {
+    throw new ProjectClockError(
+      `ERROR: invalid task '${getTaskSubjectStr(task)}'; resume without suspend`
+    );
+  }
+  if (suspend && resume && resume.length > suspend.length) {
+    throw new ProjectClockError(
+      `ERROR: invalid task '${getTaskSubjectStr(task)}'; resumed more times than suspended`
+    );
+  }
+  if (suspend && resume) {
+    suspend.forEach((suspendDateStr, i) => {
+      if (resume[i]) {
+        const suspendDate = new Date(suspendDateStr);
+        const resumeDate = new Date(resume[i]);
+        if (suspendDate.getTime() > resumeDate.getTime()) {
+          throw new ProjectClockError(
+            `ERROR: invalid task '${getTaskSubjectStr(task)}'; suspend date (${suspendDate.toISOString()}) is later than resume date (${resumeDate.toISOString()})`
+          );
+        }
+      }
+    });
+  }
+}
+
 /**
  * Calculates the times spent on each task.
  * @param tasks Array of Task objects.
@@ -88,13 +152,9 @@ function handleSuspendAndResume(
  */
 export default function calculateTimes(tasks: Task[]): TaskStatus[] {
   const statusArray: TaskStatus[] = tasks.map((task) => {
+    checkTask(task);
     const { begin, suspend, resume, end } = task;
     if (!begin) {
-      if (end) {
-        throw new ProjectClockError(
-          `ERROR: invalid task '${getTaskSubjectStr(task)}'; end date without begin date`
-        );
-      }
       return { task: task.subject, status: 'not started', timeSpent: 0 };
     }
     if (!suspend && !end) {
@@ -109,14 +169,9 @@ export default function calculateTimes(tasks: Task[]): TaskStatus[] {
       const endDate = new Date(end);
       return {
         task: task.subject,
-        status: 'complete',
+        status: 'completed',
         timeSpent: calculateDifference(beginDate, endDate, task),
       };
-    }
-    if (resume && !suspend) {
-      throw new ProjectClockError(
-        `ERROR: invalid task '${getTaskSubjectStr(task)}'; resume without suspend`
-      );
     }
     if (suspend) {
       return handleSuspendAndResume(begin, suspend, resume, end, task);

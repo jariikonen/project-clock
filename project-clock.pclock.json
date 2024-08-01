@@ -147,7 +147,7 @@
     },
     {
       "subject": "Command 'status' prints current status report",
-      "description": "Command 'status' lists currently active tasks with the time spent on each task so far, total amount of time spent on tasks, and number of complete and incomplete tasks.\n\nI tried to implement the task duration reporting using FormatJS's Intl.DurationFormat polyfill (https://formatjs.io/docs/polyfills/intl-durationformat), but I didn't get it to work. In the end, I decided to look at the localization of the app later, and implement a simple duration formatting in English for now.",
+      "description": "Command 'status' lists currently active tasks with the time spent on each task so far, total amount of time spent on tasks, and number of complete and incomplete tasks.\n\nI tried to implement the task duration reporting using FormatJS's Intl.DurationFormat polyfill (https://formatjs.io/docs/polyfills/intl-durationformat), but I didn't get it to work. I then decided to look at the localization of the app later, and implement a simple duration formatting in English only for now.\n\nI refactored the tests into their own folder, and divided them into different files. I added integration and unit tests for testing the 'status' command and the calculateTimes() function.\n\nI spent a long time trying to figure out how to get child_process.execSync() to output full status command output in the integration tests. For some reason it seems to replace the contents of the list created using CLI-table3 with ellipses. Thus it is impossible to test that the listed contents are correct. Because of this, I decided to implement a simple list formatting functionality into getTaskListString() function, that makes it possible to test the list content using execSync() in an integration test. Currently the simpler fornatting is selectable using the 'listMode' argument of the getTaskListString(). I will decide later whether to use CLI-table3 or my own simpler table implementation. If CLI-table3 is used, it must be ensured (e.g., with unit tests) that the list contents are what they should be.",
       "begin": "2024-07-18T10:07:15.029Z",
       "suspend": [
         "2024-07-18T10:51:07.177Z",
@@ -164,7 +164,24 @@
         "2024-07-23T08:15:05.789Z",
         "2024-07-23T10:22:21.278Z",
         "2024-07-27T06:11:00.158Z",
-        "2024-07-27T07:49:05.814Z"
+        "2024-07-27T07:49:05.814Z",
+        "2024-07-28T04:08:18.832Z",
+        "2024-07-28T08:27:19.316Z",
+        "2024-07-29T04:13:28.663Z",
+        "2024-07-29T07:01:06.496Z",
+        "2024-07-29T10:12:11.962Z",
+        "2024-07-29T15:37:52.885Z",
+        "2024-07-30T07:03:50.131Z",
+        "2024-07-30T08:23:38.539Z",
+        "2024-07-30T11:33:21.911Z",
+        "2024-07-30T13:04:46.601Z",
+        "2024-07-31T04:01:24.412Z",
+        "2024-07-31T08:40:09.611Z",
+        "2024-07-31T09:14:32.070Z",
+        "2024-07-31T12:59:55.644Z",
+        "2024-08-01T04:15:48.785Z",
+        "2024-08-01T05:34:41.322Z",
+        "2024-08-01T07:59:32.716Z"
       ],
       "resume": [
         "2024-07-19T06:58:26.418Z",
@@ -181,8 +198,26 @@
         "2024-07-23T09:26:40.585Z",
         "2024-07-27T05:48:40.167Z",
         "2024-07-27T07:04:43.564Z",
-        "2024-07-28T03:32:19.504Z"
-      ]
+        "2024-07-28T03:32:19.504Z",
+        "2024-07-28T06:12:27.797Z",
+        "2024-07-29T03:46:13.751Z",
+        "2024-07-29T06:03:59.106Z",
+        "2024-07-29T09:57:39.984Z",
+        "2024-07-29T14:51:10.420Z",
+        "2024-07-30T05:39:05.887Z",
+        "2024-07-30T07:29:12.633Z",
+        "2024-07-30T09:02:36.856Z",
+        "2024-07-30T12:37:43.956Z",
+        "2024-07-31T03:19:23.304Z",
+        "2024-07-31T07:08:50.693Z",
+        "2024-07-31T08:45:08.468Z",
+        "2024-07-31T10:50:43.069Z",
+        "2024-08-01T03:26:18.495Z",
+        "2024-08-01T05:04:51.982Z",
+        "2024-08-01T06:49:15.830Z",
+        "2024-08-01T10:07:53.289Z"
+      ],
+      "end": "2024-08-01T10:58:27.928Z"
     },
     {
       "subject": "Explore the i18n library options",
@@ -192,7 +227,34 @@
       "end": "2024-07-20T09:35:58.887Z"
     },
     {
+      "subject": "Create unit tests for getTimesheetData() and getTimesheetPath()",
+      "begin": "2024-07-29T07:01:06.496Z",
+      "suspend": [
+        "2024-07-29T07:57:48.473Z",
+        "2024-07-29T09:57:39.984Z",
+        "2024-07-29T12:04:34.110Z"
+      ],
+      "resume": [
+        "2024-07-29T08:31:03.162Z",
+        "2024-07-29T11:29:41.561Z",
+        "2024-07-29T14:13:58.692Z"
+      ],
+      "end": "2024-07-29T14:51:10.420Z"
+    },
+    {
+      "subject": "Modify start and stop commands so that they handle the file errors correctly"
+    },
+    {
+      "subject": "Modify TimePeriod class so that the number of hours in a day can be changed (24 or workday length)"
+    },
+    {
+      "subject": "Modify calculateTimes() so that it creates a list of the times spent on each day"
+    },
+    {
       "subject": "Add missing TSDoc comments"
+    },
+    {
+      "subject": "Timesheet file can be selected"
     },
     {
       "subject": "Tasks can be added without starting the clock"
@@ -207,12 +269,12 @@
       "subject": "A new project timesheet can be created by starting the clock"
     },
     {
-      "subject": "Command 'new' prompts for project name if it is not given as argument",
+      "subject": "Command 'new' prompts for project name if it is not given as an argument",
       "description": "Create tests for testing the new functionality and edit the code so that the tests are passed. Default value for the project name is the name of the parent directory."
     },
     {
       "subject": "See if the TypeScript configuration should be changed",
-      "description": "Is there a better way to build the code than with Rollup? How to get the FormatJS Intl.DurationFormat working?"
+      "description": "Is there a better way to build the code than with Rollup?"
     },
     {
       "subject": "Decide whether the app should be localized"
