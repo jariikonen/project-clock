@@ -253,9 +253,14 @@
     },
     {
       "subject": "Modify 'start' and 'stop' commands so that they report timesheet file errors in a user friendly manner",
+      "description": "I created tests for testing that the file errors are handled and modified the functions so that the tests pass. I also removed the unnecessary 'ERROR:' marker from all error messages used with the ProjectClockError, and refactored the timesheet file read/write functions into the same file (timesheetReadWrite.ts).",
       "begin": "2024-08-02T03:44:31.810Z",
       "suspend": ["2024-08-02T04:15:34.062Z"],
-      "resume": ["2024-08-02T05:28:37.452Z"]
+      "resume": ["2024-08-02T05:28:37.452Z"],
+      "end": "2024-08-02T07:39:04.467Z"
+    },
+    {
+      "subject": "Add missing TSDoc comments and combine related functions in common directory into the same files when necessary"
     },
     {
       "subject": "Modify 'status' command so that it reports the total time usage better when no time has been used"

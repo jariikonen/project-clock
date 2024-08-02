@@ -1,4 +1,5 @@
 import { execSync } from 'child_process';
+import fs from 'node:fs';
 import path from 'node:path';
 import {
   PROJECT_NAME,
@@ -484,6 +485,38 @@ describe('Starting and stopping the clock (when there is a timesheet)', () => {
       expect(response).not.toMatch('throw');
       expect(response).not.toMatch('ProjectClockError');
     });
+
+    test('"Start" command reports timesheet file errors in a user friendly manner', () => {
+      // initialize test environment
+      createTestFile(
+        {
+          projectName: PROJECT_NAME,
+          tasks: [
+            {
+              subject: TASK_SUBJECT,
+            },
+          ],
+        },
+        testFilePath
+      );
+      fs.chmodSync(testFilePath, '000');
+
+      // test
+      let error = '';
+      try {
+        execSync(`cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js start`, {
+          stdio: 'pipe',
+        });
+      } catch (err) {
+        const e = err as Error;
+        error = e.message;
+      }
+      expect(error).toMatch(
+        'An error occurred while reading the timesheet file'
+      );
+      expect(error).not.toMatch('throw');
+      expect(error).not.toMatch('ProjectClockError');
+    });
   });
 
   describe('Stopping the clock', () => {
@@ -931,6 +964,38 @@ describe('Starting and stopping the clock (when there is a timesheet)', () => {
       expect(response).toMatch('exiting; user force closed the process');
       expect(response).not.toMatch('throw');
       expect(response).not.toMatch('ProjectClockError');
+    });
+
+    test('"Stop" command reports timesheet file errors in a user friendly manner', () => {
+      // initialize test environment
+      createTestFile(
+        {
+          projectName: PROJECT_NAME,
+          tasks: [
+            {
+              subject: TASK_SUBJECT,
+            },
+          ],
+        },
+        testFilePath
+      );
+      fs.chmodSync(testFilePath, '000');
+
+      // test
+      let error = '';
+      try {
+        execSync(`cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js stop`, {
+          stdio: 'pipe',
+        });
+      } catch (err) {
+        const e = err as Error;
+        error = e.message;
+      }
+      expect(error).toMatch(
+        'An error occurred while reading the timesheet file'
+      );
+      expect(error).not.toMatch('throw');
+      expect(error).not.toMatch('ProjectClockError');
     });
   });
 });

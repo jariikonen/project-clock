@@ -1,9 +1,8 @@
 import confirmTask from '../common/confirmTask';
-import getTimesheetData from '../common/getTimesheetData';
-import writeTimesheet from '../common/writeTimesheet';
 import { emptyTask, ProjectClockData, Task } from '../types/ProjectClockData';
 import handleInquirerError from '../common/handleInquirerError';
 import selectTask from '../common/selectTask';
+import { readTimesheet, writeTimesheet } from '../common/timesheetReadWrite';
 
 async function getActiveTask(tasks: Task[]): Promise<Task | null> {
   const activeTasks = tasks.filter((task) => task.begin && !task.end);
@@ -86,7 +85,7 @@ function writeNewTimesheet(
  * @param taskDescriptor
  */
 export default async function stop(taskDescriptor: string | undefined) {
-  const timesheetData = getTimesheetData();
+  const timesheetData = readTimesheet();
   const { tasks } = timesheetData;
 
   let activeTask: Task | null = null;

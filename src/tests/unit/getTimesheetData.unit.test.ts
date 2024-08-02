@@ -7,9 +7,9 @@ import {
   TEST_FILE_NAME,
 } from '../common/constants';
 import { createTestDir, removeTestDir } from '../common/testDirectory';
-import getTimesheetData from '../../common/getTimesheetData';
 import ProjectClockError from '../../common/ProjectClockError';
 import { createTestFile } from '../common/testFile';
+import { getTimesheetData } from '../../common/timesheetReadWrite';
 
 const testDirName = 'testDirGetTimesheetData';
 const testDirPath = path.join(ROOT_DIR, testDirName);

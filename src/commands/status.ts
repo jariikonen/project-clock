@@ -1,8 +1,7 @@
-import getTimesheetData from '../common/getTimesheetData';
+import { readTimesheet } from '../common/timesheetReadWrite';
 import calculateTimes, { TaskStatus } from '../common/calculateTimes';
 import TimePeriod from '../common/TimePeriod';
 import ProjectClockError from '../common/ProjectClockError';
-import { ProjectClockData } from '../types/ProjectClockData';
 import calculateTotalTime from '../common/calculateTotalTime';
 import getTaskListString from '../common/getTaskListString';
 
@@ -15,22 +14,6 @@ function multiple(term: string, number: number) {
     return [`${term}s`, 'no'];
   }
   return number === 1 ? [`${term}`, '1'] : [`${term}s`, `${number}`];
-}
-
-function getTimesheet() {
-  let timesheetData: ProjectClockData;
-  try {
-    timesheetData = getTimesheetData();
-  } catch (error) {
-    if (error instanceof ProjectClockError) {
-      console.error(
-        `An error occurred while reading the timesheet file (${error.message})`
-      );
-      process.exit(1);
-    }
-    throw error;
-  }
-  return timesheetData;
 }
 
 function getActiveTaskListStr(
@@ -57,7 +40,7 @@ function getActiveTaskListStr(
  * @param options The CLI options from the user.
  */
 export default function status(options: StatusOptions) {
-  const timesheetData = getTimesheet();
+  const timesheetData = readTimesheet();
 
   const { projectName, tasks } = timesheetData;
 

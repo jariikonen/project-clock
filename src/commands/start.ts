@@ -1,8 +1,7 @@
 import input from '@inquirer/input';
 import confirmTask from '../common/confirmTask';
 import selectTask from '../common/selectTask';
-import getTimesheetData from '../common/getTimesheetData';
-import writeTimesheet from '../common/writeTimesheet';
+import { readTimesheet, writeTimesheet } from '../common/timesheetReadWrite';
 import { emptyTask, ProjectClockData, Task } from '../types/ProjectClockData';
 import handleInquirerError from '../common/handleInquirerError';
 
@@ -118,7 +117,7 @@ function writeNewTimesheet(
  *    subject.
  */
 export default async function start(taskDescriptor: string | undefined) {
-  const timesheetData = getTimesheetData();
+  const timesheetData = readTimesheet();
   const { tasks } = timesheetData;
 
   let unstartedTask: Task | null = null;
