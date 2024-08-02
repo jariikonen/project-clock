@@ -1,15 +1,15 @@
 import input from '@inquirer/input';
-import confirmTask from '../common/confirmTask';
+import confirm from '../common/confirm';
 import selectTask from '../common/selectTask';
 import { readTimesheet, writeTimesheet } from '../common/timesheetReadWrite';
 import { emptyTask, ProjectClockData, Task } from '../types/ProjectClockData';
-import handleInquirerError from '../common/handleInquirerError';
+import handleExitPromptError from '../common/handleExitPromptError';
 
 async function getUnstartedTask(tasks: Task[]): Promise<Task | null> {
   const unstartedTasks = tasks.filter((task) => !task.begin);
   if (unstartedTasks.length === 1) {
     if (
-      await confirmTask(
+      await confirm(
         `there is one unstarted task on the timesheet (${unstartedTasks[0].subject.substring(0, 15)}); start this task?`
       )
     ) {
@@ -44,7 +44,7 @@ async function getMatchingUnstartedTask(
   );
   if (matchingTasks.length === 1) {
     if (
-      await confirmTask(
+      await confirm(
         `there is one matching unstarted task on the timesheet (${matchingTasks[0].subject.substring(0, 15)}); start this task?`
       )
     ) {
@@ -131,7 +131,7 @@ export default async function start(taskDescriptor: string | undefined) {
         );
       }
     } catch (error) {
-      handleInquirerError(error);
+      handleExitPromptError(error);
     }
   }
 
@@ -141,7 +141,7 @@ export default async function start(taskDescriptor: string | undefined) {
       matchingTask = await getMatchingUnstartedTask(tasks, taskDescriptor);
       if (!matchingTask) {
         if (
-          await confirmTask(
+          await confirm(
             `no matching unstarted task found; create a new task '${taskDescriptor}'?`
           )
         ) {
@@ -152,7 +152,7 @@ export default async function start(taskDescriptor: string | undefined) {
         }
       }
     } catch (error) {
-      handleInquirerError(error);
+      handleExitPromptError(error);
     }
   }
 

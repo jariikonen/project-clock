@@ -27,6 +27,13 @@ function createChoices(tasks: Task[]): SelectChoices {
   });
 }
 
+/**
+ * Creates a prompt that asks the user to select a task from the tasks given
+ * in the argument 'tasks'.
+ * @param tasks An array of tasks from which the user must select from.
+ * @param message Message displayed to the user.
+ * @returns The selected task as a promise.
+ */
 export default async function promptToSelectTask(
   tasks: Task[],
   message: string

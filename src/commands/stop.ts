@@ -1,6 +1,6 @@
-import confirmTask from '../common/confirmTask';
+import confirmTask from '../common/confirm';
 import { emptyTask, ProjectClockData, Task } from '../types/ProjectClockData';
-import handleInquirerError from '../common/handleInquirerError';
+import handleExitPromptError from '../common/handleExitPromptError';
 import selectTask from '../common/selectTask';
 import { readTimesheet, writeTimesheet } from '../common/timesheetReadWrite';
 
@@ -97,7 +97,7 @@ export default async function stop(taskDescriptor: string | undefined) {
         process.exit(1);
       }
     } catch (error) {
-      handleInquirerError(error);
+      handleExitPromptError(error);
     }
   }
 
@@ -110,7 +110,7 @@ export default async function stop(taskDescriptor: string | undefined) {
         process.exit(1);
       }
     } catch (error) {
-      handleInquirerError(error);
+      handleExitPromptError(error);
     }
   }
 
