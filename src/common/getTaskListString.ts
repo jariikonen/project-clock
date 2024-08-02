@@ -57,7 +57,7 @@ function createTable(
 
 function formatCell(content: string, width: number): string {
   if (content.length > width) {
-    return `${content.slice(0, width - 4)}...`;
+    return `${content.slice(0, width - 4)}... `;
   }
   return content.padEnd(width, ' ');
 }
