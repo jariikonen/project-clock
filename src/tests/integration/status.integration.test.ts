@@ -90,6 +90,38 @@ describe('Status command', () => {
       );
       expect(error).not.toMatch('throw');
     });
+
+    test('"Status" command with a faulty timesheet file returns a user friendly error message (no stack trace or source code paths)', () => {
+      // initialize test environment
+      createTestFile(
+        {
+          projectName: 'first test project',
+          tasks: [
+            {
+              subject: 'faulty task',
+              begin: '2024-01-01T01:00:00.000Z',
+              end: '2024-01-01T00:00:00.000Z',
+            },
+          ],
+        },
+        testFilePath
+      );
+
+      // test
+      let error = '';
+      try {
+        execSync(`cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js status`, {
+          stdio: 'pipe',
+        });
+      } catch (err) {
+        const e = err as Error;
+        error = e.message;
+      }
+      expect(error).toMatch(
+        "Timesheet file is faulty (ERROR: invalid time period '2024-01-01T01:00:00.000Z' => '2024-01-01T00:00:00.000Z' (faulty task); start date is later than end date)"
+      );
+      expect(error).not.toMatch('throw');
+    });
   });
 
   describe('Correct output', () => {

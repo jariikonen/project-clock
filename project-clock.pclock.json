@@ -247,6 +247,11 @@
       "end": "2024-08-01T12:13:18.433Z"
     },
     {
+      "subject": "Add a test for testing that 'status' command gives a user friendly error message when there is a faulty timesheet file",
+      "begin": "2024-08-02T03:25:24.894Z",
+      "end": "2024-08-02T03:43:49.391Z"
+    },
+    {
       "subject": "Modify 'start' and 'stop' commands so that they report timesheet file errors in a user friendly manner"
     },
     {
@@ -260,7 +265,7 @@
       "subject": "Clock can be paused and unpaused"
     },
     {
-      "subject": "Modify calculateTimes() so that it creates a list of the times spent on each day"
+      "subject": "Modify calculateTimes() so that it creates a list of times spent for each day"
     },
     {
       "subject": "Tasks can be added without starting the clock"
