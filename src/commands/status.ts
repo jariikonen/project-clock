@@ -30,9 +30,18 @@ function getActiveTaskListStr(
 
   const [term, counter] = multiple('task', activeTimes.length);
   if (activeTimes.length > 0) {
-    return `${counter} active ${term}:\n${taskTable.toString()}\n`;
+    return `${counter} active ${term}:\n${taskTable.toString()}`;
   }
-  return `${counter} active ${term}\n`;
+  return `${counter} active ${term}`;
+}
+
+function getTotalTimePeriodStr(totalTime: number, includeSeconds: boolean) {
+  const timePeriod = new TimePeriod(totalTime);
+  const hoursAndMinutes = timePeriod.hoursAndMinutes(includeSeconds);
+  if (hoursAndMinutes) {
+    return `total time spent: ${hoursAndMinutes} (${timePeriod.narrowStr(includeSeconds)})`;
+  }
+  return '';
 }
 
 /**
@@ -62,20 +71,19 @@ export default function status(options: StatusOptions) {
     }
     throw error;
   }
-  const totalTime = calculateTotalTime(allTimes);
-  const totalTimePeriod = new TimePeriod(totalTime);
-
   const includeSeconds = !!options.verbose;
+  const totalTime = calculateTotalTime(allTimes);
+  const totalTimePeriodStr = getTotalTimePeriodStr(totalTime, includeSeconds);
   const activeTaskListStr = getActiveTaskListStr(activeTimes, includeSeconds);
 
   console.log(`Project: '${projectName}'\n`);
   console.log(
-    `Tasks (complete/incomplete/total): ${completeTasks.length}/${incompleteTasks.length}/${tasks.length}\n`
+    `Tasks (complete/incomplete/total): ${completeTasks.length}/${incompleteTasks.length}/${tasks.length}`
   );
   if (activeTaskListStr) {
-    console.log(activeTaskListStr);
+    console.log(`\n${activeTaskListStr}`);
   }
-  console.log(
-    `total time spent: ${totalTimePeriod.hoursAndMinutes(includeSeconds)} (${totalTimePeriod.narrowStr(includeSeconds)})`
-  );
+  if (totalTimePeriodStr) {
+    console.log(`\n${totalTimePeriodStr}`);
+  }
 }

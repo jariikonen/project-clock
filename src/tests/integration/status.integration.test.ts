@@ -4,6 +4,7 @@ import {
   PROJECT_NAME,
   ROOT_DIR,
   SUBDIR_NAME,
+  TASK_SUBJECT,
   TEST_FILE_NAME,
 } from '../common/constants';
 import { createTestDir, removeTestDir } from '../common/testDirectory';
@@ -165,6 +166,32 @@ describe('Status command', () => {
       expect(response).toMatch('First active task2h');
       expect(response).toMatch('Second active task2h');
       expect(response).toMatch('total time spent: 8h (8h)');
+    });
+
+    test('"Status" command does not report active tasks or total time spent when there is neither', () => {
+      // initialize test environment
+      createTestFile(
+        {
+          projectName: PROJECT_NAME,
+          tasks: [
+            {
+              subject: TASK_SUBJECT,
+            },
+          ],
+        },
+        testFilePath
+      );
+
+      // test
+      const response = execSync(
+        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js status`,
+        { encoding: 'utf8' }
+      );
+      expect(response).toMatch(`Project: '${PROJECT_NAME}'`);
+      expect(response).toMatch('Tasks (complete/incomplete/total): 0/1/1');
+      expect(response).toMatch('no active tasks');
+      expect(response).not.toMatch(TASK_SUBJECT);
+      expect(response).not.toMatch('total time spent:');
     });
   });
 });

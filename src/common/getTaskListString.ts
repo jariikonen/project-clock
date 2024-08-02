@@ -75,7 +75,7 @@ function createRows(
     });
     const paddingLeft = new Array(tablePadding[0] + 1).join(' ');
     const paddingRight = new Array(tablePadding[1] + 1).join(' ');
-    resultRows.push(`${paddingLeft}${rowStr}${paddingRight}\n`);
+    resultRows.push(`${paddingLeft}${rowStr}${paddingRight}`);
   });
   return resultRows;
 }
@@ -89,7 +89,7 @@ function createSimpleTable(
   const headRow = createRows([head], colWidths, tablePadding);
   const contentRows = createRows(rows, colWidths, tablePadding);
   const table = [headRow, ...contentRows];
-  return table.join('');
+  return table.join('\n');
 }
 
 function createSimple(

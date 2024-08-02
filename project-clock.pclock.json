@@ -272,7 +272,10 @@
       "end": "2024-08-02T10:34:33.031Z"
     },
     {
-      "subject": "Modify 'status' command so that it reports the total time usage better when no time has been used"
+      "subject": "Modify 'status' command so that it reports the total time usage better when no time has been used",
+      "description": "Create a test for testing that the command does not report total time usage when there is none and modify the code so that the test is passed.",
+      "begin": "2024-08-02T11:40:10.534Z",
+      "end": "2024-08-02T12:29:44.608Z"
     },
     {
       "subject": "Modify TimePeriod class so that the number of hours in a day and the number of days in a week and in a month can be customized",
