@@ -252,7 +252,16 @@
       "end": "2024-08-02T03:43:49.391Z"
     },
     {
-      "subject": "Modify 'start' and 'stop' commands so that they report timesheet file errors in a user friendly manner"
+      "subject": "Modify 'start' and 'stop' commands so that they report timesheet file errors in a user friendly manner",
+      "begin": "2024-08-02T03:44:31.810Z",
+      "suspend": ["2024-08-02T04:15:34.062Z"],
+      "resume": ["2024-08-02T05:28:37.452Z"]
+    },
+    {
+      "subject": "Modify 'status' command so that it reports the total time usage better when no time has been used"
+    },
+    {
+      "subject": "Modify all commands that handle timesheet files so that the validity of the file is checked before anything else"
     },
     {
       "subject": "Modify TimePeriod class so that the number of hours in a day and the number of days in a week and in a month can be customized",

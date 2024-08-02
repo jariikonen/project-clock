@@ -9,18 +9,14 @@ export default function isValidTimePeriod(
   const endDate = new Date(end);
 
   if (beginDate.toISOString() !== begin) {
-    throw new ProjectClockError(
-      `ERROR: 'begin' is not a valid timestamp (${begin})`
-    );
+    throw new ProjectClockError(`'begin' is not a valid timestamp (${begin})`);
   }
   if (endDate.toISOString() !== end) {
-    throw new ProjectClockError(
-      `ERROR: 'end' is not a valid timestamp (${end})`
-    );
+    throw new ProjectClockError(`'end' is not a valid timestamp (${end})`);
   }
   if (beginDate > endDate) {
     throw new ProjectClockError(
-      `ERROR: begin date is later than end date (${taskSubject})`
+      `begin date is later than end date (${taskSubject})`
     );
   }
   return true;

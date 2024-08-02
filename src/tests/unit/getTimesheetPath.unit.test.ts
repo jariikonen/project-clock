@@ -38,7 +38,7 @@ describe('getTimesheetPath', () => {
     test('getTimesheetPath() without an argument and no timesheet file in the directory throws a ProjectClockError', () => {
       expect(() => getTimesheetPath()).toThrow(ProjectClockError);
       expect(() => getTimesheetPath()).toThrow(
-        'ERROR: no timesheet file in the directory'
+        'no timesheet file in the directory'
       );
     });
 
@@ -51,7 +51,7 @@ describe('getTimesheetPath', () => {
         ProjectClockError
       );
       expect(() => getTimesheetPath(absolutePathToNonExistentFile)).toThrow(
-        `ERROR: timesheet file '${absolutePathToNonExistentFile}' does not exist`
+        `timesheet file '${absolutePathToNonExistentFile}' does not exist`
       );
     });
 
@@ -65,7 +65,7 @@ describe('getTimesheetPath', () => {
         ProjectClockError
       );
       expect(() => getTimesheetPath(relativePathToNonExistentFile)).toThrow(
-        `ERROR: timesheet file '${absoluteTestPath}' does not exist`
+        `timesheet file '${absoluteTestPath}' does not exist`
       );
     });
   });
@@ -124,7 +124,7 @@ describe('getTimesheetPath', () => {
     test('getTimesheetPath() without an argument throws a ProjectClockError', () => {
       expect(() => getTimesheetPath()).toThrow(ProjectClockError);
       expect(() => getTimesheetPath()).toThrow(
-        'ERROR: more than one timesheet file in the directory'
+        'more than one timesheet file in the directory'
       );
     });
 

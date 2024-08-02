@@ -39,7 +39,7 @@ describe('getTimesheetData()', () => {
     test('getTimesheetData() without an argument and no timesheet file in the directory throws a ProjectClockError', () => {
       expect(() => getTimesheetData()).toThrow(ProjectClockError);
       expect(() => getTimesheetData()).toThrow(
-        'ERROR: no timesheet file in the directory'
+        'no timesheet file in the directory'
       );
     });
 
@@ -52,7 +52,7 @@ describe('getTimesheetData()', () => {
         ProjectClockError
       );
       expect(() => getTimesheetData(absolutePathToNonExistentFile)).toThrow(
-        `ERROR: timesheet file '${absolutePathToNonExistentFile}' does not exist`
+        `timesheet file '${absolutePathToNonExistentFile}' does not exist`
       );
     });
 
@@ -66,7 +66,7 @@ describe('getTimesheetData()', () => {
         ProjectClockError
       );
       expect(() => getTimesheetData(relativePathToNonExistentFile)).toThrow(
-        `ERROR: timesheet file '${absoluteTestPath}' does not exist`
+        `timesheet file '${absoluteTestPath}' does not exist`
       );
     });
   });
@@ -115,14 +115,14 @@ describe('getTimesheetData()', () => {
       test('getTimesheetData() without an argument throws ProjectClockError', () => {
         expect(() => getTimesheetData()).toThrow(ProjectClockError);
         expect(() => getTimesheetData()).toThrow(
-          `ERROR: reading of file '${testFilePath}' denied (no permission)`
+          `reading of file '${testFilePath}' denied (no permission)`
         );
       });
 
       test('getTimesheetData() with an absolute path leading to an existing timesheet file as an argument throws ProjectClockError', () => {
         expect(() => getTimesheetData(testFilePath)).toThrow(ProjectClockError);
         expect(() => getTimesheetData(testFilePath)).toThrow(
-          `ERROR: reading of file '${testFilePath}' denied (no permission)`
+          `reading of file '${testFilePath}' denied (no permission)`
         );
       });
 
@@ -131,7 +131,7 @@ describe('getTimesheetData()', () => {
           ProjectClockError
         );
         expect(() => getTimesheetData(TEST_FILE_NAME)).toThrow(
-          `ERROR: reading of file '${testFilePath}' denied (no permission)`
+          `reading of file '${testFilePath}' denied (no permission)`
         );
       });
     });
@@ -145,14 +145,14 @@ describe('getTimesheetData()', () => {
       test('getTimesheetData() without an argument throws ProjectClockError', () => {
         expect(() => getTimesheetData()).toThrow(ProjectClockError);
         expect(() => getTimesheetData()).toThrow(
-          `ERROR: no write permission to file '${testFilePath}'`
+          `no write permission to file '${testFilePath}'`
         );
       });
 
       test('getTimesheetData() with an absolute path leading to an existing timesheet file as an argument throws ProjectClockError', () => {
         expect(() => getTimesheetData(testFilePath)).toThrow(ProjectClockError);
         expect(() => getTimesheetData(testFilePath)).toThrow(
-          `ERROR: no write permission to file '${testFilePath}'`
+          `no write permission to file '${testFilePath}'`
         );
       });
 
@@ -161,7 +161,7 @@ describe('getTimesheetData()', () => {
           ProjectClockError
         );
         expect(() => getTimesheetData(TEST_FILE_NAME)).toThrow(
-          `ERROR: no write permission to file '${testFilePath}'`
+          `no write permission to file '${testFilePath}'`
         );
       });
     });
@@ -190,7 +190,7 @@ describe('getTimesheetData()', () => {
       test('getTimesheetData() without an argument throws a ProjectClockError', () => {
         expect(() => getTimesheetData()).toThrow(ProjectClockError);
         expect(() => getTimesheetData()).toThrow(
-          'ERROR: more than one timesheet file in the directory'
+          'more than one timesheet file in the directory'
         );
       });
 
@@ -216,7 +216,7 @@ describe('getTimesheetData()', () => {
       test('getTimesheetData() without an argument throws a ProjectClockError', () => {
         expect(() => getTimesheetData()).toThrow(ProjectClockError);
         expect(() => getTimesheetData()).toThrow(
-          'ERROR: more than one timesheet file in the directory'
+          'more than one timesheet file in the directory'
         );
       });
 
@@ -225,7 +225,7 @@ describe('getTimesheetData()', () => {
           ProjectClockError
         );
         expect(() => getTimesheetData(testFilePath2)).toThrow(
-          `ERROR: reading of file '${testFilePath2}' denied (no permission)`
+          `reading of file '${testFilePath2}' denied (no permission)`
         );
       });
 
@@ -234,7 +234,7 @@ describe('getTimesheetData()', () => {
           ProjectClockError
         );
         expect(() => getTimesheetData(testFilePath2)).toThrow(
-          `ERROR: reading of file '${testFilePath2}' denied (no permission)`
+          `reading of file '${testFilePath2}' denied (no permission)`
         );
       });
     });
@@ -248,7 +248,7 @@ describe('getTimesheetData()', () => {
       test('getTimesheetData() without an argument throws a ProjectClockError', () => {
         expect(() => getTimesheetData()).toThrow(ProjectClockError);
         expect(() => getTimesheetData()).toThrow(
-          'ERROR: more than one timesheet file in the directory'
+          'more than one timesheet file in the directory'
         );
       });
 
@@ -257,7 +257,7 @@ describe('getTimesheetData()', () => {
           ProjectClockError
         );
         expect(() => getTimesheetData(testFilePath2)).toThrow(
-          `ERROR: no write permission to file '${testFilePath2}'`
+          `no write permission to file '${testFilePath2}'`
         );
       });
 
@@ -266,7 +266,7 @@ describe('getTimesheetData()', () => {
           ProjectClockError
         );
         expect(() => getTimesheetData(testFilePath2)).toThrow(
-          `ERROR: no write permission to file '${testFilePath2}'`
+          `no write permission to file '${testFilePath2}'`
         );
       });
     });

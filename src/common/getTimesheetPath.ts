@@ -11,25 +11,23 @@ import ProjectClockError from './ProjectClockError';
  * relative to the current working directory is returned.
  * @param file Timesheet file path.
  * @returns Absolute path to a timesheet file if such is found.
- * @throws ProjectClockError with a descriptive error message ('ERROR: no
- *    timesheet file in the directory', 'ERROR: more than one timesheet file in
- *    the directory', or `ERROR: timesheet file 'FILE_PATH' does not exist`).
+ * @throws ProjectClockError with a descriptive error message ('no timesheet
+ *    file in the directory', 'more than one timesheet file in the directory',
+ *    or `timesheet file 'FILE_PATH' does not exist`).
  */
 export default function getTimesheetPath(file = '') {
   let filePath = '';
   if (file) {
     if (path.isAbsolute(file)) {
       if (!fs.existsSync(file)) {
-        throw new ProjectClockError(
-          `ERROR: timesheet file '${file}' does not exist`
-        );
+        throw new ProjectClockError(`timesheet file '${file}' does not exist`);
       }
       filePath = file;
     } else {
       filePath = path.join(process.cwd(), file);
       if (!fs.existsSync(filePath)) {
         throw new ProjectClockError(
-          `ERROR: timesheet file '${filePath}' does not exist`
+          `timesheet file '${filePath}' does not exist`
         );
       }
     }
@@ -39,11 +37,11 @@ export default function getTimesheetPath(file = '') {
       fileName.match('.pclock.json$')
     );
     if (timesheets.length === 0) {
-      throw new ProjectClockError('ERROR: no timesheet file in the directory');
+      throw new ProjectClockError('no timesheet file in the directory');
     }
     if (timesheets.length > 1) {
       throw new ProjectClockError(
-        'ERROR: more than one timesheet file in the directory'
+        'more than one timesheet file in the directory'
       );
     }
     filePath = path.join(process.cwd(), timesheets[0]);

@@ -285,7 +285,7 @@ describe('calculateTimes()', () => {
       ];
       expect(() => calculateTimes(tasks)).toThrow(ProjectClockError);
       expect(() => calculateTimes(tasks)).toThrow(
-        `ERROR: invalid task '${TASK_SUBJECT}'; end date without begin date`
+        `invalid task '${TASK_SUBJECT}'; end date without begin date`
       );
     });
 
@@ -299,7 +299,7 @@ describe('calculateTimes()', () => {
       ];
       expect(() => calculateTimes(tasks)).toThrow(ProjectClockError);
       expect(() => calculateTimes(tasks)).toThrow(
-        `ERROR: invalid task '${TASK_SUBJECT}'; suspend date(s) without begin date`
+        `invalid task '${TASK_SUBJECT}'; suspend date(s) without begin date`
       );
     });
 
@@ -313,7 +313,7 @@ describe('calculateTimes()', () => {
       ];
       expect(() => calculateTimes(tasks)).toThrow(ProjectClockError);
       expect(() => calculateTimes(tasks)).toThrow(
-        `ERROR: invalid task '${TASK_SUBJECT}'; resume date(s) without begin date`
+        `invalid task '${TASK_SUBJECT}'; resume date(s) without begin date`
       );
     });
 
@@ -329,7 +329,7 @@ describe('calculateTimes()', () => {
       ];
       expect(() => calculateTimes(tasks)).toThrow(ProjectClockError);
       expect(() => calculateTimes(tasks)).toThrow(
-        `ERROR: invalid task '${TASK_SUBJECT}'; resume without suspend`
+        `invalid task '${TASK_SUBJECT}'; resume without suspend`
       );
     });
 
@@ -347,7 +347,7 @@ describe('calculateTimes()', () => {
       ];
       expect(() => calculateTimes(tasks)).toThrow(ProjectClockError);
       expect(() => calculateTimes(tasks)).toThrow(
-        `ERROR: invalid task '${TASK_SUBJECT}'; resumed more times than suspended`
+        `invalid task '${TASK_SUBJECT}'; resumed more times than suspended`
       );
     });
 
@@ -365,7 +365,7 @@ describe('calculateTimes()', () => {
       ];
       expect(() => calculateTimes(tasks)).toThrow(ProjectClockError);
       expect(() => calculateTimes(tasks)).toThrow(
-        `ERROR: invalid task '${TASK_SUBJECT}'; suspend and end without enough resumes`
+        `invalid task '${TASK_SUBJECT}'; suspend and end without enough resumes`
       );
     });
 
@@ -385,7 +385,7 @@ describe('calculateTimes()', () => {
       ];
       expect(() => calculateTimes(tasks)).toThrow(ProjectClockError);
       expect(() => calculateTimes(tasks)).toThrow(
-        `ERROR: invalid task '${TASK_SUBJECT}'; suspend and end without enough resumes`
+        `invalid task '${TASK_SUBJECT}'; suspend and end without enough resumes`
       );
     });
 
@@ -401,7 +401,7 @@ describe('calculateTimes()', () => {
       ];
       expect(() => calculateTimes(tasks)).toThrow(ProjectClockError);
       expect(() => calculateTimes(tasks)).toThrow(
-        `ERROR: invalid time period '${begin}' => '${end}' (${TASK_SUBJECT}); start date is later than end date`
+        `invalid time period '${begin}' => '${end}' (${TASK_SUBJECT}); start date is later than end date`
       );
     });
 
@@ -421,7 +421,7 @@ describe('calculateTimes()', () => {
       ];
       expect(() => calculateTimes(tasks)).toThrow(ProjectClockError);
       expect(() => calculateTimes(tasks)).toThrow(
-        `ERROR: invalid time period '${resume}' => '${end}' (${TASK_SUBJECT}); start date is later than end date`
+        `invalid time period '${resume}' => '${end}' (${TASK_SUBJECT}); start date is later than end date`
       );
     });
 
@@ -441,7 +441,7 @@ describe('calculateTimes()', () => {
       ];
       expect(() => calculateTimes(tasks)).toThrow(ProjectClockError);
       expect(() => calculateTimes(tasks)).toThrow(
-        `ERROR: invalid task '${TASK_SUBJECT}'; suspend date (${suspend}) is later than resume date (${resume})`
+        `invalid task '${TASK_SUBJECT}'; suspend date (${suspend}) is later than resume date (${resume})`
       );
     });
 
@@ -459,7 +459,7 @@ describe('calculateTimes()', () => {
       ];
       expect(() => calculateTimes(tasks)).toThrow(ProjectClockError);
       expect(() => calculateTimes(tasks)).toThrow(
-        `ERROR: invalid time period '${resume}' => '${suspend[1]}' (${TASK_SUBJECT}); start date is later than end date`
+        `invalid time period '${resume}' => '${suspend[1]}' (${TASK_SUBJECT}); start date is later than end date`
       );
     });
 
@@ -477,7 +477,7 @@ describe('calculateTimes()', () => {
       ];
       expect(() => calculateTimes(tasks)).toThrow(ProjectClockError);
       expect(() => calculateTimes(tasks)).toThrow(
-        `ERROR: invalid task '${TASK_SUBJECT}'; suspend date (${suspend[1]}) is later than resume date (${resume[1]})`
+        `invalid task '${TASK_SUBJECT}'; suspend date (${suspend[1]}) is later than resume date (${resume[1]})`
       );
     });
   });

@@ -455,7 +455,7 @@ describe('Starting and stopping the clock (when there is a timesheet)', () => {
       );
     });
 
-    test('"Start" command does not throw an exception with stack trace when command is force stopped with CTRL+C', () => {
+    test('"Start" command gives a user friendly error message when the command is force stopped with CTRL+C', () => {
       // initialize test environment
       createTestFile(
         {
@@ -545,7 +545,7 @@ describe('Starting and stopping the clock (when there is a timesheet)', () => {
         const e = err as Error;
         error = e.message;
       }
-      expect(error).toMatch('ERROR: no active tasks found; nothing to stop');
+      expect(error).toMatch('no active tasks found; nothing to stop');
       expect(error).not.toMatch('throw');
       expect(error).not.toMatch('ProjectClockError');
     });
@@ -730,7 +730,7 @@ describe('Starting and stopping the clock (when there is a timesheet)', () => {
         const e = err as Error;
         error = e.message;
       }
-      expect(error).toMatch('ERROR: no matching active tasks found');
+      expect(error).toMatch('no matching active tasks found');
       expect(error).not.toMatch('throw');
       expect(error).not.toMatch('ProjectClockError');
     });

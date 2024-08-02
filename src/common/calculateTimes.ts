@@ -28,7 +28,7 @@ function calculateDifference(
 ): number {
   if (startDate > endDate) {
     throw new ProjectClockError(
-      `ERROR: invalid time period '${startDate.toISOString()}' => '${endDate.toISOString()}' (${getTaskSubjectStr(task)}); start date is later than end date`
+      `invalid time period '${startDate.toISOString()}' => '${endDate.toISOString()}' (${getTaskSubjectStr(task)}); start date is later than end date`
     );
   }
   return endDate.getTime() - startDate.getTime();
@@ -100,43 +100,43 @@ function checkTask(task: Task) {
   const { begin, suspend, resume, end } = task;
   if (suspend && !Array.isArray(suspend)) {
     throw new ProjectClockError(
-      `ERROR: invalid task '${getTaskSubjectStr(task)}'; suspend field is not an array`
+      `invalid task '${getTaskSubjectStr(task)}'; suspend field is not an array`
     );
   }
   if (resume && !Array.isArray(resume)) {
     throw new ProjectClockError(
-      `ERROR: invalid task '${getTaskSubjectStr(task)}'; resume field is not an array`
+      `invalid task '${getTaskSubjectStr(task)}'; resume field is not an array`
     );
   }
   if (end && !begin) {
     throw new ProjectClockError(
-      `ERROR: invalid task '${getTaskSubjectStr(task)}'; end date without begin date`
+      `invalid task '${getTaskSubjectStr(task)}'; end date without begin date`
     );
   }
   if (suspend && !begin) {
     throw new ProjectClockError(
-      `ERROR: invalid task '${getTaskSubjectStr(task)}'; suspend date(s) without begin date`
+      `invalid task '${getTaskSubjectStr(task)}'; suspend date(s) without begin date`
     );
   }
   const resumeNumber = resume ? resume.length : 0;
   if (suspend && end && resumeNumber !== suspend.length) {
     throw new ProjectClockError(
-      `ERROR: invalid task '${getTaskSubjectStr(task)}'; suspend and end without enough resumes`
+      `invalid task '${getTaskSubjectStr(task)}'; suspend and end without enough resumes`
     );
   }
   if (resume && !begin) {
     throw new ProjectClockError(
-      `ERROR: invalid task '${getTaskSubjectStr(task)}'; resume date(s) without begin date`
+      `invalid task '${getTaskSubjectStr(task)}'; resume date(s) without begin date`
     );
   }
   if (resume && !suspend) {
     throw new ProjectClockError(
-      `ERROR: invalid task '${getTaskSubjectStr(task)}'; resume without suspend`
+      `invalid task '${getTaskSubjectStr(task)}'; resume without suspend`
     );
   }
   if (suspend && resume && resume.length > suspend.length) {
     throw new ProjectClockError(
-      `ERROR: invalid task '${getTaskSubjectStr(task)}'; resumed more times than suspended`
+      `invalid task '${getTaskSubjectStr(task)}'; resumed more times than suspended`
     );
   }
   if (suspend && resume) {
@@ -146,7 +146,7 @@ function checkTask(task: Task) {
         const resumeDate = new Date(resume[i]);
         if (suspendDate.getTime() > resumeDate.getTime()) {
           throw new ProjectClockError(
-            `ERROR: invalid task '${getTaskSubjectStr(task)}'; suspend date (${suspendDate.toISOString()}) is later than resume date (${resumeDate.toISOString()})`
+            `invalid task '${getTaskSubjectStr(task)}'; suspend date (${suspendDate.toISOString()}) is later than resume date (${resumeDate.toISOString()})`
           );
         }
       }

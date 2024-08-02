@@ -65,9 +65,7 @@ function writeNewTimesheet(
   const taskToStop: Task = foundTask ?? emptyTask;
 
   if (taskToStop.end) {
-    console.error(
-      `ERROR: task '${taskToStop.subject}' has already been stopped`
-    );
+    console.error(`task '${taskToStop.subject}' has already been stopped`);
     process.exit(1);
   } else {
     taskToStop.end = new Date().toISOString();
@@ -96,7 +94,7 @@ export default async function stop(taskDescriptor: string | undefined) {
     try {
       activeTask = await getActiveTask(tasks);
       if (!activeTask) {
-        console.error('ERROR: no active tasks found; nothing to stop');
+        console.error('no active tasks found; nothing to stop');
         process.exit(1);
       }
     } catch (error) {
@@ -109,7 +107,7 @@ export default async function stop(taskDescriptor: string | undefined) {
     try {
       matchingActiveTask = await getMatchingActiveTask(tasks, taskDescriptor);
       if (!matchingActiveTask) {
-        console.error('ERROR: no matching active tasks found; nothing to stop');
+        console.error('no matching active tasks found; nothing to stop');
         process.exit(1);
       }
     } catch (error) {

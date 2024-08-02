@@ -77,7 +77,7 @@ function writeNewTimesheet(
     const alreadyExists = tasks.find((task) => task.subject === taskDescriptor);
     if (alreadyExists) {
       console.error(
-        `ERROR: cannot create task; task '${taskDescriptor}' already exists`
+        `cannot create task; task '${taskDescriptor}' already exists`
       );
       process.exit(1);
     }
@@ -88,9 +88,7 @@ function writeNewTimesheet(
     newTimesheetData.tasks.push(taskToStart);
     newTaskCreated = true;
   } else if (taskToStart.begin) {
-    console.error(
-      `ERROR: task '${taskToStart.subject}' has already been started`
-    );
+    console.error(`task '${taskToStart.subject}' has already been started`);
     process.exit(1);
   } else {
     taskToStart.begin = new Date().toISOString();

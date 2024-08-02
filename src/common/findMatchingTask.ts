@@ -8,8 +8,8 @@ import ProjectClockError from './ProjectClockError';
  *    task.
  * @returns Task objects whose 'subject' matches the taskDescriptor parameter.
  *    An empty array if no matches were found.
- * @throws ProjectClockError with a descriptive message ('ERROR: more than one
- *    task matches the descriptor' or 'ERROR: no matching task found').
+ * @throws ProjectClockError with a descriptive message ('more than one task
+ *    matches the descriptor' or 'no matching task found').
  */
 export default function findMatchingTask(
   tasks: Task[],
@@ -19,12 +19,10 @@ export default function findMatchingTask(
     task.subject.match(taskDescriptor)
   );
   if (matchingTasks.length > 1) {
-    throw new ProjectClockError(
-      'ERROR: more than one task matches the descriptor'
-    );
+    throw new ProjectClockError('more than one task matches the descriptor');
   }
   if (matchingTasks.length === 0) {
-    throw new ProjectClockError('ERROR: no matching task found');
+    throw new ProjectClockError('no matching task found');
   }
   return matchingTasks[0];
 }

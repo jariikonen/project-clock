@@ -23,7 +23,9 @@ function getTimesheet() {
     timesheetData = getTimesheetData();
   } catch (error) {
     if (error instanceof ProjectClockError) {
-      console.error(error.message);
+      console.error(
+        `An error occurred while reading the timesheet file (${error.message})`
+      );
       process.exit(1);
     }
     throw error;
@@ -70,7 +72,9 @@ export default function status(options: StatusOptions) {
     allTimes = calculateTimes(tasks);
   } catch (error) {
     if (error instanceof ProjectClockError) {
-      console.error(`Timesheet file is faulty (${error.message})`);
+      console.error(
+        `An error occurred while inspecting the timesheet file (${error.message})`
+      );
       process.exit(1);
     }
     throw error;

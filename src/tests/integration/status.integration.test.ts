@@ -42,7 +42,7 @@ describe('Status command', () => {
         const e = err as Error;
         error = e.message;
       }
-      expect(error).toMatch('ERROR: no timesheet file in the directory');
+      expect(error).toMatch('no timesheet file in the directory');
       expect(error).not.toMatch('throw');
     });
 
@@ -85,9 +85,7 @@ describe('Status command', () => {
         const e = err as Error;
         error = e.message;
       }
-      expect(error).toMatch(
-        'ERROR: more than one timesheet file in the directory'
-      );
+      expect(error).toMatch('more than one timesheet file in the directory');
       expect(error).not.toMatch('throw');
     });
 
@@ -118,7 +116,7 @@ describe('Status command', () => {
         error = e.message;
       }
       expect(error).toMatch(
-        "Timesheet file is faulty (ERROR: invalid time period '2024-01-01T01:00:00.000Z' => '2024-01-01T00:00:00.000Z' (faulty task); start date is later than end date)"
+        "An error occurred while inspecting the timesheet file (invalid time period '2024-01-01T01:00:00.000Z' => '2024-01-01T00:00:00.000Z' (faulty task); start date is later than end date)"
       );
       expect(error).not.toMatch('throw');
     });

@@ -62,7 +62,7 @@ describe('Timesheet creation', () => {
       const e = err as Error;
       error = e.message;
     }
-    expect(error).toMatch('ERROR: timesheet file already exists');
+    expect(error).toMatch('timesheet file already exists');
     expect(error).not.toMatch('throw');
     expect(error).not.toMatch('ProjectClockError');
   });
