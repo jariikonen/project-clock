@@ -47,7 +47,7 @@ function createTable(
   times.forEach((task) => {
     taskTable.push([
       task.task,
-      new TimePeriod(task.timeSpent).hoursAndMinutes(includeSeconds),
+      new TimePeriod(task.timeSpent).hoursAndMinutesStr(includeSeconds),
       task.status,
     ]);
   });
@@ -105,7 +105,7 @@ function createSimple(
       ...accum,
       [
         current.task.toString(),
-        new TimePeriod(current.timeSpent).hoursAndMinutes(includeSeconds),
+        new TimePeriod(current.timeSpent).hoursAndMinutesStr(includeSeconds),
         current.status ? current.status.toString() : '-',
       ],
     ],

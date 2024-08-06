@@ -37,9 +37,9 @@ function getActiveTaskListStr(
 
 function getTotalTimePeriodStr(totalTime: number, includeSeconds: boolean) {
   const timePeriod = new TimePeriod(totalTime);
-  const hoursAndMinutes = timePeriod.hoursAndMinutes(includeSeconds);
+  const hoursAndMinutes = timePeriod.hoursAndMinutesStr(includeSeconds);
   if (hoursAndMinutes) {
-    return `total time spent: ${hoursAndMinutes} (${timePeriod.narrowStr(includeSeconds)})`;
+    return `total time spent: ${hoursAndMinutes} (${timePeriod.daysHoursAndMinutesStr(includeSeconds)}, ${timePeriod.conversionRateDayStr()})`;
   }
   return '';
 }

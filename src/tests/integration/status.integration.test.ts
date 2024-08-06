@@ -165,7 +165,7 @@ describe('Status command', () => {
       expect(response).toMatch('2 active tasks:');
       expect(response).toMatch('First active task2h');
       expect(response).toMatch('Second active task2h');
-      expect(response).toMatch('total time spent: 8h (8h)');
+      expect(response).toMatch('total time spent: 8h (1d, d=8h)');
     });
 
     test('"Status" command does not report active tasks or total time spent when there is neither', () => {

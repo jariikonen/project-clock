@@ -1,4 +1,21 @@
 /**
+ * Represents the parameters based on which different time units are derived.
+ */
+export interface TimeParams {
+  /** Length of day in hours. */
+  day: number;
+
+  /** Length of week in days. */
+  week: number;
+
+  /** Length of month in days. */
+  month: number;
+
+  /** Length of year in days. */
+  year: number;
+}
+
+/**
  * A class that separates a time period given in milliseconds to day, hour,
  * minute, etc., parts.
  */
@@ -72,32 +89,106 @@ export default class TimePeriod {
   /** Total number of milliseconds in the time period. */
   readonly millisecondsTotal: number;
 
-  constructor(milliseconds: number) {
-    const secs = Math.floor(Math.abs(milliseconds) / 1000);
-    const mins = Math.floor(secs / 60);
-    const hours = Math.floor(mins / 60);
-    const days = Math.floor(hours / 24);
-    const weeks = Math.floor(days / 7);
-    const months = Math.floor(days / (365.2425 / 12)); // the mean length of Gregorian year is 365.2425 days
-    const years = Math.floor(days / 365.2425);
-    const millisecs = Math.floor(Math.abs(milliseconds)) % 1000;
-    const millisecsTotal = milliseconds;
+  /**
+   * The conversion rate parameters used between the variable time units (day,
+   * week, month and year).
+   */
+  readonly timeParams: TimeParams;
 
-    this.years = years;
-    this.months = months % 12;
-    this.monthsTotal = months;
-    this.weeks = weeks % 4;
-    this.weeksTotal = weeks;
-    this.days = days % 7;
-    this.daysTotal = days;
-    this.hours = hours % 24;
-    this.hoursTotal = hours;
-    this.minutes = mins % 60;
-    this.minutesTotal = mins;
-    this.seconds = secs % 60;
-    this.secondsTotal = secs;
-    this.milliseconds = millisecs;
-    this.millisecondsTotal = millisecsTotal;
+  /** TimeParams for a Gregorian calendar time units. */
+  static readonly timeParamsCalendar: TimeParams = {
+    day: 24,
+    week: 7,
+    month: 365.2425 / 12,
+    year: 365.2425,
+  };
+
+  /** TimeParams for typical work work hours. */
+  static readonly timeParamsWork: TimeParams = {
+    day: 8,
+    week: 5,
+    month: 20,
+    year: 52 * 5,
+  };
+
+  /**
+   * Constructs a new TimePeriod object.
+   * @param milliseconds The time period in milliseconds.
+   * @param timeParams The conversion rate parameters used for deriving days,
+   *    weeks, months and years from smaller time units.
+   */
+  constructor(
+    milliseconds: number,
+    timeParams: TimeParams = TimePeriod.timeParamsWork
+  ) {
+    this.timeParams = timeParams;
+
+    this.millisecondsTotal = milliseconds;
+    this.secondsTotal = Math.floor(Math.abs(milliseconds) / 1000);
+    this.minutesTotal = Math.floor(this.secondsTotal / 60);
+    this.hoursTotal = Math.floor(this.minutesTotal / 60);
+
+    const variableUnits = TimePeriod.#calculateTimes(timeParams, milliseconds);
+
+    this.years = variableUnits.years;
+    this.monthsTotal = variableUnits.monthsTotal;
+    this.weeksTotal = variableUnits.weeksTotal;
+    this.daysTotal = variableUnits.daysTotal;
+
+    this.months = variableUnits.months;
+    this.weeks = variableUnits.weeks;
+    this.days = variableUnits.days;
+    this.hours = variableUnits.hours;
+
+    const millisecondsAfterVariableUnits =
+      milliseconds - variableUnits.totalInMilliseconds;
+    this.minutes = Math.floor(millisecondsAfterVariableUnits / 1000 / 60);
+    this.seconds = Math.floor(
+      (millisecondsAfterVariableUnits - this.minutes * 60 * 1000) / 1000
+    );
+    this.milliseconds = Math.floor(
+      millisecondsAfterVariableUnits -
+        this.minutes * 60 * 1000 -
+        this.seconds * 1000
+    );
+  }
+
+  static #calculateTimes(timeParams: TimeParams, milliseconds: number) {
+    const hoursTotal = milliseconds / 1000 / 60 / 60;
+    const asDays = hoursTotal / timeParams.day;
+    const asWeeks = asDays / timeParams.week;
+    const asMonths = asDays / timeParams.month;
+    const years = Math.floor(asDays / timeParams.year);
+
+    const daysMinusYears = asDays % timeParams.year;
+    const months = Math.floor(daysMinusYears / timeParams.month);
+    const daysMinusYearsMinusMonths = daysMinusYears % timeParams.month;
+    const weeks = Math.floor(daysMinusYearsMinusMonths / timeParams.week);
+    const daysMinusYearsMinusMonthsMinusWeeks =
+      daysMinusYearsMinusMonths % timeParams.week;
+    const days = Math.floor(daysMinusYearsMinusMonthsMinusWeeks);
+
+    const daysWeeksMonthsYearsInHours =
+      days * timeParams.day +
+      weeks * timeParams.week * timeParams.day +
+      months * timeParams.month * timeParams.day +
+      years * timeParams.year * timeParams.day;
+    const hours = Math.floor(hoursTotal - daysWeeksMonthsYearsInHours);
+
+    const totalInMilliseconds =
+      (daysWeeksMonthsYearsInHours + hours) * 60 * 60 * 1000;
+
+    return {
+      years,
+      monthsTotal: Math.floor(asMonths),
+      weeksTotal: Math.floor(asWeeks),
+      daysTotal: Math.floor(asDays),
+      months,
+      weeks,
+      days,
+      hours,
+      totalInMilliseconds,
+    };
   }
 
   static #multiple(term: string, number: number) {
@@ -140,6 +231,7 @@ export default class TimePeriod {
       case 'weeks':
         return 'wk';
       case 'days':
+      case 'daysTotal':
         return 'd';
       case 'hours':
       case 'hoursTotal':
@@ -149,14 +241,29 @@ export default class TimePeriod {
       case 'seconds':
         return 's';
       default:
-        throw new Error(`unknown term '${term}'`);
+        throw new Error(`switch ran out of options; unknown term '${term}'`);
     }
+  }
+
+  /**
+   * Returns a string displaying the conversion rates between days and hours,
+   * weeks and days, months and days and years and weeks.
+   */
+  conversionRatesStr() {
+    return `d=${this.timeParams.day}h, wk=${this.timeParams.week}d, mo=${this.timeParams.month}d, y=${this.timeParams.year / this.timeParams.week}wk`;
+  }
+
+  /**
+   * Returns a string displaying the conversion rate between days and hours.
+   */
+  conversionRateDayStr() {
+    return `d=${this.timeParams.day}h`;
   }
 
   /**
    * Returns a string representing the time period parts in a long
    * human-readable format.
-   * @param includeSeconds Outputs also the seconds part.
+   * @param includeSeconds The output also includes seconds if true.
    * @returns A long human-readable string.
    */
   longStr(includeSeconds = false) {
@@ -177,7 +284,7 @@ export default class TimePeriod {
   /**
    * Returns a string representing the time period in a shorter human-readable
    * format.
-   * @param includeSeconds Outputs also the seconds if true.
+   * @param includeSeconds The output also includes seconds if true.
    * @returns A shorter human-readable string.
    */
   shortStr(includeSeconds = false) {
@@ -197,7 +304,7 @@ export default class TimePeriod {
   /**
    * Returns a string representing the time period in a human-readable format
    * that takes up as little space as possible.
-   * @param includeSeconds Outputs also the seconds if true.
+   * @param includeSeconds The output also includes seconds if true.
    * @returns A human-readable string that takes as little space as possible.
    */
   narrowStr(includeSeconds = false) {
@@ -211,7 +318,7 @@ export default class TimePeriod {
   /**
    * Returns a string representing the time period in a format similae to
    * a digital clock.
-   * @param includeSeconds Ouputs also the seconds if true.
+   * @param includeSeconds The output also includes seconds if true.
    * @returns A string representing the time period in a format similar to
    *    a digital clock.
    */
@@ -220,17 +327,36 @@ export default class TimePeriod {
     if (includeSeconds) {
       keys.push('seconds');
     }
-    const strings = keys.map((key) => `${this[key]}`);
+    const strings = keys.map((key) => `${this[key]}`.padStart(2, '0'));
     return strings.join(':');
   }
 
   /**
    * Returns a string representing the time period in hours and minutes.
-   * @param includeSeconds Outputs also seconds if true.
+   * @param includeSeconds The output also includes seconds if true.
    * @returns A string representing the time period in hours and minutes.
    */
-  hoursAndMinutes(includeSeconds = false) {
+  hoursAndMinutesStr(includeSeconds = false) {
     const keysToCheck = ['hoursTotal', 'minutes'];
+    if (includeSeconds) {
+      keysToCheck.push('seconds');
+    }
+    const nonNullKeys = keysToCheck.filter((key) =>
+      this[key] !== 0 ? this[key] : false
+    );
+    const strings = nonNullKeys.map(
+      (key) => `${this[key]}${TimePeriod.#getAbbreviation(key)}`
+    );
+    return strings.join(' ');
+  }
+
+  /**
+   * Returns a string representing the time period in days hours and minutes.
+   * @param includeSeconds The output also includes seconds if true.
+   * @returns A string representing the time period in days hours and minutes.
+   */
+  daysHoursAndMinutesStr(includeSeconds = false) {
+    const keysToCheck = ['daysTotal', 'hours', 'minutes'];
     if (includeSeconds) {
       keysToCheck.push('seconds');
     }
