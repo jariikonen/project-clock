@@ -1,7 +1,7 @@
 import input from '@inquirer/input';
 import confirm from '../common/confirm';
 import selectTask from '../common/selectTask';
-import { readTimesheet, writeTimesheet } from '../common/timesheetReadWrite';
+import { readTimeSheet, writeTimeSheet } from '../common/timeSheetReadWrite';
 import { emptyTask, ProjectClockData, Task } from '../types/ProjectClockData';
 import handleExitPromptError from '../common/handleExitPromptError';
 
@@ -10,7 +10,7 @@ async function getUnstartedTask(tasks: Task[]): Promise<Task | null> {
   if (unstartedTasks.length === 1) {
     if (
       await confirm(
-        `there is one unstarted task on the timesheet (${unstartedTasks[0].subject.substring(0, 15)}); start this task?`
+        `there is one unstarted task on the time sheet (${unstartedTasks[0].subject.substring(0, 15)}); start this task?`
       )
     ) {
       return unstartedTasks[0];
@@ -20,7 +20,7 @@ async function getUnstartedTask(tasks: Task[]): Promise<Task | null> {
   if (unstartedTasks.length > 1) {
     const selectedUnstartedTask = await selectTask(
       unstartedTasks,
-      'there are more than one unstarted task on the timesheet; select the task to start:'
+      'there are more than one unstarted task on the time sheet; select the task to start:'
     );
     return selectedUnstartedTask;
   }
@@ -45,7 +45,7 @@ async function getMatchingUnstartedTask(
   if (matchingTasks.length === 1) {
     if (
       await confirm(
-        `there is one matching unstarted task on the timesheet (${matchingTasks[0].subject.substring(0, 15)}); start this task?`
+        `there is one matching unstarted task on the time sheet (${matchingTasks[0].subject.substring(0, 15)}); start this task?`
       )
     ) {
       return matchingTasks[0];
@@ -55,20 +55,20 @@ async function getMatchingUnstartedTask(
   if (matchingTasks.length > 1) {
     const selectedMatchingTask = await selectTask(
       matchingTasks,
-      'there are more than one matching task on the timesheet; select the task to start:'
+      'there are more than one matching task on the time sheet; select the task to start:'
     );
     return selectedMatchingTask;
   }
   return null;
 }
 
-function writeNewTimesheet(
+function writeNewTimeSheet(
   tasks: Task[],
-  timesheetData: ProjectClockData,
+  timeSheetData: ProjectClockData,
   foundTask: Task | null,
   taskDescriptor: string
 ) {
-  const newTimesheetData = { ...timesheetData };
+  const newTimeSheetData = { ...timeSheetData };
   let taskToStart: Task = foundTask ?? emptyTask;
   let newTaskCreated = false;
 
@@ -84,7 +84,7 @@ function writeNewTimesheet(
       subject: taskDescriptor,
       begin: new Date().toISOString(),
     };
-    newTimesheetData.tasks.push(taskToStart);
+    newTimeSheetData.tasks.push(taskToStart);
     newTaskCreated = true;
   } else if (taskToStart.begin) {
     console.error(`task '${taskToStart.subject}' has already been started`);
@@ -93,7 +93,7 @@ function writeNewTimesheet(
     taskToStart.begin = new Date().toISOString();
   }
 
-  writeTimesheet(newTimesheetData);
+  writeTimeSheet(newTimeSheetData);
   if (newTaskCreated) {
     console.log(`created and started a new task '${taskToStart.subject}'`);
   } else {
@@ -105,7 +105,7 @@ function writeNewTimesheet(
  * Starts the clock.
  *
  * If the function is called without any arguments, and there is a single
- * unstarted task on the timesheet, it is confirmed from the user if this is
+ * unstarted task on the time sheet, it is confirmed from the user if this is
  * the task the user wants to start. If there are more than one unstarted task,
  * user is asked which of the tasks to start. If there are no unstarted tasks,
  * user is asked a subject for the task and the current timestamp is offered as
@@ -117,8 +117,8 @@ function writeNewTimesheet(
  *    subject.
  */
 export default async function start(taskDescriptor: string | undefined) {
-  const timesheetData = readTimesheet();
-  const { tasks } = timesheetData;
+  const timeSheetData = readTimeSheet();
+  const { tasks } = timeSheetData;
 
   let unstartedTask: Task | null = null;
   let taskDescriptorToUse = '';
@@ -157,5 +157,5 @@ export default async function start(taskDescriptor: string | undefined) {
   }
 
   const foundTask = unstartedTask ?? matchingTask;
-  writeNewTimesheet(tasks, timesheetData, foundTask, taskDescriptorToUse);
+  writeNewTimeSheet(tasks, timeSheetData, foundTask, taskDescriptorToUse);
 }

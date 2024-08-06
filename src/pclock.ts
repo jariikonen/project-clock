@@ -2,7 +2,7 @@
 
 import { Command } from '@commander-js/extra-typings';
 import { version } from '../package.json';
-import newTimesheet from './commands/new';
+import newTimeSheet from './commands/new';
 import start from './commands/start';
 import stop from './commands/stop';
 import status from './commands/status';
@@ -19,10 +19,10 @@ program.addHelpText('beforeAll', `pclock (Project Clock) v${version}\n`);
 program
   .command('new')
   .description(
-    'Create a new project timesheet. Requires the project name as an argument.'
+    'Create a new project time sheet. Requires the project name as an argument.'
   )
   .argument('<project_name>', 'name of the project')
-  .action((projectName) => newTimesheet(projectName));
+  .action((projectName) => newTimeSheet(projectName));
 
 program
   .command('start')

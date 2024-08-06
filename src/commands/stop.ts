@@ -2,14 +2,14 @@ import confirmTask from '../common/confirm';
 import { emptyTask, ProjectClockData, Task } from '../types/ProjectClockData';
 import handleExitPromptError from '../common/handleExitPromptError';
 import selectTask from '../common/selectTask';
-import { readTimesheet, writeTimesheet } from '../common/timesheetReadWrite';
+import { readTimeSheet, writeTimeSheet } from '../common/timeSheetReadWrite';
 
 async function getActiveTask(tasks: Task[]): Promise<Task | null> {
   const activeTasks = tasks.filter((task) => task.begin && !task.end);
   if (activeTasks.length === 1) {
     if (
       await confirmTask(
-        `there is one active task on the timesheet (${activeTasks[0].subject.substring(0, 15)}); stop this task?`
+        `there is one active task on the time sheet (${activeTasks[0].subject.substring(0, 15)}); stop this task?`
       )
     ) {
       return activeTasks[0];
@@ -20,7 +20,7 @@ async function getActiveTask(tasks: Task[]): Promise<Task | null> {
   if (activeTasks.length > 1) {
     const selectedActiveTask = await selectTask(
       activeTasks,
-      'there are more than one active task on the timesheet; select the task to stop:'
+      'there are more than one active task on the time sheet; select the task to stop:'
     );
     return selectedActiveTask;
   }
@@ -37,7 +37,7 @@ async function getMatchingActiveTask(
   if (matchingActiveTasks.length === 1) {
     if (
       await confirmTask(
-        `there is one matching active task on the timesheet (${matchingActiveTasks[0].subject.substring(0, 15)}); stop this task?`
+        `there is one matching active task on the time sheet (${matchingActiveTasks[0].subject.substring(0, 15)}); stop this task?`
       )
     ) {
       return matchingActiveTasks[0];
@@ -48,19 +48,19 @@ async function getMatchingActiveTask(
   if (matchingActiveTasks.length > 1) {
     const selectedMatchingActiveTask = await selectTask(
       matchingActiveTasks,
-      'there are more than one matching active task on the timesheet; select the task to stop:'
+      'there are more than one matching active task on the time sheet; select the task to stop:'
     );
     return selectedMatchingActiveTask;
   }
   return null;
 }
 
-function writeNewTimesheet(
+function writeNewTimeSheet(
   tasks: Task[],
-  timesheetData: ProjectClockData,
+  timeSheetData: ProjectClockData,
   foundTask: Task | null
 ) {
-  const newTimesheetData = { ...timesheetData };
+  const newTimeSheetData = { ...timeSheetData };
   const taskToStop: Task = foundTask ?? emptyTask;
 
   if (taskToStop.end) {
@@ -70,7 +70,7 @@ function writeNewTimesheet(
     taskToStop.end = new Date().toISOString();
   }
 
-  writeTimesheet(newTimesheetData);
+  writeTimeSheet(newTimeSheetData);
   console.log(`stopped task '${taskToStop.subject}'`);
 }
 
@@ -85,8 +85,8 @@ function writeNewTimesheet(
  * @param taskDescriptor
  */
 export default async function stop(taskDescriptor: string | undefined) {
-  const timesheetData = readTimesheet();
-  const { tasks } = timesheetData;
+  const timeSheetData = readTimeSheet();
+  const { tasks } = timeSheetData;
 
   let activeTask: Task | null = null;
   if (!taskDescriptor) {
@@ -115,5 +115,5 @@ export default async function stop(taskDescriptor: string | undefined) {
   }
 
   const foundTask = activeTask ?? matchingActiveTask;
-  writeNewTimesheet(tasks, timesheetData, foundTask);
+  writeNewTimeSheet(tasks, timeSheetData, foundTask);
 }

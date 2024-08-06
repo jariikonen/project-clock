@@ -33,7 +33,7 @@ afterEach(() => {
 
 describe('Status command', () => {
   describe('User friendly error messages', () => {
-    test('"Status" command without a timesheet file returns a user friendly error message (no stack trace or source code paths)', () => {
+    test('"Status" command without a time sheet file returns a user friendly error message (no stack trace or source code paths)', () => {
       let error = '';
       try {
         execSync(`cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js status`, {
@@ -43,11 +43,11 @@ describe('Status command', () => {
         const e = err as Error;
         error = e.message;
       }
-      expect(error).toMatch('no timesheet file in the directory');
+      expect(error).toMatch('no time sheet file in the directory');
       expect(error).not.toMatch('throw');
     });
 
-    test('"Status" command with more than one timesheet returns a user friendly error message (no stack trace or source code paths)', () => {
+    test('"Status" command with more than one time sheet returns a user friendly error message (no stack trace or source code paths)', () => {
       // initialize test environment
       const testFilePath2 = path.join(
         subdirPath,
@@ -86,11 +86,11 @@ describe('Status command', () => {
         const e = err as Error;
         error = e.message;
       }
-      expect(error).toMatch('more than one timesheet file in the directory');
+      expect(error).toMatch('more than one time sheet file in the directory');
       expect(error).not.toMatch('throw');
     });
 
-    test('"Status" command with a faulty timesheet file returns a user friendly error message (no stack trace or source code paths)', () => {
+    test('"Status" command with a faulty time sheet file returns a user friendly error message (no stack trace or source code paths)', () => {
       // initialize test environment
       createTestFile(
         {
@@ -117,14 +117,14 @@ describe('Status command', () => {
         error = e.message;
       }
       expect(error).toMatch(
-        "An error occurred while inspecting the timesheet file (invalid time period '2024-01-01T01:00:00.000Z' => '2024-01-01T00:00:00.000Z' (faulty task); start date is later than end date)"
+        "An error occurred while inspecting the time sheet file (invalid time period '2024-01-01T01:00:00.000Z' => '2024-01-01T00:00:00.000Z' (faulty task); start date is later than end date)"
       );
       expect(error).not.toMatch('throw');
     });
   });
 
   describe('Correct output', () => {
-    test('"Status" command responds with correct output when there is a single timesheet file', () => {
+    test('"Status" command responds with correct output when there is a single time sheet file', () => {
       // initialize test environment
       const twoHoursAgo = new Date(
         new Date().getTime() - 120 * 60 * 1000

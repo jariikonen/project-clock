@@ -25,7 +25,7 @@ afterAll(() => {
   removeTestDir(testDirPath);
 });
 
-describe('Starting and stopping the clock (when there is a timesheet)', () => {
+describe('Starting and stopping the clock (when there is a time sheet)', () => {
   beforeEach(() => {
     createTestDir(subdirPath);
     createTestFile(
@@ -79,7 +79,7 @@ describe('Starting and stopping the clock (when there is a timesheet)', () => {
       expect(found?.begin).not.toBeDefined();
     }
 
-    test('"Start" command without any arguments asks user subject for the task (no tasks on the timesheet)', () => {
+    test('"Start" command without any arguments asks user subject for the task (no tasks on the time sheet)', () => {
       const response = execSync(
         `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js start`,
         { encoding: 'utf8', stdio: 'pipe' }
@@ -106,7 +106,7 @@ describe('Starting and stopping the clock (when there is a timesheet)', () => {
       testTaskIsStarted(0);
     });
 
-    test('"Start" command without any arguments asks confirmation from user when there is a single unstarted task on the timesheet', () => {
+    test('"Start" command without any arguments asks confirmation from user when there is a single unstarted task on the time sheet', () => {
       // initialize test environment
       createTestFile(
         {
@@ -131,7 +131,7 @@ describe('Starting and stopping the clock (when there is a timesheet)', () => {
         { encoding: 'utf8', stdio: 'pipe' }
       );
       expect(response).toMatch(
-        `there is one unstarted task on the timesheet (${TASK_SUBJECT}); start this task`
+        `there is one unstarted task on the time sheet (${TASK_SUBJECT}); start this task`
       );
     });
 
@@ -160,7 +160,7 @@ describe('Starting and stopping the clock (when there is a timesheet)', () => {
         { encoding: 'utf8', stdio: 'pipe' }
       );
       expect(response).toMatch(
-        `there is one unstarted task on the timesheet (${TASK_SUBJECT}); start this task`
+        `there is one unstarted task on the time sheet (${TASK_SUBJECT}); start this task`
       );
       testTaskIsStarted(1);
     });
@@ -193,7 +193,7 @@ describe('Starting and stopping the clock (when there is a timesheet)', () => {
         { encoding: 'utf8', stdio: 'pipe' }
       );
       expect(response).toMatch(
-        'there are more than one unstarted task on the timesheet; select the task to'
+        'there are more than one unstarted task on the time sheet; select the task to'
       );
     });
 
@@ -225,7 +225,7 @@ describe('Starting and stopping the clock (when there is a timesheet)', () => {
         { encoding: 'utf8', stdio: 'pipe' }
       );
       expect(response).toMatch(
-        'there are more than one unstarted task on the timesheet; select the task to'
+        'there are more than one unstarted task on the time sheet; select the task to'
       );
       expect(response).toMatch(`started task '${TASK_SUBJECT}'`);
       testTaskIsStarted(1);
@@ -352,7 +352,7 @@ describe('Starting and stopping the clock (when there is a timesheet)', () => {
         { encoding: 'utf8' }
       );
       expect(response).toMatch(
-        `there is one matching unstarted task on the timesheet (${TASK_SUBJECT}); start this`
+        `there is one matching unstarted task on the time sheet (${TASK_SUBJECT}); start this`
       );
     });
 
@@ -385,7 +385,7 @@ describe('Starting and stopping the clock (when there is a timesheet)', () => {
         { encoding: 'utf8' }
       );
       expect(response).toMatch(
-        `there is one matching unstarted task on the timesheet (${TASK_SUBJECT}); start this`
+        `there is one matching unstarted task on the time sheet (${TASK_SUBJECT}); start this`
       );
       testTaskIsStarted(1);
     });
@@ -419,7 +419,7 @@ describe('Starting and stopping the clock (when there is a timesheet)', () => {
         { encoding: 'utf8' }
       );
       expect(response).toMatch(
-        `there is one matching unstarted task on the timesheet (${TASK_SUBJECT}); start this`
+        `there is one matching unstarted task on the time sheet (${TASK_SUBJECT}); start this`
       );
       testTaskIsNotStarted(TASK_SUBJECT);
     });
@@ -452,7 +452,7 @@ describe('Starting and stopping the clock (when there is a timesheet)', () => {
         { encoding: 'utf8', stdio: 'pipe' }
       );
       expect(response).toMatch(
-        'there are more than one matching task on the timesheet; select the task to'
+        'there are more than one matching task on the time sheet; select the task to'
       );
     });
 
@@ -486,7 +486,7 @@ describe('Starting and stopping the clock (when there is a timesheet)', () => {
       expect(response).not.toMatch('ProjectClockError');
     });
 
-    test('"Start" command reports timesheet file errors in a user friendly manner', () => {
+    test('"Start" command reports time sheet file errors in a user friendly manner', () => {
       // initialize test environment
       createTestFile(
         {
@@ -512,7 +512,7 @@ describe('Starting and stopping the clock (when there is a timesheet)', () => {
         error = e.message;
       }
       expect(error).toMatch(
-        'An error occurred while reading the timesheet file'
+        'An error occurred while reading the time sheet file'
       );
       expect(error).not.toMatch('throw');
       expect(error).not.toMatch('ProjectClockError');
@@ -609,7 +609,7 @@ describe('Starting and stopping the clock (when there is a timesheet)', () => {
         { encoding: 'utf8', stdio: 'pipe' }
       );
       expect(response).toMatch(
-        `there is one active task on the timesheet (${TASK_SUBJECT}); stop this`
+        `there is one active task on the time sheet (${TASK_SUBJECT}); stop this`
       );
     });
 
@@ -639,7 +639,7 @@ describe('Starting and stopping the clock (when there is a timesheet)', () => {
         { encoding: 'utf8' }
       );
       expect(response).toMatch(
-        `there is one active task on the timesheet (${TASK_SUBJECT}); stop this`
+        `there is one active task on the time sheet (${TASK_SUBJECT}); stop this`
       );
       testTaskIsStopped();
     });
@@ -670,7 +670,7 @@ describe('Starting and stopping the clock (when there is a timesheet)', () => {
         { encoding: 'utf8' }
       );
       expect(response).toMatch(
-        `there is one active task on the timesheet (${TASK_SUBJECT}); stop this`
+        `there is one active task on the time sheet (${TASK_SUBJECT}); stop this`
       );
       testTaskIsNotSopped();
     });
@@ -700,7 +700,7 @@ describe('Starting and stopping the clock (when there is a timesheet)', () => {
         { encoding: 'utf8' }
       );
       expect(response).toMatch(
-        'there are more than one active task on the timesheet; select the task to stop'
+        'there are more than one active task on the time sheet; select the task to'
       );
     });
 
@@ -729,7 +729,7 @@ describe('Starting and stopping the clock (when there is a timesheet)', () => {
         { encoding: 'utf8', stdio: 'pipe' }
       );
       expect(response).toMatch(
-        'there are more than one active task on the timesheet; select the task to stop'
+        'there are more than one active task on the time sheet; select the task to'
       );
       testTaskIsStopped('first active task');
     });
@@ -794,7 +794,7 @@ describe('Starting and stopping the clock (when there is a timesheet)', () => {
         { encoding: 'utf8' }
       );
       expect(response).toMatch(
-        `there is one matching active task on the timesheet (${TASK_SUBJECT}); stop this`
+        `there is one matching active task on the time sheet (${TASK_SUBJECT}); stop this`
       );
     });
 
@@ -824,7 +824,7 @@ describe('Starting and stopping the clock (when there is a timesheet)', () => {
         { encoding: 'utf8' }
       );
       expect(response).toMatch(
-        `there is one matching active task on the timesheet (${TASK_SUBJECT}); stop this`
+        `there is one matching active task on the time sheet (${TASK_SUBJECT}); stop this`
       );
       testTaskIsStopped();
     });
@@ -855,7 +855,7 @@ describe('Starting and stopping the clock (when there is a timesheet)', () => {
         { encoding: 'utf8' }
       );
       expect(response).toMatch(
-        `there is one matching active task on the timesheet (${TASK_SUBJECT}); stop this`
+        `there is one matching active task on the time sheet (${TASK_SUBJECT}); stop this`
       );
       testTaskIsNotSopped();
     });
@@ -891,7 +891,7 @@ describe('Starting and stopping the clock (when there is a timesheet)', () => {
         { encoding: 'utf8' }
       );
       expect(response).toMatch(
-        'there are more than one matching active task on the timesheet; select the task'
+        'there are more than one matching active task on the time sheet; select the'
       );
     });
 
@@ -929,7 +929,7 @@ describe('Starting and stopping the clock (when there is a timesheet)', () => {
         }
       );
       expect(response).toMatch(
-        'there are more than one matching active task on the timesheet; select the task'
+        'there are more than one matching active task on the time sheet; select the'
       );
       testTaskIsStopped('first active task');
     });
@@ -966,7 +966,7 @@ describe('Starting and stopping the clock (when there is a timesheet)', () => {
       expect(response).not.toMatch('ProjectClockError');
     });
 
-    test('"Stop" command reports timesheet file errors in a user friendly manner', () => {
+    test('"Stop" command reports time sheet file errors in a user friendly manner', () => {
       // initialize test environment
       createTestFile(
         {
@@ -992,7 +992,7 @@ describe('Starting and stopping the clock (when there is a timesheet)', () => {
         error = e.message;
       }
       expect(error).toMatch(
-        'An error occurred while reading the timesheet file'
+        'An error occurred while reading the time sheet file'
       );
       expect(error).not.toMatch('throw');
       expect(error).not.toMatch('ProjectClockError');

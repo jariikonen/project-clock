@@ -10,7 +10,7 @@ import {
 import { getTestFileDataObj } from '../common/testFile';
 import { createTestDir, removeTestDir } from '../common/testDirectory';
 
-const testDirName = 'testDirTimesheetCreation';
+const testDirName = 'testDirTimeSheetCreation';
 const testDirPath = path.join(ROOT_DIR, testDirName);
 const subdirPath = path.join(testDirPath, SUBDIR_NAME);
 const testFilePath = path.join(subdirPath, TEST_FILE_NAME);
@@ -23,7 +23,7 @@ afterAll(() => {
   removeTestDir(testDirPath);
 });
 
-describe('Timesheet creation', () => {
+describe('Time sheet creation', () => {
   beforeEach(() => {
     createTestDir(subdirPath);
   });
@@ -32,12 +32,12 @@ describe('Timesheet creation', () => {
     removeTestDir(subdirPath);
   });
 
-  test('New project timesheet can be created', () => {
+  test('New project time sheet can be created', () => {
     const response = execSync(
       `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js new ${PROJECT_NAME}`,
       { encoding: 'utf8' }
     );
-    expect(response).toMatch(`created a new timesheet: ${testFilePath}`);
+    expect(response).toMatch(`created a new time sheet: ${testFilePath}`);
 
     const fileExists = fs.existsSync(testFilePath);
     expect(fileExists).toEqual(true);
@@ -46,11 +46,11 @@ describe('Timesheet creation', () => {
     expect(projectClockDataObj.projectName).toEqual(PROJECT_NAME);
   });
 
-  test('Timesheet creation returns with error if file already exists', () => {
+  test('Time sheet creation returns with error if file already exists', () => {
     const testCommand = `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js new ${PROJECT_NAME}`;
 
     const response = execSync(testCommand, { encoding: 'utf8' });
-    expect(response).toMatch(`created a new timesheet: ${testFilePath}`);
+    expect(response).toMatch(`created a new time sheet: ${testFilePath}`);
 
     const fileExists = fs.existsSync(testFilePath);
     expect(fileExists).toEqual(true);
@@ -62,7 +62,7 @@ describe('Timesheet creation', () => {
       const e = err as Error;
       error = e.message;
     }
-    expect(error).toMatch('timesheet file already exists');
+    expect(error).toMatch('time sheet file already exists');
     expect(error).not.toMatch('throw');
     expect(error).not.toMatch('ProjectClockError');
   });
