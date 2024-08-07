@@ -193,5 +193,50 @@ describe('Status command', () => {
       expect(response).not.toMatch(TASK_SUBJECT);
       expect(response).not.toMatch('total time spent:');
     });
+
+    test('"Status" command does not print additional days-hours-and-minutes string when the total time spent is less than a day', () => {
+      // initialize test environment
+      const twoHoursAgo = new Date(
+        new Date().getTime() - 120 * 60 * 1000
+      ).toISOString();
+
+      createTestFile(
+        {
+          projectName: PROJECT_NAME,
+          tasks: [
+            {
+              subject: 'completed task',
+              begin: '2024-01-01T00:00:00.000Z',
+              end: '2024-01-01T03:30:00.000Z',
+            },
+            {
+              subject: 'First active task',
+              begin: twoHoursAgo,
+            },
+            {
+              subject: 'Second active task',
+              begin: twoHoursAgo,
+            },
+            {
+              subject: 'Just a task',
+            },
+          ],
+        },
+        testFilePath
+      );
+
+      // test
+      const response = execSync(
+        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js status`,
+        { encoding: 'utf8' }
+      );
+      expect(response).toMatch(`Project: '${PROJECT_NAME}'`);
+      expect(response).toMatch('Tasks (complete/incomplete/total): 1/3/4');
+      expect(response).toMatch('2 active tasks:');
+      expect(response).toMatch('First active task2h');
+      expect(response).toMatch('Second active task2h');
+      expect(response).toMatch('total time spent: 7h 30min');
+      expect(response).not.toMatch('total time spent: 7h 30min (');
+    });
   });
 });

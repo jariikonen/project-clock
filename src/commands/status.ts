@@ -39,8 +39,12 @@ function getActiveTaskListStr(
 function getTotalTimePeriodStr(totalTime: number, includeSeconds: boolean) {
   const timePeriod = new TimePeriod(totalTime);
   const hoursAndMinutes = timePeriod.hoursAndMinutesStr(includeSeconds);
+  const daysHoursAndMinutes =
+    timePeriod.daysTotal > 0
+      ? ` (${timePeriod.daysHoursAndMinutesStr(includeSeconds)}, ${timePeriod.conversionRateDayStr()})`
+      : '';
   if (hoursAndMinutes) {
-    return `total time spent: ${hoursAndMinutes} (${timePeriod.daysHoursAndMinutesStr(includeSeconds)}, ${timePeriod.conversionRateDayStr()})`;
+    return `total time spent: ${hoursAndMinutes}${daysHoursAndMinutes}`;
   }
   return '';
 }

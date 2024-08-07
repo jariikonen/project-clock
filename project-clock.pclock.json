@@ -326,7 +326,9 @@
       "end": "2024-08-07T07:09:28.336Z"
     },
     {
-      "subject": "Modify 'status' command so that it won't display additional days-hours-and-minutes string on total line, if total time spent is less than a day"
+      "subject": "Modify 'status' command so that it won't display additional days-hours-and-minutes string on total line, if total time spent is less than a day",
+      "begin": "2024-08-07T07:48:00.394Z",
+      "end": "2024-08-07T08:01:16.829Z"
     },
     {
       "subject": "Time unit conversion parameters can be written into the time sheet file and if they are in the time sheet they will override default parameters"
