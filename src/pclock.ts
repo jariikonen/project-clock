@@ -6,6 +6,7 @@ import newTimeSheet from './commands/new';
 import start from './commands/start';
 import stop from './commands/stop';
 import status from './commands/status';
+import list from './commands/list';
 
 const program = new Command();
 
@@ -40,11 +41,23 @@ program
   .argument('[task_name]', 'name of the task')
   .action((taskName) => stop(taskName));
 
-program.option('-v, --verbose', 'The command prints more verbose output.');
-
+program.option('-v, --verbose', 'print more verbose output');
 program
   .command('status [-v]')
   .description('Output status information. ')
   .action(() => status(program.opts()));
+
+program.option('-a --active', 'list just the active tasks');
+program.option('-c --complete', 'list just the completed tasks');
+program.option('-i --incomplete', 'list just the incomplete tasks');
+program.option(
+  '-n --not-started',
+  'list just the tasks that have not been started'
+);
+program
+  .command('list [-acinv]')
+  .alias('ls')
+  .description('List tasks on the time sheet.\n\t-a, --active')
+  .action(() => list(program.opts()));
 
 program.parse();

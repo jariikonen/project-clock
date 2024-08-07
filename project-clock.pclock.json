@@ -57,7 +57,7 @@
       "end": "2024-07-05T10:21:33.749Z"
     },
     {
-      "subject": "A new project timesheet can be created",
+      "subject": "A new project time sheet can be created",
       "description": "Create tests for testing that the command 'new' works and edit the code so that the tests are passed. Use the commander library for the implementation and study how the library is used. Previous test for argumentless call had to be rewritten too.",
       "begin": "2024-07-05T10:24:35.655Z",
       "suspend": ["2024-07-05T12:48:14.935Z", "2024-07-06T08:26:23.033Z"],
@@ -105,8 +105,8 @@
       "end": "2024-07-13T10:34:51.514Z"
     },
     {
-      "subject": "Edit the 'start' command functionality",
-      "description": "Change the functionality of the 'start' command so that it first looks for unstarted tasks and confirmes from the user that this is the correct task to start. If there are many unstarted tasks, user is asked which one of them to start. If there are no unstarted tasks, user is prompted for a task subject and current timestamp is offered as default subject. If task argument is provided, a task with a matching string as the subject is started, or if such task doesn't exist a new task is created with parameter value as the subject of the task. Before creation of the task, it is confirmed from the user that this is what was intended. If many tasks match with the descriptor, user is prompted which of them to start.",
+      "subject": "Modify functionality of the 'start' command so that it asks the user how to proceed in certain situations",
+      "description": "Change the functionality of the 'start' command so that it first looks for unstarted tasks and confirms from the user that this is the correct task to start. If there are many unstarted tasks, user is asked which one of them to start. If there are no unstarted tasks, user is prompted for a task subject and current timestamp is offered as default subject. If task argument is provided, a task with a matching string as the subject is started, or if such task doesn't exist a new task is created with parameter value as the subject of the task. Before creation of the task, it is confirmed from the user that this is what was intended. If many tasks match with the descriptor, user is prompted which of them to start.",
       "begin": "2024-07-13T10:38:27.995Z",
       "suspend": [
         "2024-07-13T12:33:34.000Z",
@@ -136,7 +136,7 @@
       "end": "2024-07-13T13:03:34.141Z"
     },
     {
-      "subject": "Edit functionality of the 'stop' command",
+      "subject": "Modify functionality of the 'stop' command so that it asks the user how to proceed in certain situations",
       "description": "Change the functionality of the 'stop' command so that it first looks for active (started but not stopped) tasks and confirms from the user that this is the correct task to stop. If there are many active tasks, user is asked which one of them to stop. If there are no active tasks, the function still exits with error. If task argument is provided, a task with a matching string as the subject is stopped. Before stopping the task, it is confirmed from the user that it is what was intended. If many tasks match with the descriptor, user is prompted which of them to stop.",
       "begin": "2024-07-16T12:08:29.422Z",
       "suspend": [
@@ -153,7 +153,7 @@
     },
     {
       "subject": "Command 'status' prints current status report",
-      "description": "Command 'status' lists currently active tasks with the time spent on each task so far, total amount of time spent on tasks, and number of complete and incomplete tasks.\n\nI tried to implement the task duration reporting using FormatJS's Intl.DurationFormat polyfill (https://formatjs.io/docs/polyfills/intl-durationformat), but I didn't get it to work. I then decided to look at the localization of the app later, and implement a simple duration formatting in English only for now.\n\nI refactored the tests into their own folder, and divided them into different files. I added integration and unit tests for testing the 'status' command and the calculateTimes() function.\n\nI spent a long time trying to figure out how to get child_process.execSync() to output full status command output in the integration tests. For some reason it seems to replace the contents of the list created using CLI-table3 with ellipses. Thus it is impossible to test that the listed contents are correct. Because of this, I decided to implement a simple list formatting functionality into getTaskListString() function, that makes it possible to test the list content using execSync() in an integration test. Currently the simpler fornatting is selectable using the 'listMode' argument of the getTaskListString(). I will decide later whether to use CLI-table3 or my own simpler table implementation. If CLI-table3 is used, it must be ensured (e.g., with unit tests) that the list contents are what they should be.",
+      "description": "Command 'status' lists currently active tasks with the time spent on each task so far, total amount of time spent on tasks, and number of complete and incomplete tasks.\n\nI tried to implement the task duration reporting using FormatJS's Intl.DurationFormat polyfill (https://formatjs.io/docs/polyfills/intl-durationformat), but I didn't get it to work. I then decided to look at the localization of the app later, and implement a simple duration formatting in English only for now.\n\nI refactored the tests into their own folder, and divided them into different files. I added integration and unit tests for testing the 'status' command and the calculateTimes() function.\n\nI spent a long time trying to figure out how to get child_process.execSync() to output full status command output in the integration tests. For some reason it seems to replace the contents of the list created using cli-table3 with ellipses. Thus it is impossible to test that the listed contents are correct. Because of this, I decided to implement a simple list formatting functionality into getTaskListString() function, that makes it possible to test the list content using execSync() in an integration test. Currently the simpler fornatting is selectable using the 'listMode' argument of the getTaskListString(). I will decide later whether to use cli-table3 or my own simpler table implementation. If cli-table3 is used, it must be ensured (e.g., with unit tests) that the list contents are what they should be.",
       "begin": "2024-07-18T10:07:15.029Z",
       "suspend": [
         "2024-07-18T10:51:07.177Z",
@@ -233,7 +233,7 @@
       "end": "2024-07-20T09:35:58.887Z"
     },
     {
-      "subject": "Create unit tests for getTimesheetData() and getTimesheetPath()",
+      "subject": "Create unit tests for getTimeSheetData() and getTimeSheetPath()",
       "begin": "2024-07-29T07:01:06.496Z",
       "suspend": [
         "2024-07-29T07:57:48.473Z",
@@ -253,13 +253,13 @@
       "end": "2024-08-01T12:13:18.433Z"
     },
     {
-      "subject": "Add a test for testing that 'status' command gives a user friendly error message when there is a faulty timesheet file",
+      "subject": "Add a test for testing that 'status' command gives a user friendly error message when there is a faulty time sheet file",
       "begin": "2024-08-02T03:25:24.894Z",
       "end": "2024-08-02T03:43:49.391Z"
     },
     {
-      "subject": "Modify 'start' and 'stop' commands so that they report timesheet file errors in a user friendly manner",
-      "description": "I created tests for testing that the file errors are handled and modified the functions so that the tests pass. I also removed the unnecessary 'ERROR:' marker from all error messages used with the ProjectClockError, and refactored the timesheet file read/write functions into the same file (timesheetReadWrite.ts).",
+      "subject": "Modify 'start' and 'stop' commands so that they report time sheet file errors in a user friendly manner",
+      "description": "I created tests for testing that the file errors are handled and modified the functions so that the tests pass. I also removed the unnecessary 'ERROR:' marker from all error messages used with the ProjectClockError, and refactored the time sheet file read/write functions into the same file (time sheetReadWrite.ts).",
       "begin": "2024-08-02T03:44:31.810Z",
       "suspend": ["2024-08-02T04:15:34.062Z"],
       "resume": ["2024-08-02T05:28:37.452Z"],
@@ -311,16 +311,34 @@
     },
     {
       "subject": "Tasks can be listed",
-      "begin": "2024-08-06T08:20:17.326Z"
+      "description": "Implement list command and integration tests to test that it works as intended.",
+      "begin": "2024-08-06T08:20:17.326Z",
+      "suspend": [
+        "2024-08-06T09:39:18.862Z",
+        "2024-08-06T12:19:56.509Z",
+        "2024-08-07T03:59:42.307Z"
+      ],
+      "resume": [
+        "2024-08-06T10:47:05.872Z",
+        "2024-08-07T03:41:17.710Z",
+        "2024-08-07T05:02:52.651Z"
+      ],
+      "end": "2024-08-07T07:09:28.336Z"
+    },
+    {
+      "subject": "Modify 'status' command so that it won't display additional days-hours-and-minutes string on total line, if total time spent is less than a day"
+    },
+    {
+      "subject": "Time unit conversion parameters can be written into the time sheet file and if they are in the time sheet they will override default parameters"
     },
     {
       "subject": "Clock can be paused and unpaused"
     },
     {
-      "subject": "Timesheet file can be selected"
+      "subject": "Time sheet file can be selected"
     },
     {
-      "subject": "Modify new command so that it uses name of the parent directory as the default value for project name"
+      "subject": "Modify 'new' command so that it uses the name of the parent directory as the default value for project name"
     },
     {
       "subject": "Update README.md"
@@ -342,11 +360,17 @@
       "subject": "Subject and description of a task can be set and edited"
     },
     {
-      "subject": "A new project timesheet can be created by starting the clock"
+      "subject": "A new project time sheet can be created by starting the clock"
+    },
+    {
+      "subject": "Modify the commands so that user is asked which time sheet to use if there are more than one time sheet in the directory "
     },
     {
       "subject": "Command 'new' prompts for project name if it is not given as an argument",
       "description": "Create tests for testing the new functionality and edit the code so that the tests are passed. Default value for the project name is the name of the parent directory."
+    },
+    {
+      "subject": "Time unit conversion parameters can be changed with a command option"
     },
     {
       "subject": "Add a command that visually shows the times when the work has been done"

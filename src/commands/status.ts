@@ -25,7 +25,8 @@ function getActiveTaskListStr(
     activeTimes,
     consoleWidth,
     includeSeconds,
-    'simple'
+    'simple',
+    [2, 0]
   );
 
   const [term, counter] = multiple('task', activeTimes.length);

@@ -4,6 +4,9 @@ import TimePeriod from './TimePeriod';
 
 type ListMode = 'table' | 'simple';
 
+/** Amount of padding added to the sides of the table (left, right). */
+export type TablePadding = [number, number];
+
 function calculateColWidths(
   width: number,
   tablePadding: [number, number] = [0, 0]
@@ -18,7 +21,8 @@ function calculateColWidths(
 function createTable(
   times: TaskStatus[],
   width: number,
-  includeSeconds: boolean
+  includeSeconds: boolean,
+  padding: TablePadding
 ) {
   const taskTable = new CliTable3({
     chars: {
@@ -38,18 +42,17 @@ function createTable(
       'right-mid': '',
       middle: ' ',
     },
-    style: { 'padding-left': 2, 'padding-right': 0 },
+    style: { 'padding-left': padding[0], 'padding-right': padding[1] },
     head: ['Task', 'Time', 'Status'],
-    colWidths: calculateColWidths(width, [2, 0]),
+    colWidths: calculateColWidths(width, padding),
     wordWrap: true,
   });
 
   times.forEach((task) => {
-    taskTable.push([
-      task.task,
-      new TimePeriod(task.timeSpent).hoursAndMinutesStr(includeSeconds),
-      task.status,
-    ]);
+    const time = new TimePeriod(task.timeSpent).hoursAndMinutesStr(
+      includeSeconds
+    );
+    taskTable.push([task.task, time || '-', task.status]);
   });
 
   return taskTable.toString();
@@ -95,23 +98,25 @@ function createSimpleTable(
 function createSimple(
   times: TaskStatus[],
   width: number,
-  includeSeconds: boolean
+  includeSeconds: boolean,
+  padding: TablePadding
 ) {
   const head = ['Task', 'Time', 'Status'];
-  const tablePadding: [number, number] = [2, 0];
-  const colWidths = calculateColWidths(width, tablePadding);
-  const rows = times.reduce(
-    (accum, current) => [
+  const colWidths = calculateColWidths(width, padding);
+  const rows = times.reduce((accum, current) => {
+    const time = new TimePeriod(current.timeSpent).hoursAndMinutesStr(
+      includeSeconds
+    );
+    return [
       ...accum,
       [
         current.task.toString(),
-        new TimePeriod(current.timeSpent).hoursAndMinutesStr(includeSeconds),
+        time || '-',
         current.status ? current.status.toString() : '-',
       ],
-    ],
-    []
-  );
-  return createSimpleTable(head, rows, colWidths, tablePadding);
+    ];
+  }, []);
+  return createSimpleTable(head, rows, colWidths, padding);
 }
 
 /**
@@ -122,19 +127,21 @@ function createSimple(
  * @param includeSeconds Boolean indicating whether to include the seconds in
  *    the time usage field.
  * @param listMode List rendering method used.
+ * @param padding Amount of padding added to the sides of the table.
  * @returns A tabular list of tasks as a string.
  */
 export default function getTaskListString(
   times: TaskStatus[],
   width: number,
   includeSeconds: boolean,
-  listMode: ListMode
+  listMode: ListMode,
+  padding: TablePadding = [0, 0]
 ): string {
   switch (listMode) {
     case 'table':
-      return createTable(times, width, includeSeconds);
+      return createTable(times, width, includeSeconds, padding);
     case 'simple':
-      return createSimple(times, width, includeSeconds);
+      return createSimple(times, width, includeSeconds, padding);
     default:
       throw new Error('switch ran out of options');
   }
