@@ -74,6 +74,10 @@ function getTotalTimePeriodStr(
   return `${numberOfTasks} ${taskMultiple}, total time spent: -`;
 }
 
+/**
+ * Lists the tasks on the time sheet.
+ * @param options The CLI options from the user.
+ */
 export default function list(options: ListOptions) {
   const timesheetData = readTimeSheet();
   const { projectName, tasks } = timesheetData;
