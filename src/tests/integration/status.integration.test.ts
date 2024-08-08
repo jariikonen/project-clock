@@ -133,6 +133,14 @@ describe('Status command', () => {
       createTestFile(
         {
           projectName: PROJECT_NAME,
+          projectSettings: {
+            timeParams: {
+              day: 8,
+              week: 5,
+              month: 20,
+              year: 260,
+            },
+          },
           tasks: [
             {
               subject: 'completed task',

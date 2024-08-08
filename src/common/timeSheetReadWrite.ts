@@ -77,7 +77,16 @@ export function getTimeSheetData(file = '') {
     throw new ProjectClockError(`no write permission to file '${filePath}'`);
   }
   const fileData = fs.readFileSync(filePath, 'utf8');
-  return parseProjectClockData(JSON.parse(fileData));
+  let fileObj: unknown;
+  try {
+    fileObj = JSON.parse(fileData);
+  } catch (err) {
+    const errorMessage = err instanceof Error ? ` (${err.message})` : '';
+    throw new ProjectClockError(
+      `${filePath} is not a valid JSON file${errorMessage}`
+    );
+  }
+  return parseProjectClockData(fileObj);
 }
 
 /**

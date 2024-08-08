@@ -15,6 +15,27 @@ export interface TimeParams {
   year: number;
 }
 
+export function isTimeParams(value: unknown): value is TimeParams {
+  if (typeof value !== 'object') {
+    return false;
+  }
+
+  const obj = value as TimeParams;
+  if (!obj.day || typeof obj.day !== 'number') {
+    return false;
+  }
+  if (!obj.week || typeof obj.week !== 'number') {
+    return false;
+  }
+  if (!obj.month || typeof obj.month !== 'number') {
+    return false;
+  }
+  if (!obj.year || typeof obj.year !== 'number') {
+    return false;
+  }
+  return true;
+}
+
 /**
  * A class that separates a time period given in milliseconds to day, hour,
  * minute, etc., parts.
@@ -119,7 +140,7 @@ export default class TimePeriod {
    */
   constructor(
     milliseconds: number,
-    timeParams: TimeParams = TimePeriod.timeParamsWork
+    timeParams: TimeParams = TimePeriod.timeParamsCalendar
   ) {
     this.timeParams = timeParams;
 

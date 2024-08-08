@@ -130,6 +130,14 @@ describe('Correct output; many tasks, total time less than a day', () => {
     createTestFile(
       {
         projectName: PROJECT_NAME,
+        projectSettings: {
+          timeParams: {
+            day: 8,
+            week: 5,
+            month: 20,
+            year: 260,
+          },
+        },
         tasks: [
           {
             subject: 'First completed task',
@@ -257,6 +265,14 @@ describe('Correct output; many tasks, total time more than a day', () => {
     createTestFile(
       {
         projectName: PROJECT_NAME,
+        projectSettings: {
+          timeParams: {
+            day: 8,
+            week: 5,
+            month: 20,
+            year: 260,
+          },
+        },
         tasks: [
           {
             subject: 'First completed task',
@@ -318,6 +334,14 @@ describe('Correct output; no tasks to list', () => {
     createTestFile(
       {
         projectName: PROJECT_NAME,
+        projectSettings: {
+          timeParams: {
+            day: 8,
+            week: 5,
+            month: 20,
+            year: 260,
+          },
+        },
         tasks: [],
       },
       testFilePath

@@ -1,6 +1,6 @@
 import { readTimeSheet } from '../common/timeSheetReadWrite';
 import calculateTimes, { TaskStatus } from '../common/calculateTimes';
-import TimePeriod from '../common/TimePeriod';
+import TimePeriod, { TimeParams } from '../common/TimePeriod';
 import ProjectClockError from '../common/ProjectClockError';
 import calculateTotalTime from '../common/calculateTotalTime';
 import getTaskListString from '../common/getTaskListString';
@@ -18,11 +18,13 @@ function multiple(term: string, number: number) {
 
 function getActiveTaskListStr(
   activeTimes: TaskStatus[],
+  timeParams: TimeParams | undefined,
   includeSeconds: boolean
 ) {
   const consoleWidth = process.stdout.columns;
   const taskTable = getTaskListString(
     activeTimes,
+    timeParams,
     consoleWidth,
     includeSeconds,
     'simple',
@@ -36,8 +38,12 @@ function getActiveTaskListStr(
   return `${counter} active ${term}`;
 }
 
-function getTotalTimePeriodStr(totalTime: number, includeSeconds: boolean) {
-  const timePeriod = new TimePeriod(totalTime);
+function getTotalTimePeriodStr(
+  totalTime: number,
+  timeParams: TimeParams | undefined,
+  includeSeconds: boolean
+) {
+  const timePeriod = new TimePeriod(totalTime, timeParams);
   const hoursAndMinutes = timePeriod.hoursAndMinutesStr(includeSeconds);
   const daysHoursAndMinutes =
     timePeriod.daysTotal > 0
@@ -56,7 +62,7 @@ function getTotalTimePeriodStr(totalTime: number, includeSeconds: boolean) {
 export default function status(options: StatusOptions) {
   const timeSheetData = readTimeSheet();
 
-  const { projectName, tasks } = timeSheetData;
+  const { projectName, projectSettings, tasks } = timeSheetData;
 
   const activeTasks = tasks.filter((task) => task.begin && !task.end);
   const incompleteTasks = tasks.filter((task) => !task.end);
@@ -78,8 +84,16 @@ export default function status(options: StatusOptions) {
   }
   const includeSeconds = !!options.verbose;
   const totalTime = calculateTotalTime(allTimes);
-  const totalTimePeriodStr = getTotalTimePeriodStr(totalTime, includeSeconds);
-  const activeTaskListStr = getActiveTaskListStr(activeTimes, includeSeconds);
+  const totalTimePeriodStr = getTotalTimePeriodStr(
+    totalTime,
+    projectSettings?.timeParams,
+    includeSeconds
+  );
+  const activeTaskListStr = getActiveTaskListStr(
+    activeTimes,
+    projectSettings?.timeParams,
+    includeSeconds
+  );
 
   console.log(`Project: '${projectName}'\n`);
   console.log(

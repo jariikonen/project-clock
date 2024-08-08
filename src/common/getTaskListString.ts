@@ -1,6 +1,6 @@
 import CliTable3 from 'cli-table3';
 import { TaskStatus } from './calculateTimes';
-import TimePeriod from './TimePeriod';
+import TimePeriod, { TimeParams } from './TimePeriod';
 
 type ListMode = 'table' | 'simple';
 
@@ -20,6 +20,7 @@ function calculateColWidths(
 
 function createTable(
   times: TaskStatus[],
+  timeParams: TimeParams | undefined,
   width: number,
   includeSeconds: boolean,
   padding: TablePadding
@@ -49,7 +50,7 @@ function createTable(
   });
 
   times.forEach((task) => {
-    const time = new TimePeriod(task.timeSpent).hoursAndMinutesStr(
+    const time = new TimePeriod(task.timeSpent, timeParams).hoursAndMinutesStr(
       includeSeconds
     );
     taskTable.push([task.task, time || '-', task.status]);
@@ -97,6 +98,7 @@ function createSimpleTable(
 
 function createSimple(
   times: TaskStatus[],
+  timeParams: TimeParams | undefined,
   width: number,
   includeSeconds: boolean,
   padding: TablePadding
@@ -104,9 +106,10 @@ function createSimple(
   const head = ['Task', 'Time', 'Status'];
   const colWidths = calculateColWidths(width, padding);
   const rows = times.reduce((accum, current) => {
-    const time = new TimePeriod(current.timeSpent).hoursAndMinutesStr(
-      includeSeconds
-    );
+    const time = new TimePeriod(
+      current.timeSpent,
+      timeParams
+    ).hoursAndMinutesStr(includeSeconds);
     return [
       ...accum,
       [
@@ -132,6 +135,7 @@ function createSimple(
  */
 export default function getTaskListString(
   times: TaskStatus[],
+  timeParams: TimeParams | undefined,
   width: number,
   includeSeconds: boolean,
   listMode: ListMode,
@@ -139,9 +143,9 @@ export default function getTaskListString(
 ): string {
   switch (listMode) {
     case 'table':
-      return createTable(times, width, includeSeconds, padding);
+      return createTable(times, timeParams, width, includeSeconds, padding);
     case 'simple':
-      return createSimple(times, width, includeSeconds, padding);
+      return createSimple(times, timeParams, width, includeSeconds, padding);
     default:
       throw new Error('switch ran out of options');
   }

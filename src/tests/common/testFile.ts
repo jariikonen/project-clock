@@ -18,3 +18,11 @@ export function createTestFile(
   const fileJSON = JSON.stringify(testFileDataObj, null, '  ');
   fs.writeFileSync(testFilePath, fileJSON, { encoding: 'utf8' });
 }
+
+export function createUnrestrictedTestFile(
+  testFileDataObj: object,
+  testFilePath: string
+) {
+  const fileJSON = JSON.stringify(testFileDataObj, null, '  ');
+  fs.writeFileSync(testFilePath, fileJSON, { encoding: 'utf8' });
+}

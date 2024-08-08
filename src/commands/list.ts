@@ -2,7 +2,7 @@ import calculateTimes, { TaskStatus } from '../common/calculateTimes';
 import calculateTotalTime from '../common/calculateTotalTime';
 import getTaskListString from '../common/getTaskListString';
 import ProjectClockError from '../common/ProjectClockError';
-import TimePeriod from '../common/TimePeriod';
+import TimePeriod, { TimeParams } from '../common/TimePeriod';
 import { readTimeSheet } from '../common/timeSheetReadWrite';
 import { Task } from '../types/ProjectClockData';
 
@@ -39,10 +39,15 @@ function filterTasks(options: ListOptions, tasks: Task[]) {
   });
 }
 
-function getRequestedTaskListStr(times: TaskStatus[], includeSeconds: boolean) {
+function getRequestedTaskListStr(
+  times: TaskStatus[],
+  timeParams: TimeParams | undefined,
+  includeSeconds: boolean
+) {
   const consoleWidth = process.stdout.columns;
   const taskTable = getTaskListString(
     times,
+    timeParams,
     consoleWidth,
     includeSeconds,
     'simple'
@@ -55,6 +60,7 @@ function getRequestedTaskListStr(times: TaskStatus[], includeSeconds: boolean) {
 
 function getTotalTimePeriodStr(
   totalTime: number,
+  timeParams: TimeParams | undefined,
   includeSeconds: boolean,
   numberOfTasks: number
 ) {
@@ -62,7 +68,7 @@ function getTotalTimePeriodStr(
     return 'no tasks to list';
   }
   const taskMultiple = numberOfTasks === 1 ? 'task' : 'tasks';
-  const timePeriod = new TimePeriod(totalTime);
+  const timePeriod = new TimePeriod(totalTime, timeParams);
   const hoursAndMinutes = timePeriod.hoursAndMinutesStr(includeSeconds);
   const daysHoursAndMinutes =
     timePeriod.daysTotal > 0
@@ -79,8 +85,8 @@ function getTotalTimePeriodStr(
  * @param options The CLI options from the user.
  */
 export default function list(options: ListOptions) {
-  const timesheetData = readTimeSheet();
-  const { projectName, tasks } = timesheetData;
+  const timeSheetData = readTimeSheet();
+  const { projectName, projectSettings, tasks } = timeSheetData;
   const requestedTasks = filterTasks(options, tasks);
 
   let requestedTimes: TaskStatus[] = [];
@@ -99,11 +105,13 @@ export default function list(options: ListOptions) {
   const includeSeconds = !!options.verbose;
   const requestedTaskListStr = getRequestedTaskListStr(
     requestedTimes,
+    projectSettings?.timeParams,
     includeSeconds
   );
   const totalTime = calculateTotalTime(requestedTimes);
   const totalTimePeriodStr = getTotalTimePeriodStr(
     totalTime,
+    projectSettings?.timeParams,
     includeSeconds,
     requestedTimes.length
   );
