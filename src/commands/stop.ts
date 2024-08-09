@@ -1,59 +1,7 @@
-import confirmTask from '../common/confirm';
 import { emptyTask, ProjectClockData, Task } from '../types/ProjectClockData';
 import handleExitPromptError from '../common/handleExitPromptError';
-import selectTask from '../common/selectTask';
 import { readTimeSheet, writeTimeSheet } from '../common/timeSheetReadWrite';
-
-async function getActiveTask(tasks: Task[]): Promise<Task | null> {
-  const activeTasks = tasks.filter((task) => task.begin && !task.end);
-  if (activeTasks.length === 1) {
-    if (
-      await confirmTask(
-        `there is one active task on the time sheet (${activeTasks[0].subject.substring(0, 15)}); stop this task?`
-      )
-    ) {
-      return activeTasks[0];
-    }
-    console.log('nothing to stop');
-    process.exit(0);
-  }
-  if (activeTasks.length > 1) {
-    const selectedActiveTask = await selectTask(
-      activeTasks,
-      'there are more than one active task on the time sheet; select the task to stop:'
-    );
-    return selectedActiveTask;
-  }
-  return null;
-}
-
-async function getMatchingActiveTask(
-  tasks: Task[],
-  taskDescriptor: string
-): Promise<Task | null> {
-  const matchingActiveTasks = tasks.filter(
-    (task) => task.begin && !task.end && task.subject.match(taskDescriptor)
-  );
-  if (matchingActiveTasks.length === 1) {
-    if (
-      await confirmTask(
-        `there is one matching active task on the time sheet (${matchingActiveTasks[0].subject.substring(0, 15)}); stop this task?`
-      )
-    ) {
-      return matchingActiveTasks[0];
-    }
-    console.log('nothing to stop');
-    process.exit(0);
-  }
-  if (matchingActiveTasks.length > 1) {
-    const selectedMatchingActiveTask = await selectTask(
-      matchingActiveTasks,
-      'there are more than one matching active task on the time sheet; select the task to stop:'
-    );
-    return selectedMatchingActiveTask;
-  }
-  return null;
-}
+import promptForTask from '../common/promptForTask';
 
 function writeNewTimeSheet(
   tasks: Task[],
@@ -100,7 +48,8 @@ export default async function stop(taskDescriptor: string | undefined) {
   let activeTask: Task | null = null;
   if (!taskDescriptor) {
     try {
-      activeTask = await getActiveTask(tasks);
+      const activeTasks = tasks.filter((task) => task.begin && !task.end);
+      activeTask = await promptForTask(activeTasks, 'active', 'stop');
       if (!activeTask) {
         console.error('no active tasks found; nothing to stop');
         process.exit(1);
@@ -113,7 +62,14 @@ export default async function stop(taskDescriptor: string | undefined) {
   let matchingActiveTask: Task | null = null;
   if (taskDescriptor) {
     try {
-      matchingActiveTask = await getMatchingActiveTask(tasks, taskDescriptor);
+      const matchingActiveTasks = tasks.filter(
+        (task) => task.begin && !task.end && task.subject.match(taskDescriptor)
+      );
+      matchingActiveTask = await promptForTask(
+        matchingActiveTasks,
+        'matching active',
+        'stop'
+      );
       if (!matchingActiveTask) {
         console.error('no matching active tasks found; nothing to stop');
         process.exit(1);

@@ -455,7 +455,7 @@ describe('Starting and stopping the clock (when there is a time sheet)', () => {
         { encoding: 'utf8', stdio: 'pipe' }
       );
       expect(response).toMatch(
-        'there are more than one matching task on the time sheet; select the task to'
+        'there are more than one matching unstarted task on the time sheet; select the'
       );
     });
 

@@ -1,58 +1,9 @@
 import input from '@inquirer/input';
 import confirm from '../common/confirm';
-import selectTask from '../common/selectTask';
 import { readTimeSheet, writeTimeSheet } from '../common/timeSheetReadWrite';
 import { emptyTask, ProjectClockData, Task } from '../types/ProjectClockData';
 import handleExitPromptError from '../common/handleExitPromptError';
-
-async function getUnstartedTask(tasks: Task[]): Promise<Task | null> {
-  const unstartedTasks = tasks.filter((task) => !task.begin);
-  if (unstartedTasks.length === 1) {
-    if (
-      await confirm(
-        `there is one unstarted task on the time sheet (${unstartedTasks[0].subject.substring(0, 15)}); start this task?`
-      )
-    ) {
-      return unstartedTasks[0];
-    }
-    return null;
-  }
-  if (unstartedTasks.length > 1) {
-    const selectedUnstartedTask = await selectTask(
-      unstartedTasks,
-      'there are more than one unstarted task on the time sheet; select the task to start:'
-    );
-    return selectedUnstartedTask;
-  }
-  return null;
-}
-
-async function getMatchingUnstartedTask(
-  tasks: Task[],
-  taskDescriptor: string
-): Promise<Task | null> {
-  const matchingTasks = tasks.filter(
-    (task) => task.subject.match(taskDescriptor) && !task.begin
-  );
-  if (matchingTasks.length === 1) {
-    if (
-      await confirm(
-        `there is one matching unstarted task on the time sheet (${matchingTasks[0].subject.substring(0, 15)}); start this task?`
-      )
-    ) {
-      return matchingTasks[0];
-    }
-    return null;
-  }
-  if (matchingTasks.length > 1) {
-    const selectedMatchingTask = await selectTask(
-      matchingTasks,
-      'there are more than one matching task on the time sheet; select the task to start:'
-    );
-    return selectedMatchingTask;
-  }
-  return null;
-}
+import promptForTask from '../common/promptForTask';
 
 function writeNewTimeSheet(
   tasks: Task[],
@@ -134,7 +85,8 @@ export default async function start(taskDescriptor: string | undefined) {
   let taskDescriptorToUse = '';
   if (!taskDescriptor) {
     try {
-      unstartedTask = await getUnstartedTask(tasks);
+      const unstartedTasks = tasks.filter((task) => !task.begin);
+      unstartedTask = await promptForTask(unstartedTasks, 'unstarted', 'start');
       if (!unstartedTask) {
         taskDescriptorToUse = await promptForTaskCreation();
         if (!taskDescriptorToUse) {
@@ -150,7 +102,14 @@ export default async function start(taskDescriptor: string | undefined) {
   let matchingTask: Task | null = null;
   if (taskDescriptor) {
     try {
-      matchingTask = await getMatchingUnstartedTask(tasks, taskDescriptor);
+      const matchingUnstartedTasks = tasks.filter(
+        (task) => task.subject.match(taskDescriptor) && !task.begin
+      );
+      matchingTask = await promptForTask(
+        matchingUnstartedTasks,
+        'matching unstarted',
+        'start'
+      );
       if (!matchingTask) {
         if (
           await confirm(
