@@ -77,12 +77,21 @@ function writeNewTimeSheet(
 /**
  * Stops the clock.
  *
- * If the function is called without any arguments an active task (i.e., a
- * started but not stopped task) if there is only one such task, by setting
- * the "end" value of the task to current timestamp. With a task descriptor
- * as argument the function stops a task with matching "subject". If the
- * descriptor matches more than one task, function exits with an error.
- * @param taskDescriptor
+ * If the function is called without the task descriptor argument, it will look
+ * for active tasks (i.e., a task that is started but not stopped). If one such
+ * task is found, the user is confirmed whether this is the correct task. If it
+ * is, the task is stopped by setting the "end" value of the task to current
+ * timestamp. If more than one such task are found, the user is prompted which
+ * one of the tasks to stop. If no such task is found, the function exits with
+ * an error.
+ *
+ * If task descriptor is provided a tasks whose subject matches the descriptor
+ * is looked for. If such a task is found the user is confirmed whether it is
+ * the correct task to stop. if the task is correct, it is stopped. If more
+ * than one such task is found, the user is prompted which one of the tasks to
+ * stop. If no such task is found, the function exits with an error.
+ * @param taskDescriptor A regex search string that is expected to match a task
+ *    subject.
  */
 export default async function stop(taskDescriptor: string | undefined) {
   const timeSheetData = readTimeSheet();

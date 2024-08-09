@@ -5,6 +5,7 @@ import { isTimeParams, TimeParams } from '../common/TimePeriod';
 export interface Task {
   subject: string;
   description?: string;
+  notes?: string;
   begin?: string;
   suspend?: string[];
   resume?: string[];

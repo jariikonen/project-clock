@@ -27,14 +27,6 @@ async function getUnstartedTask(tasks: Task[]): Promise<Task | null> {
   return null;
 }
 
-async function promptForTaskDescriptor(message: string): Promise<string> {
-  const descriptorFromUser = await input({
-    message,
-    default: new Date().toISOString(),
-  });
-  return descriptorFromUser;
-}
-
 async function getMatchingUnstartedTask(
   tasks: Task[],
   taskDescriptor: string
@@ -101,18 +93,36 @@ function writeNewTimeSheet(
   }
 }
 
+async function promptForTaskCreation(): Promise<string> {
+  if (
+    await confirm('no unstarted tasks found; do you want to create a new task?')
+  ) {
+    const descriptorFromUser = await input({
+      message: 'enter subject for the task:',
+      default: new Date().toISOString(),
+    });
+    return descriptorFromUser;
+  }
+  return '';
+}
+
 /**
  * Starts the clock.
  *
- * If the function is called without any arguments, and there is a single
- * unstarted task on the time sheet, it is confirmed from the user if this is
- * the task the user wants to start. If there are more than one unstarted task,
- * user is asked which of the tasks to start. If there are no unstarted tasks,
- * user is asked a subject for the task and the current timestamp is offered as
- * the default subject. If task argument is provided, a task with a matching
- * string as the subject is started, or if such task doesn't exist a new task
- * is created with parameter value as the subject of the task. If many tasks
- * match with the descriptor, user is prompted which of these tasks to start.
+ * Start a task. If the function is called without the task descriptor
+ * argument, it will first look for any unstarted tasks. If a single such task
+ * is found, the user is asked if this is the one to be started. If more than
+ * one such task are found, user is asked which of the tasks to start. If no
+ * unstarted tasks are found, user is asked if a new task should be created. If
+ * user wants to create a new task, user is prompted for a subject for the new
+ * task and the current timestamp is provided as the default subject.
+ *
+ * If task descriptor is provided, a task whose subject matches the descriptor
+ * is looked for. If such a task is found, the user is confirmed if it is the
+ * right task. If the task is correct, it is started. If such a task is not
+ * found, the user is confirmed whether to create a new task with the task
+ * descriptor as its subject. If many tasks match with the descriptor, user is
+ * prompted which of the tasks to start.
  * @param taskDescriptor A regex search string that is expected to match a task
  *    subject.
  */
@@ -126,9 +136,11 @@ export default async function start(taskDescriptor: string | undefined) {
     try {
       unstartedTask = await getUnstartedTask(tasks);
       if (!unstartedTask) {
-        taskDescriptorToUse = await promptForTaskDescriptor(
-          'no unstarted tasks found; enter subject for the task:'
-        );
+        taskDescriptorToUse = await promptForTaskCreation();
+        if (!taskDescriptorToUse) {
+          console.log('exiting; no task to start');
+          process.exit(0);
+        }
       }
     } catch (error) {
       handleExitPromptError(error);

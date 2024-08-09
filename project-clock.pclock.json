@@ -349,7 +349,21 @@
       "end": "2024-08-08T03:52:08.788Z"
     },
     {
-      "subject": "Clock can be paused and unpaused"
+      "subject": "Clock can be suspended and resumed (paused and unpaused)",
+      "begin": "2024-08-08T04:59:14.597Z",
+      "suspend": ["2024-08-08T05:36:41.560Z"]
+    },
+    {
+      "subject": "Make the operation of 'start' and 'stop' command clearer",
+      "description": "Edit command descriptions and prompts of 'start' and 'stop' commands to be clearer.",
+      "notes": "After adding one more inquirer step to the command, the previous method of passing answers to inquirer questions didn't work anymore. I had to create a new function execute() that uses child_process.exec() instead of child_process.execSync(), and it took a while to learn how to use the asynchronous version of the function.",
+      "begin": "2024-08-08T05:36:41.560Z",
+      "suspend": ["2024-08-08T07:36:48.845Z", "2024-08-08T13:12:33.365Z"],
+      "resume": ["2024-08-08T10:05:37.786Z", "2024-08-09T03:18:26.212Z"],
+      "end": "2024-08-09T03:53:48.720Z"
+    },
+    {
+      "subject": "Add a 'script mode' flag that prevents all commands from asking the user for instructions"
     },
     {
       "subject": "Time sheet file can be selected"
@@ -358,7 +372,7 @@
       "subject": "Modify 'new' command so that it uses the name of the parent directory as the default value for project name"
     },
     {
-      "subject": "Update README.md"
+      "subject": "Update README.md and command descriptions"
     },
     {
       "subject": "Try adding colors to getTaskListString()'s simple rendering and see if that affects the output from child_process.execSync()",
@@ -388,9 +402,6 @@
     },
     {
       "subject": "Time unit conversion parameters can be changed with a command option"
-    },
-    {
-      "subject": "Add a 'script mode' flag that prevents all commands from asking the user for instructions"
     },
     {
       "subject": "Add a command that visually shows the times when the work has been done"

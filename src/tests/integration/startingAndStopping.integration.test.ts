@@ -11,6 +11,7 @@ import {
 import { createTestFile, getTestFileDataObj } from '../common/testFile';
 import isValidTimestamp from '../common/timeStamp';
 import { createTestDir, removeTestDir } from '../common/testDirectory';
+import execute from '../common/childProcessExecutor';
 
 const testDirName = 'testDirStartingAndStopping';
 const testDirPath = path.join(ROOT_DIR, testDirName);
@@ -79,29 +80,31 @@ describe('Starting and stopping the clock (when there is a time sheet)', () => {
       expect(found?.begin).not.toBeDefined();
     }
 
-    test('"Start" command without any arguments asks user subject for the task (no tasks on the time sheet)', () => {
+    test('"Start" command without any arguments asks if user wants to create a new task (no tasks on the time sheet)', () => {
       const response = execSync(
         `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js start`,
         { encoding: 'utf8', stdio: 'pipe' }
       );
-      expect(response).toMatch('enter subject for the task');
+      expect(response).toMatch('do you want to create a new task?');
     });
 
-    test('"Start" command without any arguments starts correct task when default value (current timestamp as subject) is accepted', () => {
-      const response = execSync(
-        `cd ${subdirPath} && printf '\n' | node ${ROOT_DIR}/bin/pclock.js start`,
-        { encoding: 'utf8', stdio: 'pipe' }
+    test('"Start" command without any arguments starts correct task when default value (current timestamp as subject) is accepted', async () => {
+      const response = await execute(
+        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js start`,
+        ['y\n', '\n']
       );
-      expect(response).toMatch('enter subject for the task');
+      expect(response).toMatch('do you want to create a new task?');
+      expect(response).toMatch('enter subject for the task:');
 
       testTaskIsStarted(0, true);
     });
 
-    test('"Start" command without any arguments starts correct task when subject for the task is entered', () => {
-      const response = execSync(
-        `cd ${subdirPath} && echo '${TASK_SUBJECT}' | node ${ROOT_DIR}/bin/pclock.js start`,
-        { encoding: 'utf8' }
+    test('"Start" command without any arguments starts correct task when subject for the task is entered', async () => {
+      const response = await execute(
+        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js start`,
+        ['y\n', `${TASK_SUBJECT}\n`]
       );
+      expect(response).toMatch('do you want to create a new task?');
       expect(response).toMatch('enter subject for the task');
       testTaskIsStarted(0);
     });
