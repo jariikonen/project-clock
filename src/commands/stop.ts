@@ -1,7 +1,6 @@
 import { emptyTask, ProjectClockData, Task } from '../types/ProjectClockData';
-import handleExitPromptError from '../common/handleExitPromptError';
 import { readTimeSheet, writeTimeSheet } from '../common/timeSheetReadWrite';
-import promptForTask from '../common/promptForTask';
+import promptForActiveTask from '../common/promptForActiveTask';
 
 function writeNewTimeSheet(
   tasks: Task[],
@@ -45,40 +44,6 @@ export default async function stop(taskDescriptor: string | undefined) {
   const timeSheetData = readTimeSheet();
   const { tasks } = timeSheetData;
 
-  let activeTask: Task | null = null;
-  if (!taskDescriptor) {
-    try {
-      const activeTasks = tasks.filter((task) => task.begin && !task.end);
-      activeTask = await promptForTask(activeTasks, 'active', 'stop');
-      if (!activeTask) {
-        console.error('no active tasks found; nothing to stop');
-        process.exit(1);
-      }
-    } catch (error) {
-      handleExitPromptError(error);
-    }
-  }
-
-  let matchingActiveTask: Task | null = null;
-  if (taskDescriptor) {
-    try {
-      const matchingActiveTasks = tasks.filter(
-        (task) => task.begin && !task.end && task.subject.match(taskDescriptor)
-      );
-      matchingActiveTask = await promptForTask(
-        matchingActiveTasks,
-        'matching active',
-        'stop'
-      );
-      if (!matchingActiveTask) {
-        console.error('no matching active tasks found; nothing to stop');
-        process.exit(1);
-      }
-    } catch (error) {
-      handleExitPromptError(error);
-    }
-  }
-
-  const foundTask = activeTask ?? matchingActiveTask;
+  const foundTask = await promptForActiveTask(tasks, taskDescriptor, 'stop');
   writeNewTimeSheet(tasks, timeSheetData, foundTask);
 }
