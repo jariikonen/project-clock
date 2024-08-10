@@ -1,25 +1,5 @@
-import { emptyTask, ProjectClockData, Task } from '../types/ProjectClockData';
 import { readTimeSheet, writeTimeSheet } from '../common/timeSheetReadWrite';
 import promptForActiveTask from '../common/promptForActiveTask';
-
-function writeNewTimeSheet(
-  tasks: Task[],
-  timeSheetData: ProjectClockData,
-  foundTask: Task | null
-) {
-  const newTimeSheetData = { ...timeSheetData };
-  const taskToStop: Task = foundTask ?? emptyTask;
-
-  if (taskToStop.end) {
-    console.error(`task '${taskToStop.subject}' has already been stopped`);
-    process.exit(1);
-  } else {
-    taskToStop.end = new Date().toISOString();
-  }
-
-  writeTimeSheet(newTimeSheetData);
-  console.log(`stopped task '${taskToStop.subject}'`);
-}
 
 /**
  * Stops the clock.
@@ -44,6 +24,33 @@ export default async function stop(taskDescriptor: string | undefined) {
   const timeSheetData = readTimeSheet();
   const { tasks } = timeSheetData;
 
-  const foundTask = await promptForActiveTask(tasks, taskDescriptor, 'stop');
-  writeNewTimeSheet(tasks, timeSheetData, foundTask);
+  if (tasks.length < 1) {
+    console.log('time sheet is empty, nothing to stop');
+    process.exit(1);
+  }
+
+  const existingTask = tasks.find((task) => task.subject === taskDescriptor);
+  const taskToStop = await promptForActiveTask(
+    tasks,
+    taskDescriptor,
+    'stop',
+    !!existingTask
+  );
+  if (taskToStop) {
+    taskToStop.end = new Date().toISOString();
+    writeTimeSheet(timeSheetData);
+    console.log(`stopped task '${taskToStop.subject}'`);
+    process.exit(0);
+  }
+  if (!existingTask?.begin) {
+    console.error(
+      `can't stop task '${taskDescriptor}'; the task hasn't been started yet`
+    );
+  }
+  if (existingTask?.end) {
+    console.error(
+      `can't stop task '${taskDescriptor}'; the task has already been stopped`
+    );
+  }
+  process.exit(1);
 }

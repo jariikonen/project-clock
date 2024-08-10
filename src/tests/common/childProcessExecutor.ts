@@ -1,5 +1,8 @@
 import child_process from 'child_process';
 
+export const DOWN = '\x1B\x5B\x42';
+export const UP = '\x1B\x5B\x41';
+
 /**
  * Executes the command using child_process.exec() and returns the stdout
  * output of the process as a string. Passes inputs to the process, one at a
@@ -8,7 +11,10 @@ import child_process from 'child_process';
  * @param inputs Inputs to the process as an array of strings.
  * @returns Stdout output of the process as a string.
  */
-export default async function execute(command: string, inputs?: string[]) {
+export default async function execute(
+  command: string,
+  inputs?: string[]
+): Promise<string> {
   return new Promise((resolve, reject) => {
     const proc = child_process.exec(command, (error) => {
       if (error) {

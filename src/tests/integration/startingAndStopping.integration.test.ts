@@ -11,7 +11,8 @@ import {
 import { createTestFile, getTestFileDataObj } from '../common/testFile';
 import isValidTimestamp from '../common/timeStamp';
 import { createTestDir, removeTestDir } from '../common/testDirectory';
-import execute from '../common/childProcessExecutor';
+import execute, { DOWN } from '../common/childProcessExecutor';
+import { Task } from '../../types/ProjectClockData';
 
 const testDirName = 'testDirStartingAndStopping';
 const testDirPath = path.join(ROOT_DIR, testDirName);
@@ -25,6 +26,22 @@ beforeAll(() => {
 afterAll(() => {
   removeTestDir(testDirPath);
 });
+
+function testTaskMemberHasValue(
+  member: keyof Task,
+  value: string | string[] | undefined,
+  subject = TASK_SUBJECT
+) {
+  const projectClockDataObj = getTestFileDataObj(testFilePath);
+  const found = projectClockDataObj.tasks.find(
+    (task) => task.subject === subject
+  );
+  let memberValue: string | string[] | undefined;
+  if (found) {
+    memberValue = found[member];
+  }
+  expect(memberValue).toEqual(value);
+}
 
 describe('Starting and stopping the clock (when there is a time sheet)', () => {
   beforeEach(() => {
@@ -234,6 +251,76 @@ describe('Starting and stopping the clock (when there is a time sheet)', () => {
       testTaskIsStarted(1);
     });
 
+    test('"Start" command without any arguments does not start a task when there are many unstarted tasks and the last option, "none", is selected', async () => {
+      // initialize test environment
+      createTestFile(
+        {
+          projectName: PROJECT_NAME,
+          tasks: [
+            {
+              subject: 'completed task',
+              begin: '2024-07-15T06:33:15.743Z',
+              end: '2024-07-15T06:41:18.415Z',
+            },
+            {
+              subject: TASK_SUBJECT,
+            },
+            {
+              subject: 'other unstarted task',
+            },
+          ],
+        },
+        testFilePath
+      );
+
+      // test
+      const response = await execute(
+        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js start`,
+        [`${DOWN}${DOWN}\n`]
+      );
+      expect(response).toMatch(
+        'there are more than one unstarted task on the time sheet; select the task to'
+      );
+      expect(response).toMatch('nothing to start');
+      testTaskIsNotStarted(TASK_SUBJECT);
+    });
+
+    test('"Start" command without any arguments does not create a new task when user tries to create a task that already exists', async () => {
+      // initialize test environment
+      createTestFile(
+        {
+          projectName: PROJECT_NAME,
+          tasks: [
+            {
+              subject: 'completed task',
+              begin: '2024-07-15T06:33:15.743Z',
+              end: '2024-07-15T06:41:18.415Z',
+            },
+            {
+              subject: TASK_SUBJECT,
+              begin: '2024-01-01T00:00:00.000Z',
+            },
+          ],
+        },
+        testFilePath
+      );
+
+      // test
+      let error = '';
+      try {
+        await execute(
+          `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js start`,
+          ['Y\n', `${TASK_SUBJECT}\n`]
+        );
+      } catch (err) {
+        const e = err as Error;
+        error = e.message;
+      }
+      expect(error).toMatch(
+        `can't create new task '${TASK_SUBJECT}'; the task already exists`
+      );
+    });
+
     test('"Start" command with task descriptor argument confirms whether a new task is created when matching task is not found', () => {
       // initialize test environment
       createTestFile(
@@ -260,7 +347,7 @@ describe('Starting and stopping the clock (when there is a time sheet)', () => {
         { encoding: 'utf8' }
       );
       expect(response).toMatch(
-        `no matching unstarted task found; create a new task '${TASK_SUBJECT}'`
+        `no matching unstarted task found; create a new task, '${TASK_SUBJECT}'?`
       );
     });
 
@@ -290,7 +377,7 @@ describe('Starting and stopping the clock (when there is a time sheet)', () => {
         { encoding: 'utf8' }
       );
       expect(response).toMatch(
-        `no matching unstarted task found; create a new task '${TASK_SUBJECT}'`
+        `no matching unstarted task found; create a new task, '${TASK_SUBJECT}'?`
       );
       testTaskIsStarted(2);
     });
@@ -321,7 +408,7 @@ describe('Starting and stopping the clock (when there is a time sheet)', () => {
         { encoding: 'utf8' }
       );
       expect(response).toMatch(
-        `no matching unstarted task found; create a new task '${TASK_SUBJECT}'`
+        `no matching unstarted task found; create a new task, '${TASK_SUBJECT}'?`
       );
       testTaskIsNotCreated();
     });
@@ -459,6 +546,46 @@ describe('Starting and stopping the clock (when there is a time sheet)', () => {
       );
     });
 
+    test('"Start" command with a task descriptor argument does not start a task if it is already started (and it has not been suspended)', () => {
+      // initialize test environment
+      createTestFile(
+        {
+          projectName: PROJECT_NAME,
+          tasks: [
+            {
+              subject: 'completed task',
+              begin: '2024-07-15T06:33:15.743Z',
+              end: '2024-07-15T06:41:18.415Z',
+            },
+            {
+              subject: TASK_SUBJECT,
+              begin: '2024-01-01T00:00:00.000Z',
+            },
+            {
+              subject: 'other unstarted task',
+            },
+          ],
+        },
+        testFilePath
+      );
+
+      // test
+      let error = '';
+      try {
+        execSync(
+          `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js start '${TASK_SUBJECT}'`,
+          { stdio: 'pipe' }
+        );
+      } catch (err) {
+        const e = err as Error;
+        error = e.message;
+      }
+      expect(error).toMatch(
+        `can't start task '${TASK_SUBJECT}'; the task has already been started`
+      );
+      testTaskMemberHasValue('begin', '2024-01-01T00:00:00.000Z');
+    });
+
     test('"Start" command gives a user friendly error message when the command is force stopped with CTRL+C', () => {
       // initialize test environment
       createTestFile(
@@ -546,7 +673,7 @@ describe('Starting and stopping the clock (when there is a time sheet)', () => {
       }
     }
 
-    function testTaskIsNotSopped(subject = TASK_SUBJECT) {
+    function testTaskIsNotStopped(subject = TASK_SUBJECT) {
       const projectClockDataObj = getTestFileDataObj(testFilePath);
       const found = projectClockDataObj.tasks.find(
         (task) => task.subject === subject
@@ -675,7 +802,7 @@ describe('Starting and stopping the clock (when there is a time sheet)', () => {
       expect(response).toMatch(
         `there is one active task on the time sheet (${TASK_SUBJECT}); stop this`
       );
-      testTaskIsNotSopped();
+      testTaskIsNotStopped();
     });
 
     test('"Stop" command without any arguments asks which of the many active tasks to stop', () => {
@@ -735,6 +862,43 @@ describe('Starting and stopping the clock (when there is a time sheet)', () => {
         'there are more than one active task on the time sheet; select the task to'
       );
       testTaskIsStopped('first active task');
+    });
+
+    test('"Stop" command without any arguments does not stop any tasks when option "none" is selected instead of one of the many active tasks', async () => {
+      // initialize test environment
+      createTestFile(
+        {
+          projectName: PROJECT_NAME,
+          tasks: [
+            {
+              subject: 'completed task',
+              begin: '2024-07-15T06:33:15.743Z',
+              end: '2024-07-15T06:41:18.415Z',
+            },
+            {
+              subject: TASK_SUBJECT,
+              begin: '2024-01-01T00:00:00.000Z',
+            },
+            {
+              subject: 'other unstarted task',
+              begin: '2024-01-01T00:00:00.000Z',
+            },
+          ],
+        },
+        testFilePath
+      );
+
+      // test
+      const response = await execute(
+        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js stop`,
+        [`${DOWN}${DOWN}\n`]
+      );
+      expect(response).toMatch(
+        'there are more than one active task on the time sheet; select the task to'
+      );
+      expect(response).toMatch('nothing to stop');
+      testTaskIsNotStopped(TASK_SUBJECT);
+      testTaskIsNotStopped('other unstarted task');
     });
 
     test('"Stop" command with task descriptor exits with an error when no matching active task is found', () => {
@@ -860,7 +1024,7 @@ describe('Starting and stopping the clock (when there is a time sheet)', () => {
       expect(response).toMatch(
         `there is one matching active task on the time sheet (${TASK_SUBJECT}); stop this`
       );
-      testTaskIsNotSopped();
+      testTaskIsNotStopped();
     });
 
     test('"Stop" command with task descriptor argument asks which of many matching active tasks to stop', () => {
@@ -935,6 +1099,109 @@ describe('Starting and stopping the clock (when there is a time sheet)', () => {
         'there are more than one matching active task on the time sheet; select the'
       );
       testTaskIsStopped('first active task');
+    });
+
+    test('"Stop" command with task descriptor argument does not stop any tasks when option "none" is selected instead of one of the active tasks', async () => {
+      // initialize test environment
+      createTestFile(
+        {
+          projectName: PROJECT_NAME,
+          tasks: [
+            {
+              subject: 'closed task (i.e., started and stopped task)',
+              begin: new Date().toISOString(),
+              end: new Date().toISOString(),
+            },
+            {
+              subject: 'first active task',
+              begin: new Date().toISOString(),
+            },
+            {
+              subject: 'second active task',
+              begin: new Date().toISOString(),
+            },
+          ],
+        },
+        testFilePath
+      );
+
+      // test
+      const matcher = 'active task';
+      const response = await execute(
+        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js stop ${matcher}`,
+        [`${DOWN}${DOWN}\n`]
+      );
+      expect(response).toMatch(
+        'there are more than one matching active task on the time sheet; select the'
+      );
+      testTaskIsNotStopped('first active task');
+      testTaskIsNotStopped('second active task');
+    });
+
+    test('"Stop" command with task descriptor argument does not stop an already stopped task', () => {
+      // initialize test environment
+      createTestFile(
+        {
+          projectName: PROJECT_NAME,
+          tasks: [
+            {
+              subject: TASK_SUBJECT,
+              begin: '2024-01-01T00:00:00.000Z',
+              end: '2024-01-01T01:00:00.000Z',
+            },
+          ],
+        },
+        testFilePath
+      );
+
+      // test
+      let error = '';
+      try {
+        execSync(
+          `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js stop '${TASK_SUBJECT}'`,
+          { encoding: 'utf8', stdio: 'pipe' }
+        );
+      } catch (err) {
+        const e = err as Error;
+        error = e.message;
+      }
+
+      expect(error).toMatch(
+        `can't stop task '${TASK_SUBJECT}'; the task has already been stopped`
+      );
+      testTaskMemberHasValue('end', '2024-01-01T01:00:00.000Z');
+    });
+
+    test('"Stop" command with task descriptor argument does not stop a task that has not been started yet', () => {
+      // initialize test environment
+      createTestFile(
+        {
+          projectName: PROJECT_NAME,
+          tasks: [
+            {
+              subject: TASK_SUBJECT,
+            },
+          ],
+        },
+        testFilePath
+      );
+
+      // test
+      let error = '';
+      try {
+        execSync(
+          `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js stop '${TASK_SUBJECT}'`,
+          { encoding: 'utf8', stdio: 'pipe' }
+        );
+      } catch (err) {
+        const e = err as Error;
+        error = e.message;
+      }
+
+      expect(error).toMatch(
+        `can't stop task '${TASK_SUBJECT}'; the task hasn't been started yet`
+      );
+      testTaskMemberHasValue('end', undefined);
     });
 
     test('"Stop" command does not throw an exception with stack trace when command is force stopped with CTRL+C', () => {

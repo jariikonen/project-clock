@@ -349,9 +349,32 @@
       "end": "2024-08-08T03:52:08.788Z"
     },
     {
-      "subject": "Clock can be suspended and resumed (paused and unpaused)",
+      "subject": "Task can be suspended and resumed (paused and unpaused)",
+      "notes": "Making 'start' and 'stop' commands' code clearer, making it use common functions better and function better in general took a long time; almost 13 hours.",
       "begin": "2024-08-08T04:59:14.597Z",
-      "suspend": ["2024-08-08T05:36:41.560Z"]
+      "suspend": [
+        "2024-08-08T05:36:41.560Z",
+        "2024-08-09T06:44:14.338Z",
+        "2024-08-09T08:10:37.866Z",
+        "2024-08-09T11:37:49.006Z",
+        "2024-08-09T13:09:30.777Z",
+        "2024-08-09T15:24:23.355Z",
+        "2024-08-10T03:18:20.860Z",
+        "2024-08-10T07:14:26.971Z",
+        "2024-08-10T08:18:27.699Z",
+        "2024-08-10T12:27:44.904Z"
+      ],
+      "resume": [
+        "2024-08-09T05:05:54.041Z",
+        "2024-08-09T07:18:38.768Z",
+        "2024-08-09T09:19:21.720Z",
+        "2024-08-09T12:21:17.592Z",
+        "2024-08-09T14:00:56.711Z",
+        "2024-08-10T02:51:14.988Z",
+        "2024-08-10T05:29:01.663Z",
+        "2024-08-10T07:45:47.565Z",
+        "2024-08-10T09:32:44.607Z"
+      ]
     },
     {
       "subject": "Make the operation of 'start' and 'stop' command clearer",
@@ -363,7 +386,7 @@
       "end": "2024-08-09T03:53:48.720Z"
     },
     {
-      "subject": "Add a 'script mode' flag that prevents all commands from asking the user for instructions"
+      "subject": "Add a 'script mode' flag that prevents all commands from prompting the user for instructions"
     },
     {
       "subject": "Time sheet file can be selected"

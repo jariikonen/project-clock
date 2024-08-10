@@ -12,7 +12,7 @@ type SelectChoices = (
 )[];
 
 function createChoices(tasks: Task[]): SelectChoices {
-  return tasks.map((task, index) => {
+  const choices = tasks.map((task, index) => {
     const name =
       task.subject.length > 15
         ? `${task.subject.substring(0, 15)}...`
@@ -25,6 +25,8 @@ function createChoices(tasks: Task[]): SelectChoices {
       description,
     };
   });
+  choices.push({ name: 'none', value: 'none', description: 'none' });
+  return choices;
 }
 
 /**
@@ -37,11 +39,14 @@ function createChoices(tasks: Task[]): SelectChoices {
 export default async function promptToSelectTask(
   tasks: Task[],
   message: string
-): Promise<Task> {
+): Promise<Task | null> {
   const choices = createChoices(tasks);
   const selectedTask = await select({
     message,
     choices,
   });
+  if (selectedTask === 'none') {
+    return null;
+  }
   return tasks[parseInt(selectedTask, 10)];
 }

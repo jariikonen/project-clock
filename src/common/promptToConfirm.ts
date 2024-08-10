@@ -4,7 +4,9 @@ import confirm from '@inquirer/confirm';
  * Asks confirmation from the user using @inquirer/confirm.
  * @param message The message shown to the user.
  */
-export default async function pclockConfirm(message: string): Promise<boolean> {
+export default async function promptToConfirm(
+  message: string
+): Promise<boolean> {
   const answer = await confirm({
     message,
   });
