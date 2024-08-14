@@ -3,13 +3,13 @@ import promptToConfirm from '../common/promptToConfirm';
 import { readTimeSheet, writeTimeSheet } from '../common/timeSheetReadWrite';
 import { ProjectClockData, Task } from '../types/ProjectClockData';
 import handleExitPromptError from '../common/handleExitPromptError';
-import promptForTask from '../common/promptForTask';
+import promptToConfirmOrSelectTask from '../common/promptToConfirmOrSelectTask';
 import ProjectClockError from '../common/ProjectClockError';
 
 type TaskToUse = Task | null;
 type TaskDescriptorToUse = string | null;
 
-async function promptForTaskCreation(
+async function promptToCreateNewTask(
   reason: string
 ): Promise<TaskDescriptorToUse> {
   if (await promptToConfirm(`${reason}; do you want to create a new task?`)) {
@@ -36,7 +36,7 @@ async function timeSheetIsEmpty(
         return taskDescriptor;
       }
     } else {
-      taskDescriptorToUse = await promptForTaskCreation('time sheet is empty');
+      taskDescriptorToUse = await promptToCreateNewTask('time sheet is empty');
       if (!taskDescriptorToUse) {
         console.log('exiting; no task to start');
         process.exit(0);
@@ -56,10 +56,14 @@ async function getUnstartedTask(
   try {
     const unstartedTasks = tasks.filter((task) => !task.begin);
     if (unstartedTasks.length > 0) {
-      unstartedTask = await promptForTask(unstartedTasks, 'unstarted', 'start');
+      unstartedTask = await promptToConfirmOrSelectTask(
+        unstartedTasks,
+        'unstarted',
+        'start'
+      );
     }
     if (!unstartedTask) {
-      taskDescriptorToUse = await promptForTaskCreation(
+      taskDescriptorToUse = await promptToCreateNewTask(
         'no unstarted tasks found'
       );
       if (!taskDescriptorToUse) {
@@ -84,7 +88,7 @@ async function getMathchingUnstartedTask(
       (task) => task.subject.match(taskDescriptor) && !task.begin
     );
     if (matchingUnstartedTasks.length > 0) {
-      matchingTask = await promptForTask(
+      matchingTask = await promptToConfirmOrSelectTask(
         matchingUnstartedTasks,
         'matching unstarted',
         'start'

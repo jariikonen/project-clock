@@ -12,7 +12,7 @@ export function getTestTask(testFilePath: string, subject = TASK_SUBJECT) {
  * Tests that the given property of the task with given subject has the given
  * value.
  */
-export function testTaskMemberHasValue(
+export function expectTaskMemberHasValue(
   testFilePath: string,
   member: keyof Task,
   value: string | string[] | undefined,

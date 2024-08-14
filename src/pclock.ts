@@ -7,6 +7,8 @@ import start from './commands/start';
 import stop from './commands/stop';
 import status from './commands/status';
 import list from './commands/list';
+import suspend from './commands/suspend';
+import resume from './commands/resume';
 
 const program = new Command();
 
@@ -65,5 +67,25 @@ program
   .alias('ls')
   .description('List tasks on the time sheet.\n\n')
   .action(() => list(program.opts()));
+
+program
+  .command('suspend')
+  .alias('pause')
+  .description('Suspend a task.\n\n')
+  .argument(
+    '[task_descriptor]',
+    'task descriptor; a string that is expected to match a task subject'
+  )
+  .action((taskDescriptor) => suspend(taskDescriptor));
+
+program
+  .command('resume')
+  .alias('unpause')
+  .description('Resume a task.\n\n')
+  .argument(
+    '[task_descriptor]',
+    'task descriptor; a string that is expected to match a task subject'
+  )
+  .action((taskDescriptor) => resume(taskDescriptor));
 
 program.parse();

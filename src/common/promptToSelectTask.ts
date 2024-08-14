@@ -11,11 +11,11 @@ type SelectChoices = (
   | Separator
 )[];
 
-function createChoices(tasks: Task[]): SelectChoices {
+function createChoices(tasks: Task[], truncateToLength = 60): SelectChoices {
   const choices = tasks.map((task, index) => {
     const name =
-      task.subject.length > 15
-        ? `${task.subject.substring(0, 15)}...`
+      task.subject.length > truncateToLength
+        ? `${task.subject.substring(0, truncateToLength - 3)}...`
         : task.subject;
     const value = index.toString();
     const description = task.subject;

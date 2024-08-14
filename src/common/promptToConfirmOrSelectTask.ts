@@ -31,7 +31,7 @@ export default async function promptForTask(
   if (tasks.length === 1) {
     if (
       await promptToConfirm(
-        `there is one ${adjective} task on the time sheet (${tasks[0].subject.substring(0, 15)}); ${verb} this task?`
+        `there is one ${adjective} task on the time sheet (${tasks[0].subject}); ${verb} this task?`
       )
     ) {
       return tasks[0];

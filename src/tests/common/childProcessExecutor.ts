@@ -13,10 +13,11 @@ export const UP = '\x1B\x5B\x41';
  */
 export default async function execute(
   command: string,
-  inputs?: string[]
+  inputs?: string[],
+  timeout = 500
 ): Promise<string> {
   return new Promise((resolve, reject) => {
-    const proc = child_process.exec(command, (error) => {
+    const proc = child_process.exec(command, { timeout }, (error) => {
       if (error) {
         reject(error);
       }

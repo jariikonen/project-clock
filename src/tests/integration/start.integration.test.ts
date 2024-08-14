@@ -12,7 +12,7 @@ import { createTestFile, getTestFileDataObj } from '../common/testFile';
 import isValidTimestamp from '../common/timeStamp';
 import { createTestDir, removeTestDir } from '../common/testDirectory';
 import execute, { DOWN } from '../common/childProcessExecutor';
-import { getTestTask, testTaskMemberHasValue } from '../common/testTask';
+import { getTestTask, expectTaskMemberHasValue } from '../common/testTask';
 
 const testDirName = 'testDirStart';
 const testDirPath = path.join(ROOT_DIR, testDirName);
@@ -36,7 +36,7 @@ describe('Starting the clock', () => {
     removeTestDir(subdirPath);
   });
 
-  function testTaskIsStarted(index: number, subjectIsTimestamp = false) {
+  function expectTaskIsStarted(index: number, subjectIsTimestamp = false) {
     const projectClockDataObj = getTestFileDataObj(testFilePath);
     const { subject, begin } = projectClockDataObj.tasks[index];
     const currentTimestamp = new Date().toISOString();
@@ -54,7 +54,7 @@ describe('Starting the clock', () => {
     }
   }
 
-  function testTaskIsNotStarted(subject = TASK_SUBJECT) {
+  function expectTaskIsNotStarted(subject = TASK_SUBJECT) {
     const task = getTestTask(testFilePath, subject);
     expect(task?.subject).toEqual(subject);
     expect(task?.begin).not.toBeDefined();
@@ -168,7 +168,7 @@ describe('Starting the clock', () => {
       expect(response).toMatch('do you want to create a new task?');
       expect(response).toMatch('enter subject for the task:');
 
-      testTaskIsStarted(0, true);
+      expectTaskIsStarted(0, true);
     });
 
     test('starts correct task when subject for the task is entered', async () => {
@@ -178,7 +178,7 @@ describe('Starting the clock', () => {
       );
       expect(response).toMatch('do you want to create a new task?');
       expect(response).toMatch('enter subject for the task');
-      testTaskIsStarted(0);
+      expectTaskIsStarted(0);
     });
 
     test('asks confirmation from user when there is a single unstarted task on the time sheet', () => {
@@ -237,7 +237,7 @@ describe('Starting the clock', () => {
       expect(response).toMatch(
         `there is one unstarted task on the time sheet (${TASK_SUBJECT}); start this task`
       );
-      testTaskIsStarted(1);
+      expectTaskIsStarted(1);
     });
 
     test('asks which of the many unstarted tasks to start', () => {
@@ -272,6 +272,82 @@ describe('Starting the clock', () => {
       );
     });
 
+    test('there is correct amount of options when the user is asked which of the many unstarted tasks found to start', () => {
+      // initialize test environment
+      createTestFile(
+        {
+          projectName: PROJECT_NAME,
+          tasks: [
+            {
+              subject: 'first unstartable task',
+              begin: '2024-01-01T00:00:00.000Z',
+            },
+            {
+              subject: 'first startable task',
+            },
+            {
+              subject: 'second unstartable task',
+              begin: '2024-01-01T00:00:00.000Z',
+              suspend: ['2024-01-01T01:00:00.000Z'],
+            },
+            {
+              subject: 'third unstartable task',
+              begin: '2024-01-01T00:00:00.000Z',
+              suspend: ['2024-01-01T01:00:00.000Z'],
+              resume: ['2024-01-01T02:00:00.000Z'],
+            },
+            {
+              subject: 'second startable task',
+            },
+            {
+              subject: 'fourth unstartable task',
+              begin: '2024-01-01T00:00:00.000Z',
+              suspend: ['2024-01-01T01:00:00.000Z', '2024-01-01T03:00:00.000Z'],
+              resume: ['2024-01-01T02:00:00.000Z'],
+            },
+            {
+              subject: 'fifth unstartable task',
+              begin: '2024-01-01T00:00:00.000Z',
+              suspend: ['2024-01-01T01:00:00.000Z', '2024-01-01T03:00:00.000Z'],
+              resume: ['2024-01-01T02:00:00.000Z', '2024-01-01T04:00:00.000Z'],
+            },
+            {
+              subject: 'sixth unstartable task',
+              begin: '2024-01-01T00:00:00.000Z',
+              suspend: ['2024-01-01T01:00:00.000Z', '2024-01-01T03:00:00.000Z'],
+              resume: ['2024-01-01T02:00:00.000Z', '2024-01-01T04:00:00.000Z'],
+              end: '2024-01-01T05:00:00.000Z',
+            },
+            {
+              subject: 'seventh unstartable task',
+              begin: '2024-01-01T00:00:00.000Z',
+              end: '2024-01-01T01:00:00.000Z',
+            },
+          ],
+        },
+        testFilePath
+      );
+
+      // test
+      const response = execSync(
+        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js start`,
+        { encoding: 'utf8' }
+      );
+      expect(response).toMatch(
+        'there are more than one unstarted task on the time sheet; select the task to'
+      );
+      expect(response).toMatch('first startable task');
+      expect(response).toMatch('second startable task');
+      expect(response).toMatch('none');
+      expect(response).not.toMatch('first unstartable task');
+      expect(response).not.toMatch('second unstartable task');
+      expect(response).not.toMatch('third unstartable task');
+      expect(response).not.toMatch('fourth unstartable task');
+      expect(response).not.toMatch('fifth unstartable task');
+      expect(response).not.toMatch('sixth unstartable task');
+      expect(response).not.toMatch('seventh unstartable task');
+    });
+
     test('starts correct task when the first of many unstarted tasks is selected', () => {
       // initialize test environment
       createTestFile(
@@ -303,7 +379,7 @@ describe('Starting the clock', () => {
         'there are more than one unstarted task on the time sheet; select the task to'
       );
       expect(response).toMatch(`started task '${TASK_SUBJECT}'`);
-      testTaskIsStarted(1);
+      expectTaskIsStarted(1);
     });
 
     test('does not start a task when there are many unstarted tasks and the last option, "none", is selected', async () => {
@@ -337,7 +413,7 @@ describe('Starting the clock', () => {
         'there are more than one unstarted task on the time sheet; select the task to'
       );
       expect(response).toMatch('nothing to start');
-      testTaskIsNotStarted(TASK_SUBJECT);
+      expectTaskIsNotStarted(TASK_SUBJECT);
     });
 
     test('does not create a new task when user tries to create a task that already exists', async () => {
@@ -446,7 +522,7 @@ describe('Starting the clock', () => {
       expect(response).toMatch(
         `no matching unstarted task found; create a new task, '${TASK_SUBJECT}'?`
       );
-      testTaskIsStarted(2);
+      expectTaskIsStarted(2);
     });
 
     test('exits without creating a task when matching task is not found and user answers no', () => {
@@ -545,7 +621,7 @@ describe('Starting the clock', () => {
       expect(response).toMatch(
         `there is one matching unstarted task on the time sheet (${TASK_SUBJECT}); start this`
       );
-      testTaskIsStarted(1);
+      expectTaskIsStarted(1);
     });
 
     test('exits without starting a task when single unstarted task is found and user answers no', () => {
@@ -579,7 +655,7 @@ describe('Starting the clock', () => {
       expect(response).toMatch(
         `there is one matching unstarted task on the time sheet (${TASK_SUBJECT}); start this`
       );
-      testTaskIsNotStarted(TASK_SUBJECT);
+      expectTaskIsNotStarted(TASK_SUBJECT);
     });
 
     test('asks which of the many matching tasks to start', () => {
@@ -651,7 +727,11 @@ describe('Starting the clock', () => {
       expect(error).toMatch(
         `can't start task '${TASK_SUBJECT}'; the task has already been started`
       );
-      testTaskMemberHasValue(testFilePath, 'begin', '2024-01-01T00:00:00.000Z');
+      expectTaskMemberHasValue(
+        testFilePath,
+        'begin',
+        '2024-01-01T00:00:00.000Z'
+      );
     });
   });
 });
