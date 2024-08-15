@@ -9,8 +9,12 @@ export function getTestTask(testFilePath: string, subject = TASK_SUBJECT) {
 }
 
 /**
- * Tests that the given property of the task with given subject has the given
+ * Expects that the given property of the task with given subject has the given
  * value.
+ * @param testFilePath Test file path.
+ * @param member The member under review.
+ * @param value The value the member is expected to have.
+ * @param subject The subject of the task under review.
  */
 export function expectTaskMemberHasValue(
   testFilePath: string,
@@ -18,13 +22,25 @@ export function expectTaskMemberHasValue(
   value: string | string[] | undefined,
   subject = TASK_SUBJECT
 ) {
-  const projectClockDataObj = getTestFileDataObj(testFilePath);
-  const found = projectClockDataObj.tasks.find(
-    (task) => task.subject === subject
-  );
+  const task = getTestTask(testFilePath, subject);
   let memberValue: string | string[] | undefined;
-  if (found) {
-    memberValue = found[member];
+  if (task) {
+    memberValue = task[member];
   }
   expect(memberValue).toEqual(value);
+}
+
+/**
+ * Expects that the given task equals to the given object.
+ * @param testFilePath Test file path.
+ * @param reference A reference object the task is expected to be equal to.
+ * @param subject The subject of the task under review.
+ */
+export function expectTaskEqualsTo(
+  testFilePath: string,
+  reference: Task,
+  subject = TASK_SUBJECT
+) {
+  const task = getTestTask(testFilePath, subject);
+  expect(task).toEqual(reference);
 }

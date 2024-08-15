@@ -145,9 +145,9 @@ export function getResumableTasks(tasks: Task[]) {
     }
     // suspended
     if (
-      (task.suspend && !task.resume && !task.end) ??
-      (task.suspend &&
-        task.resume &&
+      (!!task.suspend && !task.resume && !task.end) ||
+      (!!task.suspend &&
+        !!task.resume &&
         task.suspend.length > task.resume?.length &&
         !task.end)
     ) {
@@ -168,15 +168,15 @@ export function getMatchingResumableTasks(
     }
     // suspended
     if (
-      (task.suspend &&
+      (!!task.suspend &&
         !task.resume &&
         !task.end &&
-        task.subject.match(taskDescriptor)) ??
-      (task.suspend &&
-        task.resume &&
+        !!task.subject.match(taskDescriptor)) ||
+      (!!task.suspend &&
+        !!task.resume &&
         task.suspend.length > task.resume?.length &&
         !task.end &&
-        task.subject.match(taskDescriptor))
+        !!task.subject.match(taskDescriptor))
     ) {
       return true;
     }
@@ -185,76 +185,14 @@ export function getMatchingResumableTasks(
 }
 
 export function getStoppableTasks(tasks: Task[]) {
-  return tasks.filter((task) => {
-    // started
-    if (task.begin && !task.suspend && !task.end) {
-      return true;
-    }
-    // suspended
-    if (
-      (task.suspend && !task.resume && !task.end) ??
-      (task.suspend &&
-        task.resume &&
-        task.suspend.length > task.resume?.length &&
-        !task.end)
-    ) {
-      return true;
-    }
-    // resumed
-    if (
-      task.resume &&
-      task.resume.length > 0 &&
-      !task.end &&
-      task.suspend &&
-      task.suspend.length < task.resume.length
-    ) {
-      return true;
-    }
-    return false;
-  });
+  return getActiveTasks(tasks);
 }
 
 export function getMatchingStoppableTasks(
   tasks: Task[],
   taskDescriptor: string
 ) {
-  return tasks.filter((task) => {
-    // started
-    if (
-      task.begin &&
-      !task.suspend &&
-      !task.end &&
-      task.subject.match(taskDescriptor)
-    ) {
-      return true;
-    }
-    // suspended
-    if (
-      (task.suspend &&
-        !task.resume &&
-        !task.end &&
-        task.subject.match(taskDescriptor)) ??
-      (task.suspend &&
-        task.resume &&
-        task.suspend.length > task.resume?.length &&
-        !task.end &&
-        task.subject.match(taskDescriptor))
-    ) {
-      return true;
-    }
-    // resumed
-    if (
-      task.resume &&
-      task.resume.length > 0 &&
-      !task.end &&
-      task.suspend &&
-      task.suspend.length < task.resume.length &&
-      task.subject.match(taskDescriptor)
-    ) {
-      return true;
-    }
-    return false;
-  });
+  return getMatchingActiveTasks(tasks, taskDescriptor);
 }
 
 export function filterTasks(
@@ -264,6 +202,7 @@ export function filterTasks(
 ): [Task[], string] {
   switch (taskType) {
     case TaskType.Active:
+    case TaskType.Stoppable:
       return taskDescriptor
         ? [getMatchingActiveTasks(tasks, taskDescriptor), 'matching active']
         : [getActiveTasks(tasks), 'active'];
@@ -274,6 +213,13 @@ export function filterTasks(
             'matching suspendable',
           ]
         : [getSuspendableTasks(tasks), 'suspendable'];
+    case TaskType.Resumable:
+      return taskDescriptor
+        ? [
+            getMatchingResumableTasks(tasks, taskDescriptor),
+            'matching resumable',
+          ]
+        : [getResumableTasks(tasks), 'resumable'];
     default:
       throw new ProjectClockError('switch ran out of options');
   }

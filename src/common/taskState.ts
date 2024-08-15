@@ -5,7 +5,7 @@ export function isUnstarted(task?: Task) {
 }
 
 export function isStarted(task?: Task) {
-  return !!task?.begin;
+  return !!task?.begin && !task.suspend && !task.end;
 }
 
 export function isSuspended(task?: Task) {
