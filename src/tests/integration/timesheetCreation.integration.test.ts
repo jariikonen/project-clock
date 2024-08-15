@@ -23,7 +23,7 @@ afterAll(() => {
   removeTestDir(testDirPath);
 });
 
-describe('Time sheet creation', () => {
+describe('Timesheet creation', () => {
   beforeEach(() => {
     createTestDir(subdirPath);
   });
@@ -32,12 +32,12 @@ describe('Time sheet creation', () => {
     removeTestDir(subdirPath);
   });
 
-  test('New project time sheet can be created', () => {
+  test('New project timesheet can be created', () => {
     const response = execSync(
       `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js new ${PROJECT_NAME}`,
       { encoding: 'utf8' }
     );
-    expect(response).toMatch(`created a new time sheet: ${testFilePath}`);
+    expect(response).toMatch(`created a new timesheet: ${testFilePath}`);
 
     const fileExists = fs.existsSync(testFilePath);
     expect(fileExists).toEqual(true);
@@ -46,11 +46,11 @@ describe('Time sheet creation', () => {
     expect(projectClockDataObj.projectName).toEqual(PROJECT_NAME);
   });
 
-  test('Time sheet creation returns with error if file already exists', () => {
+  test('timesheet creation returns with error if file already exists', () => {
     const testCommand = `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js new ${PROJECT_NAME}`;
 
     const response = execSync(testCommand, { encoding: 'utf8' });
-    expect(response).toMatch(`created a new time sheet: ${testFilePath}`);
+    expect(response).toMatch(`created a new timesheet: ${testFilePath}`);
 
     const fileExists = fs.existsSync(testFilePath);
     expect(fileExists).toEqual(true);
@@ -62,7 +62,7 @@ describe('Time sheet creation', () => {
       const e = err as Error;
       error = e.message;
     }
-    expect(error).toMatch('time sheet file already exists');
+    expect(error).toMatch('timesheet file already exists');
     expect(error).not.toMatch('throw');
     expect(error).not.toMatch('ProjectClockError');
   });

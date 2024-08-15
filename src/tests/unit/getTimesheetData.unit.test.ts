@@ -9,9 +9,9 @@ import {
 import { createTestDir, removeTestDir } from '../common/testDirectory';
 import ProjectClockError from '../../common/ProjectClockError';
 import { createTestFile } from '../common/testFile';
-import { getTimeSheetData } from '../../common/timeSheetReadWrite';
+import { getTimesheetData } from '../../common/timesheetReadWrite';
 
-const testDirName = 'testDirGetTimeSheetData';
+const testDirName = 'testDirGetTimesheetData';
 const testDirPath = path.join(ROOT_DIR, testDirName);
 const subdirPath = path.join(testDirPath, SUBDIR_NAME);
 const testFilePath = path.join(subdirPath, TEST_FILE_NAME);
@@ -24,7 +24,7 @@ afterAll(() => {
   removeTestDir(testDirPath);
 });
 
-describe('getTimeSheetData()', () => {
+describe('getTimesheetData()', () => {
   beforeEach(() => {
     createTestDir(subdirPath);
     process.chdir(subdirPath);
@@ -35,43 +35,43 @@ describe('getTimeSheetData()', () => {
     process.chdir(ROOT_DIR);
   });
 
-  describe('No time sheet file exists', () => {
-    test('getTimeSheetData() without an argument and no time sheet file in the directory throws a ProjectClockError', () => {
-      expect(() => getTimeSheetData()).toThrow(ProjectClockError);
-      expect(() => getTimeSheetData()).toThrow(
-        'no time sheet file in the directory'
+  describe('No timesheet file exists', () => {
+    test('getTimesheetData() without an argument and no timesheet file in the directory throws a ProjectClockError', () => {
+      expect(() => getTimesheetData()).toThrow(ProjectClockError);
+      expect(() => getTimesheetData()).toThrow(
+        'no timesheet file in the directory'
       );
     });
 
-    test('getTimeSheetData() with an absolute path leading to non-existent file as an argument throws a ProjectClockError', () => {
+    test('getTimesheetData() with an absolute path leading to non-existent file as an argument throws a ProjectClockError', () => {
       const absolutePathToNonExistentFile = path.join(
         subdirPath,
         TEST_FILE_NAME
       );
-      expect(() => getTimeSheetData(absolutePathToNonExistentFile)).toThrow(
+      expect(() => getTimesheetData(absolutePathToNonExistentFile)).toThrow(
         ProjectClockError
       );
-      expect(() => getTimeSheetData(absolutePathToNonExistentFile)).toThrow(
-        `time sheet file '${absolutePathToNonExistentFile}' does not exist`
+      expect(() => getTimesheetData(absolutePathToNonExistentFile)).toThrow(
+        `timesheet file '${absolutePathToNonExistentFile}' does not exist`
       );
     });
 
-    test('getTimeSheetData() with a relative path leading to non-existent file as an argument throws a ProjectClockError', () => {
+    test('getTimesheetData() with a relative path leading to non-existent file as an argument throws a ProjectClockError', () => {
       const relativePathToNonExistentFile = TEST_FILE_NAME;
       const absoluteTestPath = path.join(
         process.cwd(),
         relativePathToNonExistentFile
       );
-      expect(() => getTimeSheetData(relativePathToNonExistentFile)).toThrow(
+      expect(() => getTimesheetData(relativePathToNonExistentFile)).toThrow(
         ProjectClockError
       );
-      expect(() => getTimeSheetData(relativePathToNonExistentFile)).toThrow(
-        `time sheet file '${absoluteTestPath}' does not exist`
+      expect(() => getTimesheetData(relativePathToNonExistentFile)).toThrow(
+        `timesheet file '${absoluteTestPath}' does not exist`
       );
     });
   });
 
-  describe('TimeSheet file exists', () => {
+  describe('Timesheet file exists', () => {
     const testFileDataObj = {
       projectName: PROJECT_NAME,
       tasks: [],
@@ -81,26 +81,26 @@ describe('getTimeSheetData()', () => {
       createTestFile(testFileDataObj, testFilePath);
     });
 
-    test('getTimeSheetData() without an argument returns correct data', () => {
-      expect(() => getTimeSheetData()).not.toThrow();
-      const response = getTimeSheetData();
+    test('getTimesheetData() without an argument returns correct data', () => {
+      expect(() => getTimesheetData()).not.toThrow();
+      const response = getTimesheetData();
       expect(response).toEqual(testFileDataObj);
     });
 
-    test('getTimeSheetData() with an absolute path leading to an existing time sheet file as an argument returns correct data', () => {
-      expect(() => getTimeSheetData(testFilePath)).not.toThrow();
-      const response = getTimeSheetData(testFilePath);
+    test('getTimesheetData() with an absolute path leading to an existing timesheet file as an argument returns correct data', () => {
+      expect(() => getTimesheetData(testFilePath)).not.toThrow();
+      const response = getTimesheetData(testFilePath);
       expect(response).toEqual(testFileDataObj);
     });
 
-    test('getTimeSheetData() with a relative path leading to an existing time sheet file as an argument returns correct data', () => {
-      expect(() => getTimeSheetData(TEST_FILE_NAME)).not.toThrow();
-      const response = getTimeSheetData(testFilePath);
+    test('getTimesheetData() with a relative path leading to an existing timesheet file as an argument returns correct data', () => {
+      expect(() => getTimesheetData(TEST_FILE_NAME)).not.toThrow();
+      const response = getTimesheetData(testFilePath);
       expect(response).toEqual(testFileDataObj);
     });
   });
 
-  describe('An inaccessable time sheet file exists', () => {
+  describe('An inaccessable timesheet file exists', () => {
     const testFileDataObj = {
       projectName: PROJECT_NAME,
       tasks: [],
@@ -112,25 +112,25 @@ describe('getTimeSheetData()', () => {
         fs.chmodSync(testFilePath, '000');
       });
 
-      test('getTimeSheetData() without an argument throws ProjectClockError', () => {
-        expect(() => getTimeSheetData()).toThrow(ProjectClockError);
-        expect(() => getTimeSheetData()).toThrow(
+      test('getTimesheetData() without an argument throws ProjectClockError', () => {
+        expect(() => getTimesheetData()).toThrow(ProjectClockError);
+        expect(() => getTimesheetData()).toThrow(
           `reading of file '${testFilePath}' denied (no permission)`
         );
       });
 
-      test('getTimeSheetData() with an absolute path leading to an existing time sheet file as an argument throws ProjectClockError', () => {
-        expect(() => getTimeSheetData(testFilePath)).toThrow(ProjectClockError);
-        expect(() => getTimeSheetData(testFilePath)).toThrow(
+      test('getTimesheetData() with an absolute path leading to an existing timesheet file as an argument throws ProjectClockError', () => {
+        expect(() => getTimesheetData(testFilePath)).toThrow(ProjectClockError);
+        expect(() => getTimesheetData(testFilePath)).toThrow(
           `reading of file '${testFilePath}' denied (no permission)`
         );
       });
 
-      test('getTimeSheetData() with a relative path leading to an existing time sheet file as an argument throws ProjectClockError', () => {
-        expect(() => getTimeSheetData(TEST_FILE_NAME)).toThrow(
+      test('getTimesheetData() with a relative path leading to an existing timesheet file as an argument throws ProjectClockError', () => {
+        expect(() => getTimesheetData(TEST_FILE_NAME)).toThrow(
           ProjectClockError
         );
-        expect(() => getTimeSheetData(TEST_FILE_NAME)).toThrow(
+        expect(() => getTimesheetData(TEST_FILE_NAME)).toThrow(
           `reading of file '${testFilePath}' denied (no permission)`
         );
       });
@@ -142,32 +142,32 @@ describe('getTimeSheetData()', () => {
         fs.chmodSync(testFilePath, '444');
       });
 
-      test('getTimeSheetData() without an argument throws ProjectClockError', () => {
-        expect(() => getTimeSheetData()).toThrow(ProjectClockError);
-        expect(() => getTimeSheetData()).toThrow(
+      test('getTimesheetData() without an argument throws ProjectClockError', () => {
+        expect(() => getTimesheetData()).toThrow(ProjectClockError);
+        expect(() => getTimesheetData()).toThrow(
           `no write permission to file '${testFilePath}'`
         );
       });
 
-      test('getTimeSheetData() with an absolute path leading to an existing time sheet file as an argument throws ProjectClockError', () => {
-        expect(() => getTimeSheetData(testFilePath)).toThrow(ProjectClockError);
-        expect(() => getTimeSheetData(testFilePath)).toThrow(
+      test('getTimesheetData() with an absolute path leading to an existing timesheet file as an argument throws ProjectClockError', () => {
+        expect(() => getTimesheetData(testFilePath)).toThrow(ProjectClockError);
+        expect(() => getTimesheetData(testFilePath)).toThrow(
           `no write permission to file '${testFilePath}'`
         );
       });
 
-      test('getTimeSheetData() with a relative path leading to an existing time sheet file as an argument throws ProjectClockError', () => {
-        expect(() => getTimeSheetData(TEST_FILE_NAME)).toThrow(
+      test('getTimesheetData() with a relative path leading to an existing timesheet file as an argument throws ProjectClockError', () => {
+        expect(() => getTimesheetData(TEST_FILE_NAME)).toThrow(
           ProjectClockError
         );
-        expect(() => getTimeSheetData(TEST_FILE_NAME)).toThrow(
+        expect(() => getTimesheetData(TEST_FILE_NAME)).toThrow(
           `no write permission to file '${testFilePath}'`
         );
       });
     });
   });
 
-  describe('More than one time sheet file exists', () => {
+  describe('More than one timesheet file exists', () => {
     const testFileDataObj = {
       projectName: PROJECT_NAME,
       tasks: [],
@@ -187,22 +187,22 @@ describe('getTimeSheetData()', () => {
     });
 
     describe('The target file is accessible', () => {
-      test('getTimeSheetData() without an argument throws a ProjectClockError', () => {
-        expect(() => getTimeSheetData()).toThrow(ProjectClockError);
-        expect(() => getTimeSheetData()).toThrow(
-          'more than one time sheet file in the directory'
+      test('getTimesheetData() without an argument throws a ProjectClockError', () => {
+        expect(() => getTimesheetData()).toThrow(ProjectClockError);
+        expect(() => getTimesheetData()).toThrow(
+          'more than one timesheet file in the directory'
         );
       });
 
-      test('getTimeSheetData() with an absolute path leading to an existing time sheet file as an argument returns correct data', () => {
-        expect(() => getTimeSheetData(testFilePath2)).not.toThrow();
-        const response = getTimeSheetData(testFilePath2);
+      test('getTimesheetData() with an absolute path leading to an existing timesheet file as an argument returns correct data', () => {
+        expect(() => getTimesheetData(testFilePath2)).not.toThrow();
+        const response = getTimesheetData(testFilePath2);
         expect(response).toEqual(testFileDataObj2);
       });
 
-      test('getTimeSheetData() with a relative path leading to an existing time sheet file as an argument returns correct data', () => {
-        expect(() => getTimeSheetData(testFileName2)).not.toThrow();
-        const response = getTimeSheetData(testFilePath2);
+      test('getTimesheetData() with a relative path leading to an existing timesheet file as an argument returns correct data', () => {
+        expect(() => getTimesheetData(testFileName2)).not.toThrow();
+        const response = getTimesheetData(testFilePath2);
         expect(response).toEqual(testFileDataObj2);
       });
     });
@@ -213,27 +213,27 @@ describe('getTimeSheetData()', () => {
         fs.chmodSync(testFilePath2, '000');
       });
 
-      test('getTimeSheetData() without an argument throws a ProjectClockError', () => {
-        expect(() => getTimeSheetData()).toThrow(ProjectClockError);
-        expect(() => getTimeSheetData()).toThrow(
-          'more than one time sheet file in the directory'
+      test('getTimesheetData() without an argument throws a ProjectClockError', () => {
+        expect(() => getTimesheetData()).toThrow(ProjectClockError);
+        expect(() => getTimesheetData()).toThrow(
+          'more than one timesheet file in the directory'
         );
       });
 
-      test('getTimeSheetData() with an absolute path leading to an existing time sheet file as an argument throws ProjectClockError', () => {
-        expect(() => getTimeSheetData(testFilePath2)).toThrow(
+      test('getTimesheetData() with an absolute path leading to an existing timesheet file as an argument throws ProjectClockError', () => {
+        expect(() => getTimesheetData(testFilePath2)).toThrow(
           ProjectClockError
         );
-        expect(() => getTimeSheetData(testFilePath2)).toThrow(
+        expect(() => getTimesheetData(testFilePath2)).toThrow(
           `reading of file '${testFilePath2}' denied (no permission)`
         );
       });
 
-      test('getTimeSheetData() with a relative path leading to an existing time sheet file as an argument throws ProjectClockError', () => {
-        expect(() => getTimeSheetData(testFileName2)).toThrow(
+      test('getTimesheetData() with a relative path leading to an existing timesheet file as an argument throws ProjectClockError', () => {
+        expect(() => getTimesheetData(testFileName2)).toThrow(
           ProjectClockError
         );
-        expect(() => getTimeSheetData(testFilePath2)).toThrow(
+        expect(() => getTimesheetData(testFilePath2)).toThrow(
           `reading of file '${testFilePath2}' denied (no permission)`
         );
       });
@@ -245,27 +245,27 @@ describe('getTimeSheetData()', () => {
         fs.chmodSync(testFilePath2, '444');
       });
 
-      test('getTimeSheetData() without an argument throws a ProjectClockError', () => {
-        expect(() => getTimeSheetData()).toThrow(ProjectClockError);
-        expect(() => getTimeSheetData()).toThrow(
-          'more than one time sheet file in the directory'
+      test('getTimesheetData() without an argument throws a ProjectClockError', () => {
+        expect(() => getTimesheetData()).toThrow(ProjectClockError);
+        expect(() => getTimesheetData()).toThrow(
+          'more than one timesheet file in the directory'
         );
       });
 
-      test('getTimeSheetData() with an absolute path leading to an existing time sheet file as an argument throws ProjectClockError', () => {
-        expect(() => getTimeSheetData(testFilePath2)).toThrow(
+      test('getTimesheetData() with an absolute path leading to an existing timesheet file as an argument throws ProjectClockError', () => {
+        expect(() => getTimesheetData(testFilePath2)).toThrow(
           ProjectClockError
         );
-        expect(() => getTimeSheetData(testFilePath2)).toThrow(
+        expect(() => getTimesheetData(testFilePath2)).toThrow(
           `no write permission to file '${testFilePath2}'`
         );
       });
 
-      test('getTimeSheetData() with a relative path leading to an existing time sheet file as an argument throws ProjectClockError', () => {
-        expect(() => getTimeSheetData(testFileName2)).toThrow(
+      test('getTimesheetData() with a relative path leading to an existing timesheet file as an argument throws ProjectClockError', () => {
+        expect(() => getTimesheetData(testFileName2)).toThrow(
           ProjectClockError
         );
-        expect(() => getTimeSheetData(testFilePath2)).toThrow(
+        expect(() => getTimesheetData(testFilePath2)).toThrow(
           `no write permission to file '${testFilePath2}'`
         );
       });

@@ -89,7 +89,7 @@ describe('Suspend command', () => {
     expect(response).not.toMatch('ProjectClockError');
   });
 
-  test('"Suspend" command reports time sheet file errors in a user friendly manner; no time sheet file', () => {
+  test('"Suspend" command reports timesheet file errors in a user friendly manner; no timesheet file', () => {
     let error = '';
     try {
       execSync(`cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js suspend`, {
@@ -101,13 +101,13 @@ describe('Suspend command', () => {
       error = e.message;
     }
     expect(error).toMatch(
-      'An error occurred while reading the time sheet file (no time sheet file in the directory)'
+      'An error occurred while reading the timesheet file (no timesheet file in the directory)'
     );
     expect(error).not.toMatch('throw');
     expect(error).not.toMatch('ProjectClockError');
   });
 
-  test('"Suspend" command reports time sheet file errors in a user friendly manner; no permission', () => {
+  test('"Suspend" command reports timesheet file errors in a user friendly manner; no permission', () => {
     // initialize test environment
     createTestFile(
       {
@@ -128,9 +128,7 @@ describe('Suspend command', () => {
       const e = err as Error;
       error = e.message;
     }
-    expect(error).toMatch(
-      'An error occurred while reading the time sheet file'
-    );
+    expect(error).toMatch('An error occurred while reading the timesheet file');
     expect(error).toMatch('no permission');
     expect(error).not.toMatch('throw');
     expect(error).not.toMatch('ProjectClockError');
@@ -171,7 +169,7 @@ describe('Suspend command', () => {
       expect(error).not.toMatch('ProjectClockError');
     });
 
-    test('exits with an error when no suspendable tasks are found because the time sheet is empty', () => {
+    test('exits with an error when no suspendable tasks are found because the timesheet is empty', () => {
       // initialize test environment
       createTestFile(
         {
@@ -191,7 +189,7 @@ describe('Suspend command', () => {
         const e = err as Error;
         error = e.message;
       }
-      expect(error).toMatch('time sheet is empty, nothing to suspend');
+      expect(error).toMatch('timesheet is empty, nothing to suspend');
       expect(error).not.toMatch('throw');
       expect(error).not.toMatch('ProjectClockError');
     });
@@ -217,7 +215,7 @@ describe('Suspend command', () => {
         { encoding: 'utf8', stdio: 'pipe' }
       );
       expect(response).toMatch(
-        `there is one suspendable task on the time sheet (${TASK_SUBJECT}); suspend`
+        `there is one suspendable task on the timesheet (${TASK_SUBJECT}); suspend`
       );
     });
 
@@ -242,7 +240,7 @@ describe('Suspend command', () => {
         { encoding: 'utf8' }
       );
       expect(response).toMatch(
-        `there is one suspendable task on the time sheet (${TASK_SUBJECT}); suspend this`
+        `there is one suspendable task on the timesheet (${TASK_SUBJECT}); suspend this`
       );
       expectTaskIsSuspended();
     });
@@ -268,7 +266,7 @@ describe('Suspend command', () => {
         { encoding: 'utf8' }
       );
       expect(response).toMatch(
-        `there is one suspendable task on the time sheet (${TASK_SUBJECT}); suspend this`
+        `there is one suspendable task on the timesheet (${TASK_SUBJECT}); suspend this`
       );
       expectTaskIsNotSuspended();
     });
@@ -305,7 +303,7 @@ describe('Suspend command', () => {
         { encoding: 'utf8' }
       );
       expect(response).toMatch(
-        'there are more than one suspendable task on the time sheet; select the task to'
+        'there are more than one suspendable task on the timesheet; select the task to'
       );
     });
 
@@ -362,7 +360,7 @@ describe('Suspend command', () => {
         { encoding: 'utf8' }
       );
       expect(response).toMatch(
-        'there are more than one suspendable task on the time sheet; select the task to'
+        'there are more than one suspendable task on the timesheet; select the task to'
       );
       expect(response).toMatch('first suspendable task');
       expect(response).toMatch('second suspendable task');
@@ -405,7 +403,7 @@ describe('Suspend command', () => {
         [`${DOWN}\n`]
       );
       expect(response).toMatch(
-        'there are more than one suspendable task on the time sheet; select the task to'
+        'there are more than one suspendable task on the timesheet; select the task to'
       );
       expectTaskIsSuspended('second suspendable task');
     });
@@ -442,7 +440,7 @@ describe('Suspend command', () => {
         [`${DOWN}${DOWN}${DOWN}\n`]
       );
       expect(response).toMatch(
-        'there are more than one suspendable task on the time sheet; select the task to'
+        'there are more than one suspendable task on the timesheet; select the task to'
       );
       expect(response).toMatch('nothing to suspend');
       expectTaskIsNotSuspended('first suspendable task');
@@ -507,7 +505,7 @@ describe('Suspend command', () => {
         { encoding: 'utf8' }
       );
       expect(response).toMatch(
-        `there is one matching suspendable task on the time sheet (${TASK_SUBJECT}); suspend`
+        `there is one matching suspendable task on the timesheet (${TASK_SUBJECT}); suspend`
       );
     });
 
@@ -538,7 +536,7 @@ describe('Suspend command', () => {
         { encoding: 'utf8' }
       );
       expect(response).toMatch(
-        `there is one matching suspendable task on the time sheet (${TASK_SUBJECT}); suspend`
+        `there is one matching suspendable task on the timesheet (${TASK_SUBJECT}); suspend`
       );
       expectTaskIsSuspended();
     });
@@ -572,7 +570,7 @@ describe('Suspend command', () => {
         { encoding: 'utf8' }
       );
       expect(response).toMatch(
-        `there is one matching suspendable task on the time sheet (${TASK_SUBJECT}); suspend`
+        `there is one matching suspendable task on the timesheet (${TASK_SUBJECT}); suspend`
       );
       expectTaskIsSuspended();
     });
@@ -605,7 +603,7 @@ describe('Suspend command', () => {
         { encoding: 'utf8' }
       );
       expect(response).toMatch(
-        `there is one matching suspendable task on the time sheet (${TASK_SUBJECT}); suspend`
+        `there is one matching suspendable task on the timesheet (${TASK_SUBJECT}); suspend`
       );
       expectTaskIsSuspended();
     });
@@ -640,7 +638,7 @@ describe('Suspend command', () => {
         { encoding: 'utf8' }
       );
       expect(response).toMatch(
-        `there is one matching suspendable task on the time sheet (${TASK_SUBJECT}); suspend`
+        `there is one matching suspendable task on the timesheet (${TASK_SUBJECT}); suspend`
       );
       expectTaskIsSuspended();
     });
@@ -672,7 +670,7 @@ describe('Suspend command', () => {
         { encoding: 'utf8' }
       );
       expect(response).toMatch(
-        `there is one matching suspendable task on the time sheet (${TASK_SUBJECT}); suspend`
+        `there is one matching suspendable task on the timesheet (${TASK_SUBJECT}); suspend`
       );
       expectTaskIsNotSuspended();
     });
@@ -706,7 +704,7 @@ describe('Suspend command', () => {
         { encoding: 'utf8' }
       );
       expect(response).toMatch(
-        'there are more than one matching suspendable task on the time sheet; select'
+        'there are more than one matching suspendable task on the timesheet; select'
       );
     });
 
@@ -764,7 +762,7 @@ describe('Suspend command', () => {
         { encoding: 'utf8' }
       );
       expect(response).toMatch(
-        'there are more than one matching suspendable task on the time sheet; select'
+        'there are more than one matching suspendable task on the timesheet; select'
       );
       expect(response).toMatch('first suspendable task');
       expect(response).toMatch('second suspendable task');
@@ -829,7 +827,7 @@ describe('Suspend command', () => {
         [`${DOWN}${DOWN}\n`]
       );
       expect(response).toMatch(
-        'there are more than one matching suspendable task on the time sheet; select'
+        'there are more than one matching suspendable task on the timesheet; select'
       );
       expectTaskIsSuspended('third suspendable task');
     });
@@ -888,7 +886,7 @@ describe('Suspend command', () => {
         [`${DOWN}${DOWN}${DOWN}\n`]
       );
       expect(response).toMatch(
-        'there are more than one matching suspendable task on the time sheet; select'
+        'there are more than one matching suspendable task on the timesheet; select'
       );
       expect(response).toMatch('nothing to suspend');
       expectTaskIsNotSuspended('first suspendable task');

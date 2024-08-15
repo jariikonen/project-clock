@@ -7,63 +7,63 @@ import {
 } from '../types/ProjectClockData';
 
 /**
- * Returns time sheet file path based on the 'file' parameter.
+ * Returns timesheet file path based on the 'file' parameter.
  *
  * If 'file' is undefined, the function looks for a file with a name matching
- * the time sheet file naming convention (project_name.pclock.json) from the
+ * the timesheet file naming convention (project_name.pclock.json) from the
  * current working directory. If 'file' is not an absolute path, a path
  * relative to the current working directory is returned.
- * @param file TimeSheet file path.
- * @returns Absolute path to a time sheet file if such is found.
- * @throws ProjectClockError with a descriptive error message ('no time sheet
- *    file in the directory', 'more than one time sheet file in the directory',
- *    or `time sheet file 'FILE_PATH' does not exist`).
+ * @param file Timesheet file path.
+ * @returns Absolute path to a timesheet file if such is found.
+ * @throws ProjectClockError with a descriptive error message ('no timesheet
+ *    file in the directory', 'more than one timesheet file in the directory',
+ *    or `timesheet file 'FILE_PATH' does not exist`).
  */
-export function getTimeSheetPath(file = '') {
+export function getTimesheetPath(file = '') {
   let filePath = '';
   if (file) {
     if (path.isAbsolute(file)) {
       if (!fs.existsSync(file)) {
-        throw new ProjectClockError(`time sheet file '${file}' does not exist`);
+        throw new ProjectClockError(`timesheet file '${file}' does not exist`);
       }
       filePath = file;
     } else {
       filePath = path.join(process.cwd(), file);
       if (!fs.existsSync(filePath)) {
         throw new ProjectClockError(
-          `time sheet file '${filePath}' does not exist`
+          `timesheet file '${filePath}' does not exist`
         );
       }
     }
   } else {
     const dirContents = fs.readdirSync(process.cwd(), { encoding: 'utf8' });
-    const timeSheets = dirContents.filter((fileName) =>
+    const timesheets = dirContents.filter((fileName) =>
       fileName.match('.pclock.json$')
     );
-    if (timeSheets.length === 0) {
-      throw new ProjectClockError('no time sheet file in the directory');
+    if (timesheets.length === 0) {
+      throw new ProjectClockError('no timesheet file in the directory');
     }
-    if (timeSheets.length > 1) {
+    if (timesheets.length > 1) {
       throw new ProjectClockError(
-        'more than one time sheet file in the directory'
+        'more than one timesheet file in the directory'
       );
     }
-    filePath = path.join(process.cwd(), timeSheets[0]);
+    filePath = path.join(process.cwd(), timesheets[0]);
   }
   return filePath;
 }
 
 /**
- * Returns ProjectClockData object parsed from the time sheet file. Uses path
- * given as argument to find the file or looks for a time sheet file from the
+ * Returns ProjectClockData object parsed from the timesheet file. Uses path
+ * given as argument to find the file or looks for a timesheet file from the
  * current directory, if no path is provided.
- * @throws ProjectClockError with a descriptive error message ('no time sheet
- *    file in the directory', 'more than one time sheet file in the directory',
- *    `time sheet file 'FILE_PATH' does not exist`, `reading of file 'FILE_PATH'
+ * @throws ProjectClockError with a descriptive error message ('no timesheet
+ *    file in the directory', 'more than one timesheet file in the directory',
+ *    `timesheet file 'FILE_PATH' does not exist`, `reading of file 'FILE_PATH'
  *    denied (no permission)` or `no write permission to file 'FILE_PATH'`).
  */
-export function getTimeSheetData(file = '') {
-  const filePath = getTimeSheetPath(file);
+export function getTimesheetData(file = '') {
+  const filePath = getTimesheetPath(file);
   try {
     fs.accessSync(filePath, fs.constants.R_OK);
   } catch (err) {
@@ -90,40 +90,40 @@ export function getTimeSheetData(file = '') {
 }
 
 /**
- * Returns ProjectClockData object parsed from the time sheet file. Uses path
- * given as argument to find the file or looks for a time sheet file from the
+ * Returns ProjectClockData object parsed from the timesheet file. Uses path
+ * given as argument to find the file or looks for a timesheet file from the
  * current directory, if no path is provided.
  *
- * Differs from getTimeSheetData() by handling ProjectClockErrors. If a
+ * Differs from getTimesheetData() by handling ProjectClockErrors. If a
  * ProjectClockError is catched the message is printed to std.error and the
  * process is exited with code 1.
  * @param file
  * @returns
  */
-export function readTimeSheet(file = '') {
-  let timeSheetData: ProjectClockData;
+export function readTimesheet(file = '') {
+  let timesheetData: ProjectClockData;
   try {
-    timeSheetData = getTimeSheetData(file);
+    timesheetData = getTimesheetData(file);
   } catch (error) {
     if (error instanceof ProjectClockError) {
       console.error(
-        `An error occurred while reading the time sheet file (${error.message})`
+        `An error occurred while reading the timesheet file (${error.message})`
       );
       process.exit(1);
     }
     throw error;
   }
-  return timeSheetData;
+  return timesheetData;
 }
 
 /**
- * Writes new data to the time sheet file.
- * @throws ProjectClockError with a descriptive error message ('no time sheet
- *    file in the directory', 'more than one time sheet file in the directory')
+ * Writes new data to the timesheet file.
+ * @throws ProjectClockError with a descriptive error message ('no timesheet
+ *    file in the directory', 'more than one timesheet file in the directory')
  *    or an fs error.
  */
-export function writeTimeSheet(data: ProjectClockData, file = '') {
-  const filePath = getTimeSheetPath(file);
+export function writeTimesheet(data: ProjectClockData, file = '') {
+  const filePath = getTimesheetPath(file);
   fs.writeFileSync(filePath, JSON.stringify(data, null, 2), {
     encoding: 'utf8',
   });

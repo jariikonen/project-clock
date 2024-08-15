@@ -7,10 +7,10 @@ import {
 } from '../common/constants';
 import { createTestDir, removeTestDir } from '../common/testDirectory';
 import { createTestFile, createUnrestrictedTestFile } from '../common/testFile';
-import { getTimeSheetData } from '../../common/timeSheetReadWrite';
+import { getTimesheetData } from '../../common/timesheetReadWrite';
 import ProjectClockError from '../../common/ProjectClockError';
 
-const testDirName = 'testDirTimeSheetReadWrite';
+const testDirName = 'testDirTimesheetReadWrite';
 const testDirPath = path.join(ROOT_DIR, testDirName);
 const subdirPath = path.join(testDirPath, SUBDIR_NAME);
 const testFilePath = path.join(subdirPath, TEST_FILE_NAME);
@@ -31,8 +31,8 @@ afterEach(() => {
   removeTestDir(subdirPath);
 });
 
-describe('Reading of time conversion parameters from the time sheet file', () => {
-  test('Time unit conversion parameters can exist in a valid time sheet file', () => {
+describe('Reading of time conversion parameters from the timesheet file', () => {
+  test('Time unit conversion parameters can exist in a valid timesheet file', () => {
     // initialize test environment
     createTestFile(
       {
@@ -51,7 +51,7 @@ describe('Reading of time conversion parameters from the time sheet file', () =>
     );
 
     // test
-    const timeSheetData = getTimeSheetData(testFilePath);
+    const timeSheetData = getTimesheetData(testFilePath);
     expect(timeSheetData.projectSettings).toEqual({
       timeParams: {
         day: 12,
@@ -62,7 +62,7 @@ describe('Reading of time conversion parameters from the time sheet file', () =>
     });
   });
 
-  test('getTimeSheetData() throws a ProjectClockError when the time sheet contains invalid timeParams', () => {
+  test('getTimesheetData() throws a ProjectClockError when the timesheet contains invalid timeParams', () => {
     // initialize test environment
     createUnrestrictedTestFile(
       {
@@ -81,9 +81,9 @@ describe('Reading of time conversion parameters from the time sheet file', () =>
     );
 
     // test
-    expect(() => getTimeSheetData(testFilePath)).toThrow();
-    expect(() => getTimeSheetData(testFilePath)).toThrow(ProjectClockError);
-    expect(() => getTimeSheetData(testFilePath)).toThrow(
+    expect(() => getTimesheetData(testFilePath)).toThrow();
+    expect(() => getTimesheetData(testFilePath)).toThrow(ProjectClockError);
+    expect(() => getTimesheetData(testFilePath)).toThrow(
       'not a ProjectClockData object'
     );
   });

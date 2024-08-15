@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 /**
- * Creates a new time sheet file for a project.
+ * Creates a new timesheet file for a project.
  *
  * Requires the project name as an argument. Exits with an error if the
  * argument is not provided.
@@ -27,11 +27,11 @@ export default function newTimeSheet(projectName: string) {
     );
   } catch (err) {
     if (err instanceof Error && err.message.startsWith('EEXIST')) {
-      console.error('ERROR: time sheet file already exists');
+      console.error('ERROR: timesheet file already exists');
       process.exit(1);
     } else {
       reportError(err);
     }
   }
-  console.log(`created a new time sheet: ${projectFilePath}`);
+  console.log(`created a new timesheet: ${projectFilePath}`);
 }

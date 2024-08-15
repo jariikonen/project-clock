@@ -1,7 +1,7 @@
 import { TaskType } from '../common/filterTasks';
 import getTaskOfType from '../common/getTaskOfType';
 import { isSuspended, isUnstarted } from '../common/taskState';
-import { readTimeSheet, writeTimeSheet } from '../common/timeSheetReadWrite';
+import { readTimesheet, writeTimesheet } from '../common/timesheetReadWrite';
 import { Task } from '../types/ProjectClockData';
 
 function suspendTask(task: Task): void {
@@ -59,11 +59,11 @@ function suspendTask(task: Task): void {
  *    subject.
  */
 export default async function suspend(taskDescriptor: string | undefined) {
-  const timeSheetData = readTimeSheet();
-  const { tasks } = timeSheetData;
+  const timesheetData = readTimesheet();
+  const { tasks } = timesheetData;
 
   if (tasks.length < 1) {
-    console.error('time sheet is empty, nothing to suspend');
+    console.error('timesheet is empty, nothing to suspend');
     process.exit(1);
   }
 
@@ -77,7 +77,7 @@ export default async function suspend(taskDescriptor: string | undefined) {
   );
   if (taskToSuspend) {
     suspendTask(taskToSuspend);
-    writeTimeSheet(timeSheetData);
+    writeTimesheet(timesheetData);
     console.log(`suspended task '${taskToSuspend.subject}'`);
     process.exit(0);
   }

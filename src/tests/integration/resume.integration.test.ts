@@ -115,7 +115,7 @@ describe('Resume command', () => {
     expect(response).not.toMatch('ProjectClockError');
   });
 
-  test('"Resume" command reports time sheet file errors in a user friendly manner; no time sheet file', () => {
+  test('"Resume" command reports timesheet file errors in a user friendly manner; no timesheet file', () => {
     let error = '';
     try {
       execSync(`cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js resume`, {
@@ -127,13 +127,13 @@ describe('Resume command', () => {
       error = e.message;
     }
     expect(error).toMatch(
-      'An error occurred while reading the time sheet file (no time sheet file in the directory)'
+      'An error occurred while reading the timesheet file (no timesheet file in the directory)'
     );
     expect(error).not.toMatch('throw');
     expect(error).not.toMatch('ProjectClockError');
   });
 
-  test('"Resume" command reports time sheet file errors in a user friendly manner; no permission', () => {
+  test('"Resume" command reports timesheet file errors in a user friendly manner; no permission', () => {
     // initialize test environment
     createTestFile(
       {
@@ -154,9 +154,7 @@ describe('Resume command', () => {
       const e = err as Error;
       error = e.message;
     }
-    expect(error).toMatch(
-      'An error occurred while reading the time sheet file'
-    );
+    expect(error).toMatch('An error occurred while reading the timesheet file');
     expect(error).toMatch('no permission');
     expect(error).not.toMatch('throw');
     expect(error).not.toMatch('ProjectClockError');
@@ -188,7 +186,7 @@ describe('Resume command', () => {
       expect(error).not.toMatch('ProjectClockError');
     });
 
-    test('exits with an error when no resumable tasks are found because the time sheet is empty', () => {
+    test('exits with an error when no resumable tasks are found because the timesheet is empty', () => {
       // initialize test environment
       createTestFile(
         {
@@ -208,7 +206,7 @@ describe('Resume command', () => {
         const e = err as Error;
         error = e.message;
       }
-      expect(error).toMatch('time sheet is empty, nothing to resume');
+      expect(error).toMatch('timesheet is empty, nothing to resume');
       expect(error).not.toMatch('throw');
       expect(error).not.toMatch('ProjectClockError');
     });
@@ -235,7 +233,7 @@ describe('Resume command', () => {
         { encoding: 'utf8', stdio: 'pipe' }
       );
       expect(response).toMatch(
-        `there is one resumable task on the time sheet (${TASK_SUBJECT}); resume`
+        `there is one resumable task on the timesheet (${TASK_SUBJECT}); resume`
       );
     });
 
@@ -261,7 +259,7 @@ describe('Resume command', () => {
         { encoding: 'utf8' }
       );
       expect(response).toMatch(
-        `there is one resumable task on the time sheet (${TASK_SUBJECT}); resume this`
+        `there is one resumable task on the timesheet (${TASK_SUBJECT}); resume this`
       );
       expectTaskIsResumed();
     });
@@ -289,7 +287,7 @@ describe('Resume command', () => {
         { encoding: 'utf8' }
       );
       expect(response).toMatch(
-        `there is one resumable task on the time sheet (${TASK_SUBJECT}); resume this`
+        `there is one resumable task on the timesheet (${TASK_SUBJECT}); resume this`
       );
       expectTaskIsResumed();
     });
@@ -316,7 +314,7 @@ describe('Resume command', () => {
         { encoding: 'utf8' }
       );
       expect(response).toMatch(
-        `there is one resumable task on the time sheet (${TASK_SUBJECT}); resume this`
+        `there is one resumable task on the timesheet (${TASK_SUBJECT}); resume this`
       );
       expectTaskIsResumed();
       const task = getTestTask(testFilePath);
@@ -351,7 +349,7 @@ describe('Resume command', () => {
         { encoding: 'utf8' }
       );
       expect(response).toMatch(
-        `there is one resumable task on the time sheet (${TASK_SUBJECT}); resume this`
+        `there is one resumable task on the timesheet (${TASK_SUBJECT}); resume this`
       );
       expectTaskIsResumed();
       expectTaskMemberHasValue(testFilePath, 'suspend', [
@@ -384,7 +382,7 @@ describe('Resume command', () => {
         { encoding: 'utf8' }
       );
       expect(response).toMatch(
-        `there is one resumable task on the time sheet (${TASK_SUBJECT}); resume this`
+        `there is one resumable task on the timesheet (${TASK_SUBJECT}); resume this`
       );
       expectTaskEqualsTo(testFilePath, {
         subject: TASK_SUBJECT,
@@ -409,7 +407,7 @@ describe('Resume command', () => {
         { encoding: 'utf8' }
       );
       expect(response).toMatch(
-        'there are more than one resumable task on the time sheet; select the task to'
+        'there are more than one resumable task on the timesheet; select the task to'
       );
     });
 
@@ -429,7 +427,7 @@ describe('Resume command', () => {
         { encoding: 'utf8' }
       );
       expect(response).toMatch(
-        'there are more than one resumable task on the time sheet; select the task to'
+        'there are more than one resumable task on the timesheet; select the task to'
       );
       expect(response).toMatch('first resumable task');
       expect(response).toMatch('second resumable task');
@@ -456,7 +454,7 @@ describe('Resume command', () => {
         [`${DOWN}\n`]
       );
       expect(response).toMatch(
-        'there are more than one resumable task on the time sheet; select the task to'
+        'there are more than one resumable task on the timesheet; select the task to'
       );
       expectTaskIsResumed('second resumable task');
     });
@@ -477,7 +475,7 @@ describe('Resume command', () => {
         [`${DOWN}${DOWN}${DOWN}\n`]
       );
       expect(response).toMatch(
-        'there are more than one resumable task on the time sheet; select the task to'
+        'there are more than one resumable task on the timesheet; select the task to'
       );
       expect(response).toMatch('nothing to resume');
       expectTaskEqualsTo(
@@ -642,7 +640,7 @@ describe('Resume command', () => {
         { encoding: 'utf8' }
       );
       expect(response).toMatch(
-        `there is one matching resumable task on the time sheet (${TASK_SUBJECT}); resume`
+        `there is one matching resumable task on the timesheet (${TASK_SUBJECT}); resume`
       );
     });
 
@@ -674,7 +672,7 @@ describe('Resume command', () => {
         { encoding: 'utf8' }
       );
       expect(response).toMatch(
-        `there is one matching resumable task on the time sheet (${TASK_SUBJECT}); resume`
+        `there is one matching resumable task on the timesheet (${TASK_SUBJECT}); resume`
       );
       expectTaskIsResumed();
     });
@@ -708,7 +706,7 @@ describe('Resume command', () => {
         { encoding: 'utf8' }
       );
       expect(response).toMatch(
-        `there is one matching resumable task on the time sheet (${TASK_SUBJECT}); resume`
+        `there is one matching resumable task on the timesheet (${TASK_SUBJECT}); resume`
       );
       expectTaskIsResumed();
     });
@@ -741,7 +739,7 @@ describe('Resume command', () => {
         { encoding: 'utf8' }
       );
       expect(response).toMatch(
-        `there is one matching resumable task on the time sheet (${TASK_SUBJECT}); resume`
+        `there is one matching resumable task on the timesheet (${TASK_SUBJECT}); resume`
       );
       expectTaskIsResumed();
       expectTaskMemberHasValue(testFilePath, 'suspend', [
@@ -783,7 +781,7 @@ describe('Resume command', () => {
         { encoding: 'utf8' }
       );
       expect(response).toMatch(
-        `there is one matching resumable task on the time sheet (${TASK_SUBJECT}); resume`
+        `there is one matching resumable task on the timesheet (${TASK_SUBJECT}); resume`
       );
       expectTaskIsResumed();
       expectTaskMemberHasValue(testFilePath, 'suspend', [
@@ -825,7 +823,7 @@ describe('Resume command', () => {
         { encoding: 'utf8' }
       );
       expect(response).toMatch(
-        `there is one matching resumable task on the time sheet (${TASK_SUBJECT}); resume`
+        `there is one matching resumable task on the timesheet (${TASK_SUBJECT}); resume`
       );
       expectTaskIsNotResumed();
     });
@@ -847,7 +845,7 @@ describe('Resume command', () => {
         { encoding: 'utf8' }
       );
       expect(response).toMatch(
-        'there are more than one matching resumable task on the time sheet; select'
+        'there are more than one matching resumable task on the timesheet; select'
       );
     });
 
@@ -868,7 +866,7 @@ describe('Resume command', () => {
         { encoding: 'utf8' }
       );
       expect(response).toMatch(
-        'there are more than one matching resumable task on the time sheet; select'
+        'there are more than one matching resumable task on the timesheet; select'
       );
       expect(response).toMatch('first resumable task');
       expect(response).toMatch('second resumable task');
@@ -896,7 +894,7 @@ describe('Resume command', () => {
         [`${DOWN}${DOWN}\n`]
       );
       expect(response).toMatch(
-        'there are more than one matching resumable task on the time sheet; select'
+        'there are more than one matching resumable task on the timesheet; select'
       );
       expectTaskIsResumed('third resumable task');
     });
@@ -918,7 +916,7 @@ describe('Resume command', () => {
         [`${DOWN}${DOWN}${DOWN}\n`]
       );
       expect(response).toMatch(
-        'there are more than one matching resumable task on the time sheet; select'
+        'there are more than one matching resumable task on the timesheet; select'
       );
       expect(response).toMatch('nothing to resume');
       expectTaskIsNotResumed('first resumable task');

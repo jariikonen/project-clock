@@ -31,7 +31,7 @@ export default async function promptForTask(
   if (tasks.length === 1) {
     if (
       await promptToConfirm(
-        `there is one ${adjective} task on the time sheet (${tasks[0].subject}); ${verb} this task?`
+        `there is one ${adjective} task on the timesheet (${tasks[0].subject}); ${verb} this task?`
       )
     ) {
       return tasks[0];
@@ -41,7 +41,7 @@ export default async function promptForTask(
   if (tasks.length > 1) {
     const selectedTask = await promptToSelectTask(
       tasks,
-      `there are more than one ${adjective} task on the time sheet; select the task to ${verb}:`
+      `there are more than one ${adjective} task on the timesheet; select the task to ${verb}:`
     );
     if (selectedTask) {
       return selectedTask;

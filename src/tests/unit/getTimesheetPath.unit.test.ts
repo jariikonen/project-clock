@@ -8,9 +8,9 @@ import {
 import { createTestDir, removeTestDir } from '../common/testDirectory';
 import ProjectClockError from '../../common/ProjectClockError';
 import { createTestFile } from '../common/testFile';
-import { getTimeSheetPath } from '../../common/timeSheetReadWrite';
+import { getTimesheetPath } from '../../common/timesheetReadWrite';
 
-const testDirName = 'testDirGetTimeSheetPath';
+const testDirName = 'testDirGetTimesheetPath';
 const testDirPath = path.join(ROOT_DIR, testDirName);
 const subdirPath = path.join(testDirPath, SUBDIR_NAME);
 const testFilePath = path.join(subdirPath, TEST_FILE_NAME);
@@ -23,7 +23,7 @@ afterAll(() => {
   removeTestDir(testDirPath);
 });
 
-describe('getTimeSheetPath', () => {
+describe('getTimesheetPath', () => {
   beforeEach(() => {
     createTestDir(subdirPath);
     process.chdir(subdirPath);
@@ -34,43 +34,43 @@ describe('getTimeSheetPath', () => {
     process.chdir(ROOT_DIR);
   });
 
-  describe('No time sheet file exists', () => {
-    test('getTimeSheetPath() without an argument and no time sheet file in the directory throws a ProjectClockError', () => {
-      expect(() => getTimeSheetPath()).toThrow(ProjectClockError);
-      expect(() => getTimeSheetPath()).toThrow(
-        'no time sheet file in the directory'
+  describe('No timesheet file exists', () => {
+    test('getTimesheetPath() without an argument and no timesheet file in the directory throws a ProjectClockError', () => {
+      expect(() => getTimesheetPath()).toThrow(ProjectClockError);
+      expect(() => getTimesheetPath()).toThrow(
+        'no timesheet file in the directory'
       );
     });
 
-    test('getTimeSheetPath() with an absolute path leading to non-existent file as an argument throws a ProjectClockError', () => {
+    test('getTimesheetPath() with an absolute path leading to non-existent file as an argument throws a ProjectClockError', () => {
       const absolutePathToNonExistentFile = path.join(
         subdirPath,
         TEST_FILE_NAME
       );
-      expect(() => getTimeSheetPath(absolutePathToNonExistentFile)).toThrow(
+      expect(() => getTimesheetPath(absolutePathToNonExistentFile)).toThrow(
         ProjectClockError
       );
-      expect(() => getTimeSheetPath(absolutePathToNonExistentFile)).toThrow(
-        `time sheet file '${absolutePathToNonExistentFile}' does not exist`
+      expect(() => getTimesheetPath(absolutePathToNonExistentFile)).toThrow(
+        `timesheet file '${absolutePathToNonExistentFile}' does not exist`
       );
     });
 
-    test('getTimeSheetPath() with a relative path leading to non-existent file as an argument throws a ProjectClockError', () => {
+    test('getTimesheetPath() with a relative path leading to non-existent file as an argument throws a ProjectClockError', () => {
       const relativePathToNonExistentFile = TEST_FILE_NAME;
       const absoluteTestPath = path.join(
         process.cwd(),
         relativePathToNonExistentFile
       );
-      expect(() => getTimeSheetPath(relativePathToNonExistentFile)).toThrow(
+      expect(() => getTimesheetPath(relativePathToNonExistentFile)).toThrow(
         ProjectClockError
       );
-      expect(() => getTimeSheetPath(relativePathToNonExistentFile)).toThrow(
-        `time sheet file '${absoluteTestPath}' does not exist`
+      expect(() => getTimesheetPath(relativePathToNonExistentFile)).toThrow(
+        `timesheet file '${absoluteTestPath}' does not exist`
       );
     });
   });
 
-  describe('Time sheet file exists', () => {
+  describe('Timesheet file exists', () => {
     beforeEach(() => {
       createTestFile(
         {
@@ -81,26 +81,26 @@ describe('getTimeSheetPath', () => {
       );
     });
 
-    test('getTimeSheetPath() without an argument returns correct path', () => {
-      expect(() => getTimeSheetPath()).not.toThrow();
-      const response = getTimeSheetPath();
+    test('getTimesheetPath() without an argument returns correct path', () => {
+      expect(() => getTimesheetPath()).not.toThrow();
+      const response = getTimesheetPath();
       expect(response).toMatch(testFilePath);
     });
 
-    test('getTimeSheetPath() with an absolute path leading to an existing time sheet file as an argument returns correct path', () => {
-      expect(() => getTimeSheetPath(testFilePath)).not.toThrow();
-      const response = getTimeSheetPath(testFilePath);
+    test('getTimesheetPath() with an absolute path leading to an existing timesheet file as an argument returns correct path', () => {
+      expect(() => getTimesheetPath(testFilePath)).not.toThrow();
+      const response = getTimesheetPath(testFilePath);
       expect(response).toMatch(testFilePath);
     });
 
-    test('getTimeSheetPath() with a relative path leading to an existing time sheet file as an argument returns correct path', () => {
-      expect(() => getTimeSheetPath(TEST_FILE_NAME)).not.toThrow();
-      const response = getTimeSheetPath(testFilePath);
+    test('getTimesheetPath() with a relative path leading to an existing timesheet file as an argument returns correct path', () => {
+      expect(() => getTimesheetPath(TEST_FILE_NAME)).not.toThrow();
+      const response = getTimesheetPath(testFilePath);
       expect(response).toMatch(testFilePath);
     });
   });
 
-  describe('More than one time sheet file exists', () => {
+  describe('More than one timesheet file exists', () => {
     beforeEach(() => {
       createTestFile(
         {
@@ -121,22 +121,22 @@ describe('getTimeSheetPath', () => {
       );
     });
 
-    test('getTimeSheetPath() without an argument throws a ProjectClockError', () => {
-      expect(() => getTimeSheetPath()).toThrow(ProjectClockError);
-      expect(() => getTimeSheetPath()).toThrow(
-        'more than one time sheet file in the directory'
+    test('getTimesheetPath() without an argument throws a ProjectClockError', () => {
+      expect(() => getTimesheetPath()).toThrow(ProjectClockError);
+      expect(() => getTimesheetPath()).toThrow(
+        'more than one timesheet file in the directory'
       );
     });
 
-    test('getTimeSheetPath() with an absolute path leading to an existing time sheet file as an argument returns correct path', () => {
-      expect(() => getTimeSheetPath(testFilePath)).not.toThrow();
-      const response = getTimeSheetPath(testFilePath);
+    test('getTimesheetPath() with an absolute path leading to an existing timesheet file as an argument returns correct path', () => {
+      expect(() => getTimesheetPath(testFilePath)).not.toThrow();
+      const response = getTimesheetPath(testFilePath);
       expect(response).toMatch(testFilePath);
     });
 
-    test('getTimeSheetPath() with a relative path leading to an existing time sheet file as an argument returns correct path', () => {
-      expect(() => getTimeSheetPath(TEST_FILE_NAME)).not.toThrow();
-      const response = getTimeSheetPath(testFilePath);
+    test('getTimesheetPath() with a relative path leading to an existing timesheet file as an argument returns correct path', () => {
+      expect(() => getTimesheetPath(TEST_FILE_NAME)).not.toThrow();
+      const response = getTimesheetPath(testFilePath);
       expect(response).toMatch(testFilePath);
     });
   });

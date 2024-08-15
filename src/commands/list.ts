@@ -3,7 +3,7 @@ import calculateTotalTime from '../common/calculateTotalTime';
 import getTaskListString from '../common/getTaskListString';
 import ProjectClockError from '../common/ProjectClockError';
 import TimePeriod, { TimeParams } from '../common/TimePeriod';
-import { readTimeSheet } from '../common/timeSheetReadWrite';
+import { readTimesheet } from '../common/timesheetReadWrite';
 import { Task } from '../types/ProjectClockData';
 
 interface ListOptions {
@@ -81,12 +81,12 @@ function getTotalTimePeriodStr(
 }
 
 /**
- * Lists the tasks on the time sheet.
+ * Lists the tasks on the timesheet.
  * @param options The CLI options from the user.
  */
 export default function list(options: ListOptions) {
-  const timeSheetData = readTimeSheet();
-  const { projectName, projectSettings, tasks } = timeSheetData;
+  const timesheetData = readTimesheet();
+  const { projectName, projectSettings, tasks } = timesheetData;
   const requestedTasks = filterTasks(options, tasks);
 
   let requestedTimes: TaskStatus[] = [];
@@ -95,7 +95,7 @@ export default function list(options: ListOptions) {
   } catch (error) {
     if (error instanceof ProjectClockError) {
       console.error(
-        `An error occurred while inspecting the time sheet file (${error.message})`
+        `An error occurred while inspecting the timesheet file (${error.message})`
       );
       process.exit(1);
     }

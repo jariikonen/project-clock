@@ -1,4 +1,4 @@
-import { readTimeSheet, writeTimeSheet } from '../common/timeSheetReadWrite';
+import { readTimesheet, writeTimesheet } from '../common/timesheetReadWrite';
 import getTaskOfType from '../common/getTaskOfType';
 import { TaskType } from '../common/filterTasks';
 import { Task } from '../types/ProjectClockData';
@@ -45,11 +45,11 @@ function stopTask(task: Task): void {
  *    subject.
  */
 export default async function stop(taskDescriptor: string | undefined) {
-  const timeSheetData = readTimeSheet();
-  const { tasks } = timeSheetData;
+  const timesheetData = readTimesheet();
+  const { tasks } = timesheetData;
 
   if (tasks.length < 1) {
-    console.error('time sheet is empty, nothing to stop');
+    console.error('timesheet is empty, nothing to stop');
     process.exit(1);
   }
 
@@ -63,7 +63,7 @@ export default async function stop(taskDescriptor: string | undefined) {
   );
   if (taskToStop) {
     stopTask(taskToStop);
-    writeTimeSheet(timeSheetData);
+    writeTimesheet(timesheetData);
     console.log(`stopped task '${taskToStop.subject}'`);
     process.exit(0);
   }

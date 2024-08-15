@@ -22,7 +22,7 @@ program.addHelpText('beforeAll', `pclock (Project Clock) v${version}\n`);
 program
   .command('new')
   .description(
-    'Create a new project time sheet. Requires the project name as an argument.\n\n'
+    'Create a new project timesheet. Requires the project name as an argument.\n\n'
   )
   .argument('<project_name>', 'name of the project')
   .action((projectName) => newTimeSheet(projectName));
@@ -65,7 +65,7 @@ program.option(
 program
   .command('list [-acinv]')
   .alias('ls')
-  .description('List tasks on the time sheet.\n\n')
+  .description('List tasks on the timesheet.\n\n')
   .action(() => list(program.opts()));
 
 program

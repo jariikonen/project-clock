@@ -1,6 +1,6 @@
 import input from '@inquirer/input';
 import promptToConfirm from '../common/promptToConfirm';
-import { readTimeSheet, writeTimeSheet } from '../common/timeSheetReadWrite';
+import { readTimesheet, writeTimesheet } from '../common/timesheetReadWrite';
 import { ProjectClockData, Task } from '../types/ProjectClockData';
 import handleExitPromptError from '../common/handleExitPromptError';
 import promptToConfirmOrSelectTask from '../common/promptToConfirmOrSelectTask';
@@ -22,7 +22,7 @@ async function promptToCreateNewTask(
   return null;
 }
 
-async function timeSheetIsEmpty(
+async function timesheetIsEmpty(
   taskDescriptor: string | undefined
 ): Promise<TaskDescriptorToUse> {
   let taskDescriptorToUse: TaskDescriptorToUse = null;
@@ -30,13 +30,13 @@ async function timeSheetIsEmpty(
     if (taskDescriptor) {
       if (
         await promptToConfirm(
-          `time sheet is empty; do you want to create a new task, '${taskDescriptor}'?`
+          `timesheet is empty; do you want to create a new task, '${taskDescriptor}'?`
         )
       ) {
         return taskDescriptor;
       }
     } else {
-      taskDescriptorToUse = await promptToCreateNewTask('time sheet is empty');
+      taskDescriptorToUse = await promptToCreateNewTask('timesheet is empty');
       if (!taskDescriptorToUse) {
         console.log('exiting; no task to start');
         process.exit(0);
@@ -121,15 +121,15 @@ async function getMathchingUnstartedTask(
   return [matchingTask, taskDescriptorToUse];
 }
 
-function writeNewTimeSheet(
-  timeSheetData: ProjectClockData,
+function writeNewTimesheet(
+  timesheetData: ProjectClockData,
   taskToStart: Task | null,
   taskDescriptor: string | null
 ) {
   let newTaskCreated = false;
 
   if (!taskToStart && taskDescriptor) {
-    const { tasks } = timeSheetData;
+    const { tasks } = timesheetData;
     const alreadyExists = tasks.find((task) => task.subject === taskDescriptor);
     if (alreadyExists) {
       console.error(
@@ -142,7 +142,7 @@ function writeNewTimeSheet(
       subject: taskDescriptor,
       begin: new Date().toISOString(),
     };
-    timeSheetData.tasks.push(newTask);
+    timesheetData.tasks.push(newTask);
     newTaskCreated = true;
   } else if (taskToStart) {
     if (taskToStart.begin) {
@@ -155,7 +155,7 @@ function writeNewTimeSheet(
     taskToStart.begin = new Date().toISOString();
   }
 
-  writeTimeSheet(timeSheetData);
+  writeTimesheet(timesheetData);
   if (newTaskCreated) {
     console.log(`created and started a new task '${taskDescriptor}'`);
   } else {
@@ -184,13 +184,13 @@ function writeNewTimeSheet(
  *    subject.
  */
 export default async function start(taskDescriptor: string | undefined) {
-  const timeSheetData = readTimeSheet();
-  const { tasks } = timeSheetData;
+  const timesheetData = readTimesheet();
+  const { tasks } = timesheetData;
 
   let taskToStart: Task | null = null;
   let taskDescriptorToUse: string | null = null;
   if (tasks.length < 1) {
-    taskDescriptorToUse = await timeSheetIsEmpty(taskDescriptor);
+    taskDescriptorToUse = await timesheetIsEmpty(taskDescriptor);
   } else if (!taskDescriptor) {
     [taskToStart, taskDescriptorToUse] = await getUnstartedTask(tasks);
   } else {
@@ -200,7 +200,7 @@ export default async function start(taskDescriptor: string | undefined) {
     );
   }
   if (taskToStart ?? taskDescriptorToUse) {
-    writeNewTimeSheet(timeSheetData, taskToStart, taskDescriptorToUse);
+    writeNewTimesheet(timesheetData, taskToStart, taskDescriptorToUse);
   } else {
     throw new ProjectClockError(
       `internal error: this should not have happened (${taskToStart}, ${taskDescriptorToUse})`

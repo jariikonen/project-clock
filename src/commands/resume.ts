@@ -6,7 +6,7 @@ import {
   isSuspended,
   isUnstarted,
 } from '../common/taskState';
-import { readTimeSheet, writeTimeSheet } from '../common/timeSheetReadWrite';
+import { readTimesheet, writeTimesheet } from '../common/timesheetReadWrite';
 import { Task } from '../types/ProjectClockData';
 
 function resumeTask(task: Task): void {
@@ -61,11 +61,11 @@ function resumeTask(task: Task): void {
  *    subject.
  */
 export default async function resume(taskDescriptor: string | undefined) {
-  const timeSheetData = readTimeSheet();
-  const { tasks } = timeSheetData;
+  const timesheetData = readTimesheet();
+  const { tasks } = timesheetData;
 
   if (tasks.length < 1) {
-    console.error('time sheet is empty, nothing to resume');
+    console.error('timesheet is empty, nothing to resume');
     process.exit(1);
   }
 
@@ -79,7 +79,7 @@ export default async function resume(taskDescriptor: string | undefined) {
   );
   if (taskToResume) {
     resumeTask(taskToResume);
-    writeTimeSheet(timeSheetData);
+    writeTimesheet(timesheetData);
     console.log(`resumed task '${taskToResume.subject}'`);
     process.exit(0);
   }

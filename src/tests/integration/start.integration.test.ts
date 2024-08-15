@@ -9,7 +9,7 @@ import {
   TEST_FILE_NAME,
 } from '../common/constants';
 import { createTestFile, getTestFileDataObj } from '../common/testFile';
-import isValidTimestamp from '../common/timeStamp';
+import isValidTimestamp from '../common/timestamp';
 import { createTestDir, removeTestDir } from '../common/testDirectory';
 import execute, { DOWN } from '../common/childProcessExecutor';
 import { getTestTask, expectTaskMemberHasValue } from '../common/testTask';
@@ -90,7 +90,7 @@ describe('Starting the clock', () => {
     expect(response).not.toMatch('ProjectClockError');
   });
 
-  test('"Start" command reports time sheet file errors in a user friendly manner; no time sheet file', () => {
+  test('"Start" command reports timesheet file errors in a user friendly manner; no timesheet file', () => {
     let error = '';
     try {
       execSync(`cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js start`, {
@@ -102,13 +102,13 @@ describe('Starting the clock', () => {
       error = e.message;
     }
     expect(error).toMatch(
-      'An error occurred while reading the time sheet file (no time sheet file in the directory)'
+      'An error occurred while reading the timesheet file (no timesheet file in the directory)'
     );
     expect(error).not.toMatch('throw');
     expect(error).not.toMatch('ProjectClockError');
   });
 
-  test('"Start" command reports time sheet file errors in a user friendly manner; no permission', () => {
+  test('"Start" command reports timesheet file errors in a user friendly manner; no permission', () => {
     // initialize test environment
     createTestFile(
       {
@@ -129,9 +129,7 @@ describe('Starting the clock', () => {
       const e = err as Error;
       error = e.message;
     }
-    expect(error).toMatch(
-      'An error occurred while reading the time sheet file'
-    );
+    expect(error).toMatch('An error occurred while reading the timesheet file');
     expect(error).toMatch('no permission');
     expect(error).not.toMatch('throw');
     expect(error).not.toMatch('ProjectClockError');
@@ -148,7 +146,7 @@ describe('Starting the clock', () => {
       );
     });
 
-    test('asks if user wants to create a new task (no tasks on the time sheet)', () => {
+    test('asks if user wants to create a new task (no tasks on the timesheet)', () => {
       const response = execSync(
         `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js start`,
         { encoding: 'utf8', stdio: 'pipe' }
@@ -177,7 +175,7 @@ describe('Starting the clock', () => {
       expectTaskIsStarted(0);
     });
 
-    test('asks confirmation from user when there is a single unstarted task on the time sheet', () => {
+    test('asks confirmation from user when there is a single unstarted task on the timesheet', () => {
       // initialize test environment
       createTestFile(
         {
@@ -202,7 +200,7 @@ describe('Starting the clock', () => {
         { encoding: 'utf8', stdio: 'pipe' }
       );
       expect(response).toMatch(
-        `there is one unstarted task on the time sheet (${TASK_SUBJECT}); start this task`
+        `there is one unstarted task on the timesheet (${TASK_SUBJECT}); start this task`
       );
     });
 
@@ -231,7 +229,7 @@ describe('Starting the clock', () => {
         { encoding: 'utf8', stdio: 'pipe' }
       );
       expect(response).toMatch(
-        `there is one unstarted task on the time sheet (${TASK_SUBJECT}); start this task`
+        `there is one unstarted task on the timesheet (${TASK_SUBJECT}); start this task`
       );
       expectTaskIsStarted(1);
     });
@@ -264,7 +262,7 @@ describe('Starting the clock', () => {
         { encoding: 'utf8', stdio: 'pipe' }
       );
       expect(response).toMatch(
-        'there are more than one unstarted task on the time sheet; select the task to'
+        'there are more than one unstarted task on the timesheet; select the task to'
       );
     });
 
@@ -330,7 +328,7 @@ describe('Starting the clock', () => {
         { encoding: 'utf8' }
       );
       expect(response).toMatch(
-        'there are more than one unstarted task on the time sheet; select the task to'
+        'there are more than one unstarted task on the timesheet; select the task to'
       );
       expect(response).toMatch('first startable task');
       expect(response).toMatch('second startable task');
@@ -372,7 +370,7 @@ describe('Starting the clock', () => {
         { encoding: 'utf8', stdio: 'pipe' }
       );
       expect(response).toMatch(
-        'there are more than one unstarted task on the time sheet; select the task to'
+        'there are more than one unstarted task on the timesheet; select the task to'
       );
       expect(response).toMatch(`started task '${TASK_SUBJECT}'`);
       expectTaskIsStarted(1);
@@ -406,7 +404,7 @@ describe('Starting the clock', () => {
         [`${DOWN}${DOWN}\n`]
       );
       expect(response).toMatch(
-        'there are more than one unstarted task on the time sheet; select the task to'
+        'there are more than one unstarted task on the timesheet; select the task to'
       );
       expect(response).toMatch('nothing to start');
       expectTaskIsNotStarted(TASK_SUBJECT);
@@ -582,7 +580,7 @@ describe('Starting the clock', () => {
         { encoding: 'utf8' }
       );
       expect(response).toMatch(
-        `there is one matching unstarted task on the time sheet (${TASK_SUBJECT}); start this`
+        `there is one matching unstarted task on the timesheet (${TASK_SUBJECT}); start this`
       );
     });
 
@@ -615,7 +613,7 @@ describe('Starting the clock', () => {
         { encoding: 'utf8' }
       );
       expect(response).toMatch(
-        `there is one matching unstarted task on the time sheet (${TASK_SUBJECT}); start this`
+        `there is one matching unstarted task on the timesheet (${TASK_SUBJECT}); start this`
       );
       expectTaskIsStarted(1);
     });
@@ -649,7 +647,7 @@ describe('Starting the clock', () => {
         { encoding: 'utf8' }
       );
       expect(response).toMatch(
-        `there is one matching unstarted task on the time sheet (${TASK_SUBJECT}); start this`
+        `there is one matching unstarted task on the timesheet (${TASK_SUBJECT}); start this`
       );
       expectTaskIsNotStarted(TASK_SUBJECT);
     });
@@ -682,7 +680,7 @@ describe('Starting the clock', () => {
         { encoding: 'utf8', stdio: 'pipe' }
       );
       expect(response).toMatch(
-        'there are more than one matching unstarted task on the time sheet; select the'
+        'there are more than one matching unstarted task on the timesheet; select the'
       );
     });
 

@@ -9,7 +9,7 @@ import {
   TEST_FILE_NAME,
 } from '../common/constants';
 import { createTestFile } from '../common/testFile';
-import isValidTimestamp from '../common/timeStamp';
+import isValidTimestamp from '../common/timestamp';
 import { createTestDir, removeTestDir } from '../common/testDirectory';
 import execute, { DOWN } from '../common/childProcessExecutor';
 import { expectTaskMemberHasValue, getTestTask } from '../common/testTask';
@@ -87,7 +87,7 @@ describe('Stopping the clock', () => {
     expect(response).not.toMatch('ProjectClockError');
   });
 
-  test('"Stop" command reports time sheet file errors in a user friendly manner; no time sheet file', () => {
+  test('"Stop" command reports timesheet file errors in a user friendly manner; no timesheet file', () => {
     let error = '';
     try {
       execSync(`cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js stop`, {
@@ -99,13 +99,13 @@ describe('Stopping the clock', () => {
       error = e.message;
     }
     expect(error).toMatch(
-      'An error occurred while reading the time sheet file (no time sheet file in the directory)'
+      'An error occurred while reading the timesheet file (no timesheet file in the directory)'
     );
     expect(error).not.toMatch('throw');
     expect(error).not.toMatch('ProjectClockError');
   });
 
-  test('"Stop" command reports time sheet file errors in a user friendly manner; no permission', () => {
+  test('"Stop" command reports timesheet file errors in a user friendly manner; no permission', () => {
     // initialize test environment
     createTestFile(
       {
@@ -126,9 +126,7 @@ describe('Stopping the clock', () => {
       const e = err as Error;
       error = e.message;
     }
-    expect(error).toMatch(
-      'An error occurred while reading the time sheet file'
-    );
+    expect(error).toMatch('An error occurred while reading the timesheet file');
     expect(error).toMatch('no permission');
     expect(error).not.toMatch('throw');
     expect(error).not.toMatch('ProjectClockError');
@@ -181,7 +179,7 @@ describe('Stopping the clock', () => {
       expect(error).not.toMatch('ProjectClockError');
     });
 
-    test('exits with an error when no active (started but not stopped) tasks are found because the time sheet is empty', () => {
+    test('exits with an error when no active (started but not stopped) tasks are found because the timesheet is empty', () => {
       // initialize test environment
       createTestFile(
         {
@@ -201,7 +199,7 @@ describe('Stopping the clock', () => {
         const e = err as Error;
         error = e.message;
       }
-      expect(error).toMatch('time sheet is empty, nothing to stop');
+      expect(error).toMatch('timesheet is empty, nothing to stop');
       expect(error).not.toMatch('throw');
       expect(error).not.toMatch('ProjectClockError');
     });
@@ -232,7 +230,7 @@ describe('Stopping the clock', () => {
         { encoding: 'utf8', stdio: 'pipe' }
       );
       expect(response).toMatch(
-        `there is one active task on the time sheet (${TASK_SUBJECT}); stop this`
+        `there is one active task on the timesheet (${TASK_SUBJECT}); stop this`
       );
     });
 
@@ -262,7 +260,7 @@ describe('Stopping the clock', () => {
         { encoding: 'utf8' }
       );
       expect(response).toMatch(
-        `there is one active task on the time sheet (${TASK_SUBJECT}); stop this`
+        `there is one active task on the timesheet (${TASK_SUBJECT}); stop this`
       );
       expectTaskIsStopped();
     });
@@ -293,7 +291,7 @@ describe('Stopping the clock', () => {
         { encoding: 'utf8' }
       );
       expect(response).toMatch(
-        `there is one active task on the time sheet (${TASK_SUBJECT}); stop this`
+        `there is one active task on the timesheet (${TASK_SUBJECT}); stop this`
       );
       expectTaskIsNotStopped();
     });
@@ -330,7 +328,7 @@ describe('Stopping the clock', () => {
         { encoding: 'utf8' }
       );
       expect(response).toMatch(
-        'there are more than one active task on the time sheet; select the task to'
+        'there are more than one active task on the timesheet; select the task to'
       );
     });
 
@@ -393,7 +391,7 @@ describe('Stopping the clock', () => {
         { encoding: 'utf8' }
       );
       expect(response).toMatch(
-        'there are more than one active task on the time sheet; select the task to'
+        'there are more than one active task on the timesheet; select the task to'
       );
       expect(response).toMatch('first stoppable task');
       expect(response).toMatch('second stoppable task');
@@ -431,7 +429,7 @@ describe('Stopping the clock', () => {
         { encoding: 'utf8', stdio: 'pipe' }
       );
       expect(response).toMatch(
-        'there are more than one active task on the time sheet; select the task to'
+        'there are more than one active task on the timesheet; select the task to'
       );
       expectTaskIsStopped('first active task');
     });
@@ -466,7 +464,7 @@ describe('Stopping the clock', () => {
         [`${DOWN}${DOWN}\n`]
       );
       expect(response).toMatch(
-        'there are more than one active task on the time sheet; select the task to'
+        'there are more than one active task on the timesheet; select the task to'
       );
       expect(response).toMatch('nothing to stop');
       expectTaskIsNotStopped(TASK_SUBJECT);
@@ -535,7 +533,7 @@ describe('Stopping the clock', () => {
         { encoding: 'utf8' }
       );
       expect(response).toMatch(
-        `there is one matching active task on the time sheet (${TASK_SUBJECT}); stop this`
+        `there is one matching active task on the timesheet (${TASK_SUBJECT}); stop this`
       );
     });
 
@@ -565,7 +563,7 @@ describe('Stopping the clock', () => {
         { encoding: 'utf8' }
       );
       expect(response).toMatch(
-        `there is one matching active task on the time sheet (${TASK_SUBJECT}); stop this`
+        `there is one matching active task on the timesheet (${TASK_SUBJECT}); stop this`
       );
       expectTaskIsStopped();
     });
@@ -596,7 +594,7 @@ describe('Stopping the clock', () => {
         { encoding: 'utf8' }
       );
       expect(response).toMatch(
-        `there is one matching active task on the time sheet (${TASK_SUBJECT}); stop this`
+        `there is one matching active task on the timesheet (${TASK_SUBJECT}); stop this`
       );
       expectTaskIsNotStopped();
     });
@@ -632,7 +630,7 @@ describe('Stopping the clock', () => {
         { encoding: 'utf8' }
       );
       expect(response).toMatch(
-        'there are more than one matching active task on the time sheet; select the'
+        'there are more than one matching active task on the timesheet; select the'
       );
     });
 
@@ -670,7 +668,7 @@ describe('Stopping the clock', () => {
         }
       );
       expect(response).toMatch(
-        'there are more than one matching active task on the time sheet; select the'
+        'there are more than one matching active task on the timesheet; select the'
       );
       expectTaskIsStopped('first active task');
     });
@@ -706,7 +704,7 @@ describe('Stopping the clock', () => {
         [`${DOWN}${DOWN}\n`]
       );
       expect(response).toMatch(
-        'there are more than one matching active task on the time sheet; select the'
+        'there are more than one matching active task on the timesheet; select the'
       );
       expectTaskIsNotStopped('first active task');
       expectTaskIsNotStopped('second active task');
