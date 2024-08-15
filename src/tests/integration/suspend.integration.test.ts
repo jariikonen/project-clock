@@ -112,18 +112,7 @@ describe('Suspend command', () => {
     createTestFile(
       {
         projectName: PROJECT_NAME,
-        tasks: [
-          {
-            subject: 'first suspendable task',
-            begin: '2024-01-01T00:00:00.000Z',
-          },
-          {
-            subject: 'second suspendable task',
-            begin: '2024-01-01T00:00:00.000Z',
-            suspend: ['2024-01-01T01:00:00.000Z'],
-            resume: ['2024-01-01T02:00:00.000Z'],
-          },
-        ],
+        tasks: [],
       },
       testFilePath
     );

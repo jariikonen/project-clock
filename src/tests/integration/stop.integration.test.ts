@@ -110,11 +110,7 @@ describe('Stopping the clock', () => {
     createTestFile(
       {
         projectName: PROJECT_NAME,
-        tasks: [
-          {
-            subject: TASK_SUBJECT,
-          },
-        ],
+        tasks: [],
       },
       testFilePath
     );
