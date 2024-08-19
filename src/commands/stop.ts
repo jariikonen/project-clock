@@ -1,6 +1,6 @@
 import { readTimesheet, writeTimesheet } from '../common/timesheetReadWrite';
 import getTaskOfType from '../common/getTaskOfType';
-import { TaskType } from '../common/filterTasks';
+import { TaskStateType } from '../common/filterTasks';
 import { Task } from '../types/ProjectClockData';
 
 function stopTask(task: Task): void {
@@ -56,7 +56,7 @@ export default async function stop(taskDescriptor: string | undefined) {
   const existingTask = tasks.find((task) => task.subject === taskDescriptor);
   const taskToStop = await getTaskOfType(
     tasks,
-    TaskType.Active,
+    TaskStateType.Active,
     taskDescriptor,
     'stop',
     !!existingTask

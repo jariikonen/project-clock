@@ -8,7 +8,7 @@ import {
   getResumableTasks,
   getStoppableTasks,
   getSuspendableTasks,
-  TaskType,
+  TaskStateType,
 } from '../../common/filterTasks';
 import { Task } from '../../types/ProjectClockData';
 
@@ -313,61 +313,61 @@ describe('getMatchingResumableTasks()', () => {
 
 describe('filterTasks()', () => {
   test('returns the same as getActiveTasks() and getMatchingActiveTasks() when taskType is Active', () => {
-    expect(filterTasks(tasks, TaskType.Active)[0]).toEqual(
+    expect(filterTasks(tasks, TaskStateType.Active)[0]).toEqual(
       getActiveTasks(tasks)
     );
-    expect(filterTasks(tasks, TaskType.Active, 'first')[0]).toEqual(
+    expect(filterTasks(tasks, TaskStateType.Active, 'first')[0]).toEqual(
       getMatchingActiveTasks(tasks, 'first')
     );
-    expect(filterTasks(tasks, TaskType.Active, 'second')[0]).toEqual(
+    expect(filterTasks(tasks, TaskStateType.Active, 'second')[0]).toEqual(
       getMatchingActiveTasks(tasks, 'second')
     );
-    expect(filterTasks(tasks, TaskType.Active, 'third')[0]).toEqual(
+    expect(filterTasks(tasks, TaskStateType.Active, 'third')[0]).toEqual(
       getMatchingActiveTasks(tasks, 'third')
     );
   });
 
   test('returns the same as getSuspendableTasks() and getMatchingSuspendableTasks() when taskType is Suspendable', () => {
-    expect(filterTasks(tasks, TaskType.Suspendable)[0]).toEqual(
+    expect(filterTasks(tasks, TaskStateType.Suspendable)[0]).toEqual(
       getSuspendableTasks(tasks)
     );
-    expect(filterTasks(tasks, TaskType.Suspendable, 'first')[0]).toEqual(
+    expect(filterTasks(tasks, TaskStateType.Suspendable, 'first')[0]).toEqual(
       getMatchingSuspendableTasks(tasks, 'first')
     );
-    expect(filterTasks(tasks, TaskType.Suspendable, 'second')[0]).toEqual(
+    expect(filterTasks(tasks, TaskStateType.Suspendable, 'second')[0]).toEqual(
       getMatchingSuspendableTasks(tasks, 'second')
     );
-    expect(filterTasks(tasks, TaskType.Suspendable, 'third')[0]).toEqual(
+    expect(filterTasks(tasks, TaskStateType.Suspendable, 'third')[0]).toEqual(
       getMatchingSuspendableTasks(tasks, 'third')
     );
   });
 
   test('returns the same as getResumableTasks() and getMatchingResumableTasks() when taskType is Resumable', () => {
-    expect(filterTasks(tasks, TaskType.Resumable)[0]).toEqual(
+    expect(filterTasks(tasks, TaskStateType.Resumable)[0]).toEqual(
       getResumableTasks(tasks)
     );
-    expect(filterTasks(tasks, TaskType.Resumable, 'first')[0]).toEqual(
+    expect(filterTasks(tasks, TaskStateType.Resumable, 'first')[0]).toEqual(
       getMatchingResumableTasks(tasks, 'first')
     );
-    expect(filterTasks(tasks, TaskType.Resumable, 'second')[0]).toEqual(
+    expect(filterTasks(tasks, TaskStateType.Resumable, 'second')[0]).toEqual(
       getMatchingResumableTasks(tasks, 'second')
     );
-    expect(filterTasks(tasks, TaskType.Resumable, 'third')[0]).toEqual(
+    expect(filterTasks(tasks, TaskStateType.Resumable, 'third')[0]).toEqual(
       getMatchingResumableTasks(tasks, 'third')
     );
   });
 
   test('returns the same as getStoppableTasks() and getMatchingStoppableTasks() when taskType is Stoppable', () => {
-    expect(filterTasks(tasks, TaskType.Stoppable)[0]).toEqual(
+    expect(filterTasks(tasks, TaskStateType.Stoppable)[0]).toEqual(
       getStoppableTasks(tasks)
     );
-    expect(filterTasks(tasks, TaskType.Stoppable, 'first')[0]).toEqual(
+    expect(filterTasks(tasks, TaskStateType.Stoppable, 'first')[0]).toEqual(
       getMatchingStoppableTasks(tasks, 'first')
     );
-    expect(filterTasks(tasks, TaskType.Stoppable, 'second')[0]).toEqual(
+    expect(filterTasks(tasks, TaskStateType.Stoppable, 'second')[0]).toEqual(
       getMatchingStoppableTasks(tasks, 'second')
     );
-    expect(filterTasks(tasks, TaskType.Stoppable, 'third')[0]).toEqual(
+    expect(filterTasks(tasks, TaskStateType.Stoppable, 'third')[0]).toEqual(
       getMatchingStoppableTasks(tasks, 'third')
     );
   });

@@ -1,4 +1,4 @@
-import { TaskType } from '../common/filterTasks';
+import { TaskStateType } from '../common/filterTasks';
 import getTaskOfType from '../common/getTaskOfType';
 import { isSuspended, isUnstarted } from '../common/taskState';
 import { readTimesheet, writeTimesheet } from '../common/timesheetReadWrite';
@@ -70,7 +70,7 @@ export default async function suspend(taskDescriptor: string | undefined) {
   const existingTask = tasks.find((task) => task.subject === taskDescriptor);
   const taskToSuspend = await getTaskOfType(
     tasks,
-    TaskType.Suspendable,
+    TaskStateType.Suspendable,
     taskDescriptor,
     'suspend',
     !!existingTask

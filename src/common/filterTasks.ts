@@ -60,7 +60,7 @@
 import { Task } from '../types/ProjectClockData';
 import ProjectClockError from './ProjectClockError';
 
-export enum TaskType {
+export enum TaskStateType {
   Active = 'active',
   Suspendable = 'suspendable',
   Resumable = 'resumable',
@@ -197,23 +197,23 @@ export function getMatchingStoppableTasks(
 
 export function filterTasks(
   tasks: Task[],
-  taskType: TaskType,
+  taskType: TaskStateType,
   taskDescriptor = ''
 ): [Task[], string] {
   switch (taskType) {
-    case TaskType.Active:
-    case TaskType.Stoppable:
+    case TaskStateType.Active:
+    case TaskStateType.Stoppable:
       return taskDescriptor
         ? [getMatchingActiveTasks(tasks, taskDescriptor), 'matching active']
         : [getActiveTasks(tasks), 'active'];
-    case TaskType.Suspendable:
+    case TaskStateType.Suspendable:
       return taskDescriptor
         ? [
             getMatchingSuspendableTasks(tasks, taskDescriptor),
             'matching suspendable',
           ]
         : [getSuspendableTasks(tasks), 'suspendable'];
-    case TaskType.Resumable:
+    case TaskStateType.Resumable:
       return taskDescriptor
         ? [
             getMatchingResumableTasks(tasks, taskDescriptor),

@@ -1,5 +1,5 @@
 import { Task } from '../types/ProjectClockData';
-import { filterTasks, TaskType } from './filterTasks';
+import { filterTasks, TaskStateType } from './filterTasks';
 import handleExitPromptError from './handleExitPromptError';
 import promptToConfirmOrSelectTask from './promptToConfirmOrSelectTask';
 
@@ -23,7 +23,7 @@ import promptToConfirmOrSelectTask from './promptToConfirmOrSelectTask';
  */
 export default async function getTask(
   tasks: Task[],
-  taskType: TaskType,
+  taskType: TaskStateType,
   taskDescriptor: string | undefined,
   verb: string,
   taskExists: boolean

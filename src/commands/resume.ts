@@ -1,4 +1,4 @@
-import { TaskType } from '../common/filterTasks';
+import { TaskStateType } from '../common/filterTasks';
 import getTaskOfType from '../common/getTaskOfType';
 import {
   isResumed,
@@ -72,7 +72,7 @@ export default async function resume(taskDescriptor: string | undefined) {
   const existingTask = tasks.find((task) => task.subject === taskDescriptor);
   const taskToResume = await getTaskOfType(
     tasks,
-    TaskType.Resumable,
+    TaskStateType.Resumable,
     taskDescriptor,
     'resume',
     !!existingTask
