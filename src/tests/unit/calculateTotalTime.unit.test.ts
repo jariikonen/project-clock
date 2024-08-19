@@ -6,7 +6,7 @@ describe('calculateTotalTime()', () => {
     const taskStatuses: TaskStatus[] = [
       {
         task: 'Task 1',
-        status: 'not started',
+        status: 'unstarted',
         timeSpent: 0,
       },
       {

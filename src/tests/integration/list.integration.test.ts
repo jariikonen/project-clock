@@ -186,9 +186,7 @@ describe('Correct output; many tasks, total time less than a day', () => {
     expect(response).toMatch('First active task1hsuspended');
     expect(response).toMatch('Second active task1h 30minsuspended');
     expect(response).toMatch('Third active task2hstarted');
-    expect(response).toMatch(
-      'First incomplete but not active task-not started'
-    );
+    expect(response).toMatch('First incomplete but not active task-unstarted');
     expect(response).toMatch('6 tasks, total time spent: 7h 30min');
     expect(response).not.toMatch('6 tasks, total time spent: 7h 30min (');
   });
@@ -235,9 +233,7 @@ describe('Correct output; many tasks, total time less than a day', () => {
     expect(response).toMatch('First active task1hsuspended');
     expect(response).toMatch('Second active task1h 30minsuspended');
     expect(response).toMatch('Third active task2hstarted');
-    expect(response).toMatch(
-      'First incomplete but not active task-not started'
-    );
+    expect(response).toMatch('First incomplete but not active task-unstarted');
     expect(response).toMatch('4 tasks, total time spent: 4h 30min');
     expect(response).not.toMatch('4 tasks, total time spent: 4h 30min (');
   });
@@ -248,9 +244,7 @@ describe('Correct output; many tasks, total time less than a day', () => {
       { encoding: 'utf8' }
     );
     expect(response).toMatch(`Project: '${PROJECT_NAME}'`);
-    expect(response).toMatch(
-      'First incomplete but not active task-not started'
-    );
+    expect(response).toMatch('First incomplete but not active task-unstarted');
     expect(response).toMatch('1 task, total time spent: -');
     expect(response).not.toMatch('1 task, total time spent: - (');
   });
@@ -321,9 +315,7 @@ describe('Correct output; many tasks, total time more than a day', () => {
     expect(response).toMatch('First active task1hsuspended');
     expect(response).toMatch('Second active task2hsuspended');
     expect(response).toMatch('Third active task2hstarted');
-    expect(response).toMatch(
-      'First incomplete but not active task-not started'
-    );
+    expect(response).toMatch('First incomplete but not active task-unstarted');
     expect(response).toMatch('6 tasks, total time spent: 8h (1d, d=8h)');
   });
 });

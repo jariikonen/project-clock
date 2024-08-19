@@ -18,7 +18,7 @@ describe('calculateTimes()', () => {
 
       const expectedStatus: TaskStatus = {
         task: TASK_SUBJECT,
-        status: 'not started',
+        status: 'unstarted',
         timeSpent: 0,
       };
 
@@ -505,7 +505,7 @@ describe('calculateTimes()', () => {
       const expectedStatuses: TaskStatus[] = [
         {
           task: 'Task 1',
-          status: 'not started',
+          status: 'unstarted',
           timeSpent: 0,
         },
         {

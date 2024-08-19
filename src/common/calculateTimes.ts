@@ -4,7 +4,7 @@ import ProjectClockError from './ProjectClockError';
 export interface TaskStatus {
   task: string;
   status:
-    | 'not started'
+    | 'unstarted'
     | 'started'
     | 'suspended'
     | 'resumed'
@@ -165,7 +165,7 @@ export default function calculateTimes(tasks: Task[]): TaskStatus[] {
     checkTask(task);
     const { begin, suspend, resume, end } = task;
     if (!begin) {
-      return { task: task.subject, status: 'not started', timeSpent: 0 };
+      return { task: task.subject, status: 'unstarted', timeSpent: 0 };
     }
     if (!suspend && !end) {
       return {
