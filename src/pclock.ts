@@ -9,6 +9,7 @@ import status from './commands/status';
 import list from './commands/list';
 import suspend from './commands/suspend';
 import resume from './commands/resume';
+import add from './commands/add';
 
 const program = new Command();
 
@@ -87,5 +88,16 @@ program
     'task descriptor; a string that is expected to match a task subject'
   )
   .action((taskDescriptor) => resume(taskDescriptor));
+
+program
+  .command('add')
+  .description(
+    'Add a new task. Prompts the user for a task subject if the task_subject argument is not given.\n\n'
+  )
+  .argument(
+    '[task_subject]',
+    'task subject; a string defining the subject of the task'
+  )
+  .action((taskSubject) => add(taskSubject));
 
 program.parse();
