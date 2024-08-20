@@ -1,21 +1,20 @@
-import fs from 'node:fs';
-import path from 'node:path';
 import { execSync } from 'child_process';
-import {
-  PROJECT_NAME,
-  ROOT_DIR,
-  SUBDIR_NAME,
-  TASK_SUBJECT,
-  TEST_FILE_NAME,
-} from '../common/constants';
+import { PROJECT_NAME, ROOT_DIR, TASK_SUBJECT } from '../common/constants';
 import { createTestFile, getTestFileDataObj } from '../common/testFile';
 import { createTestDir, removeTestDir } from '../common/testDirectory';
 import { expectTaskEqualsTo } from '../common/testTask';
+import {
+  Command,
+  forceStopped,
+  moreThanOneTimesheetFiles,
+  noPermission,
+  noTimesheetFile,
+} from '../common/userFriendlyErrorMessages';
+import { getTestPaths } from '../common/testPaths';
 
-const testDirName = 'testDirAdd';
-const testDirPath = path.join(ROOT_DIR, testDirName);
-const subdirPath = path.join(testDirPath, SUBDIR_NAME);
-const testFilePath = path.join(subdirPath, TEST_FILE_NAME);
+const testSuiteName = 'add';
+const { testDirName, testDirPath, subdirPath, testFilePath } =
+  getTestPaths(testSuiteName);
 
 beforeAll(() => {
   createTestDir(testDirPath);
@@ -35,71 +34,22 @@ afterEach(() => {
 
 describe('User friendly error messages', () => {
   test('"Add" command reports timesheet file errors in a user friendly manner; no timesheet file', () => {
-    let error = '';
-    try {
-      execSync(`cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js add`, {
-        encoding: 'utf8',
-        stdio: 'pipe',
-      });
-    } catch (err) {
-      const e = err as Error;
-      error = e.message;
-    }
-    expect(error).toMatch(
-      'An error occurred while reading the timesheet file (no timesheet file in the directory)'
-    );
-    expect(error).not.toMatch('throw');
-    expect(error).not.toMatch('ProjectClockError');
+    noTimesheetFile(testDirName, Command.Add);
   });
 
   test('"Add" command reports timesheet file errors in a user friendly manner; no permission', () => {
-    // initialize test environment
-    createTestFile(
-      {
-        projectName: PROJECT_NAME,
-        tasks: [],
-      },
-      testFilePath
-    );
-    fs.chmodSync(testFilePath, '000');
+    noPermission(testDirName, Command.Add);
+  });
 
-    // test
-    let error = '';
-    try {
-      execSync(`cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js add`, {
-        stdio: 'pipe',
-      });
-    } catch (err) {
-      const e = err as Error;
-      error = e.message;
-    }
-    expect(error).toMatch('An error occurred while reading the timesheet file');
-    expect(error).toMatch('no permission');
-    expect(error).not.toMatch('throw');
-    expect(error).not.toMatch('ProjectClockError');
+  test('"Add" command reports timesheet file errors in a user friendly manner; more than one timesheet files', () => {
+    moreThanOneTimesheetFiles(testDirName, Command.Add);
   });
 
   test('"Add" command gives a user friendly error message when the command is force stopped with CTRL+C', () => {
-    // initialize test environment
-    createTestFile(
-      {
-        projectName: PROJECT_NAME,
-        tasks: [],
-      },
-      testFilePath
-    );
-
-    // test
-    const response = execSync(
-      `cd ${subdirPath} && printf '^C' | node ${ROOT_DIR}/bin/pclock.js add`,
-      {
-        encoding: 'utf8',
-        stdio: 'pipe',
-      }
-    );
-    expect(response).toMatch('exiting; user force closed the process');
-    expect(response).not.toMatch('throw');
-    expect(response).not.toMatch('ProjectClockError');
+    forceStopped(testDirName, Command.Add, {
+      projectName: PROJECT_NAME,
+      tasks: [],
+    });
   });
 });
 

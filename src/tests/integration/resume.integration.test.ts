@@ -1,13 +1,5 @@
 import { execSync } from 'child_process';
-import fs from 'node:fs';
-import path from 'node:path';
-import {
-  PROJECT_NAME,
-  ROOT_DIR,
-  SUBDIR_NAME,
-  TASK_SUBJECT,
-  TEST_FILE_NAME,
-} from '../common/constants';
+import { PROJECT_NAME, ROOT_DIR, TASK_SUBJECT } from '../common/constants';
 import { createTestFile } from '../common/testFile';
 import { createTestDir, removeTestDir } from '../common/testDirectory';
 import {
@@ -16,11 +8,18 @@ import {
   getTestTask,
 } from '../common/testTask';
 import execute, { DOWN } from '../common/childProcessExecutor';
+import {
+  Command,
+  forceStopped,
+  moreThanOneTimesheetFiles,
+  noPermission,
+  noTimesheetFile,
+} from '../common/userFriendlyErrorMessages';
+import { getTestPaths } from '../common/testPaths';
 
-const testDirName = 'testDirResume';
-const testDirPath = path.join(ROOT_DIR, testDirName);
-const subdirPath = path.join(testDirPath, SUBDIR_NAME);
-const testFilePath = path.join(subdirPath, TEST_FILE_NAME);
+const testSuiteName = 'resume';
+const { testDirName, testDirPath, subdirPath, testFilePath } =
+  getTestPaths(testSuiteName);
 
 const resumableTasks = [
   {
@@ -92,72 +91,36 @@ describe('Resume command', () => {
     }
   }
 
-  test('"Resume" command gives a user friendly error message when the command is force stopped with CTRL+C', () => {
-    // initialize test environment
-    createTestFile(
-      {
+  describe('User friendly error messages', () => {
+    test('"Resume" command reports timesheet file errors in a user friendly manner; no timesheet file', () => {
+      noTimesheetFile(testDirName, Command.Resume);
+    });
+
+    test('"Resume" command reports timesheet file errors in a user friendly manner; no permission', () => {
+      noPermission(testDirName, Command.Resume);
+    });
+
+    test('"Resume" command reports timesheet file errors in a user friendly manner; more than one timesheet files', () => {
+      moreThanOneTimesheetFiles(testDirName, Command.Resume);
+    });
+
+    test('"Resume" command gives a user friendly error message when the command is force stopped with CTRL+C', () => {
+      forceStopped(testDirName, Command.Resume, {
         projectName: PROJECT_NAME,
-        tasks: resumableTasks,
-      },
-      testFilePath
-    );
-
-    // test
-    const response = execSync(
-      `cd ${subdirPath} && printf '^C' | node ${ROOT_DIR}/bin/pclock.js resume`,
-      {
-        encoding: 'utf8',
-        stdio: 'pipe',
-      }
-    );
-    expect(response).toMatch('exiting; user force closed the process');
-    expect(response).not.toMatch('throw');
-    expect(response).not.toMatch('ProjectClockError');
-  });
-
-  test('"Resume" command reports timesheet file errors in a user friendly manner; no timesheet file', () => {
-    let error = '';
-    try {
-      execSync(`cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js resume`, {
-        encoding: 'utf8',
-        stdio: 'pipe',
+        tasks: [
+          {
+            subject: 'resumable task',
+            begin: '2024-01-01T00:00:00.000Z',
+            suspend: ['2024-01-01T00:00:00.000Z'],
+          },
+          {
+            subject: 'second resumable task',
+            begin: '2024-01-01T00:00:00.000Z',
+            suspend: ['2024-01-01T00:00:00.000Z'],
+          },
+        ],
       });
-    } catch (err) {
-      const e = err as Error;
-      error = e.message;
-    }
-    expect(error).toMatch(
-      'An error occurred while reading the timesheet file (no timesheet file in the directory)'
-    );
-    expect(error).not.toMatch('throw');
-    expect(error).not.toMatch('ProjectClockError');
-  });
-
-  test('"Resume" command reports timesheet file errors in a user friendly manner; no permission', () => {
-    // initialize test environment
-    createTestFile(
-      {
-        projectName: PROJECT_NAME,
-        tasks: [],
-      },
-      testFilePath
-    );
-    fs.chmodSync(testFilePath, '000');
-
-    // test
-    let error = '';
-    try {
-      execSync(`cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js resume`, {
-        stdio: 'pipe',
-      });
-    } catch (err) {
-      const e = err as Error;
-      error = e.message;
-    }
-    expect(error).toMatch('An error occurred while reading the timesheet file');
-    expect(error).toMatch('no permission');
-    expect(error).not.toMatch('throw');
-    expect(error).not.toMatch('ProjectClockError');
+    });
   });
 
   describe('"Resume" command without any arguments', () => {
@@ -411,7 +374,7 @@ describe('Resume command', () => {
       );
     });
 
-    test('there is correct amount of options when the user is asked which of the many resumable tasks found to resume', () => {
+    test('there is correct amount of options when the user is asked which of the many tasks found to resume', () => {
       // initialize test environment
       createTestFile(
         {
@@ -849,7 +812,7 @@ describe('Resume command', () => {
       );
     });
 
-    test('there is correct amount of options when the user is asked which of the many resumable tasks found to resume', () => {
+    test('there is correct amount of options when the user is asked which of the many tasks found to resume', () => {
       // initialize test environment
       createTestFile(
         {

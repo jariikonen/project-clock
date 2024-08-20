@@ -507,7 +507,15 @@
       "end": "2024-08-20T09:22:47.261Z"
     },
     {
-      "subject": "Make error reporting testing consistent in integration tests"
+      "subject": "Make error reporting testing consistent in integration tests",
+      "begin": "2024-08-20T09:45:50.426Z",
+      "suspend": [
+        "2024-08-20T11:38:40.449Z"
+      ],
+      "resume": [
+        "2024-08-20T11:39:32.078Z"
+      ],
+      "end": "2024-08-20T11:48:47.585Z"
     },
     {
       "subject": "Modify 'new' command so that it uses the name of the parent directory as the default value for project name and prompts the user for confirmation"
@@ -587,7 +595,7 @@
       "subject": "Use of quotation marks in user entered texts and program output"
     },
     {
-      "subject": "Update README.md and command descriptions"
+      "subject": "Update and review README.md and command descriptions"
     },
     {
       "subject": "Add missing TSDoc comments, combine related functions in common directory into the same files when necessary and remove unnecessary functions",
@@ -617,7 +625,8 @@
         "2024-08-16T06:26:42.143Z",
         "2024-08-19T10:40:33.016Z",
         "2024-08-20T07:32:32.696Z",
-        "2024-08-20T09:28:01.126Z"
+        "2024-08-20T09:28:01.126Z",
+        "2024-08-20T09:41:38.461Z"
       ],
       "resume": [
         "2024-08-02T08:51:55.636Z",
@@ -629,7 +638,8 @@
         "2024-08-16T05:25:56.347Z",
         "2024-08-19T10:39:43.650Z",
         "2024-08-20T07:20:56.057Z",
-        "2024-08-20T09:26:25.645Z"
+        "2024-08-20T09:26:25.645Z",
+        "2024-08-20T09:40:20.554Z"
       ]
     }
   ]
