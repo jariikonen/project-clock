@@ -504,7 +504,14 @@
       "end": "2024-08-21T10:03:03.294Z"
     },
     {
-      "subject": "Full task data (full subject, description and notes texts) can be displayed"
+      "subject": "Full task data (full subject, description and notes texts) can be displayed",
+      "begin": "2024-08-21T10:14:08.040Z",
+      "suspend": ["2024-08-21T10:47:32.209Z"]
+    },
+    {
+      "subject": "Fix a test outputting unnecessarily to stdout",
+      "begin": "2024-08-21T11:01:35.044Z",
+      "end": "2024-08-21T11:10:37.264Z"
     },
     {
       "subject": "Fix padding in simple table rendering",

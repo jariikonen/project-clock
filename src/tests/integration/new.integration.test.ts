@@ -142,7 +142,7 @@ describe('Timesheet creation', () => {
     try {
       execSync(
         `cd ${subdirPath} && printf "\n" | node ${ROOT_DIR}/bin/pclock.js new`,
-        { encoding: 'utf8' }
+        { encoding: 'utf8', stdio: 'pipe' }
       );
     } catch (err) {
       const e = err as Error;
