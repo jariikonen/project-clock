@@ -430,7 +430,7 @@ describe('Suspend command', () => {
         error = e.message;
       }
       expect(error).toMatch(
-        `can't suspend task '${TASK_SUBJECT}'; the task hasn't been started yet`
+        `cannot suspend task '${TASK_SUBJECT}'; the task hasn't been started yet`
       );
       expect(error).not.toMatch('throw');
       expect(error).not.toMatch('ProjectClockError');
@@ -897,7 +897,7 @@ describe('Suspend command', () => {
       }
 
       expect(error).toMatch(
-        `can't suspend task '${TASK_SUBJECT}'; the task has already been suspended`
+        `cannot suspend task '${TASK_SUBJECT}'; the task has already been suspended`
       );
       expectTaskMemberHasValue(testFilePath, 'suspend', [
         '2024-01-01T01:00:00.000Z',
@@ -934,7 +934,7 @@ describe('Suspend command', () => {
       }
 
       expect(error).toMatch(
-        `can't suspend task '${TASK_SUBJECT}'; the task has already been suspended`
+        `cannot suspend task '${TASK_SUBJECT}'; the task has already been suspended`
       );
       expectTaskMemberHasValue(testFilePath, 'suspend', [
         '2024-01-01T01:00:00.000Z',
@@ -976,7 +976,7 @@ describe('Suspend command', () => {
       }
 
       expect(error).toMatch(
-        `can't suspend task '${TASK_SUBJECT}'; the task has already been suspended`
+        `cannot suspend task '${TASK_SUBJECT}'; the task has already been suspended`
       );
       expectTaskMemberHasValue(testFilePath, 'suspend', [
         '2024-01-01T01:00:00.000Z',

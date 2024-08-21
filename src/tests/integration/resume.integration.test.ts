@@ -503,7 +503,7 @@ describe('Resume command', () => {
         error = e.message;
       }
       expect(error).toMatch(
-        `can't resume task '${TASK_SUBJECT}'; the task hasn't even been started yet`
+        `cannot resume task '${TASK_SUBJECT}'; the task hasn't even been started yet`
       );
       expect(error).not.toMatch('throw');
       expect(error).not.toMatch('ProjectClockError');
@@ -538,7 +538,7 @@ describe('Resume command', () => {
         error = e.message;
       }
       expect(error).toMatch(
-        `can't resume task '${TASK_SUBJECT}'; the task has been started but not suspended`
+        `cannot resume task '${TASK_SUBJECT}'; the task has been started but not suspended`
       );
       expect(error).not.toMatch('throw');
       expect(error).not.toMatch('ProjectClockError');
@@ -575,7 +575,7 @@ describe('Resume command', () => {
         error = e.message;
       }
       expect(error).toMatch(
-        `can't resume task '${TASK_SUBJECT}'; the task has already been resumed`
+        `cannot resume task '${TASK_SUBJECT}'; the task has already been resumed`
       );
       expect(error).not.toMatch('throw');
       expect(error).not.toMatch('ProjectClockError');
@@ -932,7 +932,7 @@ describe('Resume command', () => {
       }
 
       expect(error).toMatch(
-        `can't resume task '${TASK_SUBJECT}'; the task has already been resumed`
+        `cannot resume task '${TASK_SUBJECT}'; the task has already been resumed`
       );
       expectTaskEqualsTo(testFilePath, {
         subject: TASK_SUBJECT,
@@ -972,7 +972,7 @@ describe('Resume command', () => {
       }
 
       expect(error).toMatch(
-        `can't resume task '${TASK_SUBJECT}'; the task has already been resumed`
+        `cannot resume task '${TASK_SUBJECT}'; the task has already been resumed`
       );
       expectTaskEqualsTo(testFilePath, {
         subject: TASK_SUBJECT,
@@ -1020,7 +1020,7 @@ describe('Resume command', () => {
       }
 
       expect(error).toMatch(
-        `can't resume task '${TASK_SUBJECT}'; the task has already been resumed`
+        `cannot resume task '${TASK_SUBJECT}'; the task has already been resumed`
       );
       expectTaskEqualsTo(testFilePath, {
         subject: TASK_SUBJECT,

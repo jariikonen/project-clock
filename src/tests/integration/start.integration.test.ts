@@ -394,7 +394,7 @@ describe('Starting the clock', () => {
         error = e.message;
       }
       expect(error).toMatch(
-        `can't create new task '${TASK_SUBJECT}'; the task already exists`
+        `cannot create new task '${TASK_SUBJECT}'; the task already exists`
       );
     });
   });
@@ -671,7 +671,7 @@ describe('Starting the clock', () => {
         error = e.message;
       }
       expect(error).toMatch(
-        `can't start task '${TASK_SUBJECT}'; the task has already been started`
+        `cannot start task '${TASK_SUBJECT}'; the task has already been started`
       );
       expectTaskMemberHasValue(
         testFilePath,

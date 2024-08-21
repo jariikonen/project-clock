@@ -100,7 +100,7 @@ async function getMathchingUnstartedTask(
       );
       if (alreadyStarted) {
         console.error(
-          `can't start task '${taskDescriptor}'; the task has already been started`
+          `cannot start task '${taskDescriptor}'; the task has already been started`
         );
         process.exit(1);
       }
@@ -133,7 +133,7 @@ function writeNewTimesheet(
     const alreadyExists = tasks.find((task) => task.subject === taskDescriptor);
     if (alreadyExists) {
       console.error(
-        `can't create new task '${taskDescriptor}'; the task already exists`
+        `cannot create new task '${taskDescriptor}'; the task already exists`
       );
       process.exit(1);
     }
@@ -147,7 +147,7 @@ function writeNewTimesheet(
   } else if (taskToStart) {
     if (taskToStart.begin) {
       console.error(
-        `can't start task '${taskToStart.subject}'; the task has already been started`
+        `cannot start task '${taskToStart.subject}'; the task has already been started`
       );
       process.exit(1);
     }

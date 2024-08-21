@@ -85,17 +85,17 @@ export default async function resume(taskDescriptor: string | undefined) {
   }
   if (isUnstarted(existingTask)) {
     console.error(
-      `can't resume task '${taskDescriptor}'; the task hasn't even been started yet`
+      `cannot resume task '${taskDescriptor}'; the task hasn't even been started yet`
     );
   }
   if (isStarted(existingTask)) {
     console.error(
-      `can't resume task '${taskDescriptor}'; the task has been started but not suspended`
+      `cannot resume task '${taskDescriptor}'; the task has been started but not suspended`
     );
   }
   if (isResumed(existingTask)) {
     console.error(
-      `can't resume task '${taskDescriptor}'; the task has already been resumed`
+      `cannot resume task '${taskDescriptor}'; the task has already been resumed`
     );
   }
   process.exit(1);

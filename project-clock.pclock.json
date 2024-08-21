@@ -62,14 +62,8 @@
       "subject": "A new project timesheet can be created",
       "description": "Create tests for testing that the command 'new' works and edit the code so that the tests are passed. Use the commander library for the implementation and study how the library is used. Previous test for argumentless call had to be rewritten too.",
       "begin": "2024-07-05T10:24:35.655Z",
-      "suspend": [
-        "2024-07-05T12:48:14.935Z",
-        "2024-07-06T08:26:23.033Z"
-      ],
-      "resume": [
-        "2024-07-06T05:42:52.001Z",
-        "2024-07-06T08:45:43.944Z"
-      ],
+      "suspend": ["2024-07-05T12:48:14.935Z", "2024-07-06T08:26:23.033Z"],
+      "resume": ["2024-07-06T05:42:52.001Z", "2024-07-06T08:45:43.944Z"],
       "end": "2024-07-06T12:24:58.481Z"
     },
     {
@@ -236,12 +230,8 @@
     {
       "subject": "Explore the i18n library options",
       "begin": "2024-07-20T08:35:19.321Z",
-      "suspend": [
-        "2024-07-20T08:49:09.485Z"
-      ],
-      "resume": [
-        "2024-07-20T09:03:44.690Z"
-      ],
+      "suspend": ["2024-07-20T08:49:09.485Z"],
+      "resume": ["2024-07-20T09:03:44.690Z"],
       "end": "2024-07-20T09:35:58.887Z"
     },
     {
@@ -273,12 +263,8 @@
       "subject": "Modify 'start' and 'stop' commands so that they report timesheet file errors in a user friendly manner",
       "description": "I created tests for testing that the file errors are handled and modified the functions so that the tests pass. I also removed the unnecessary 'ERROR:' marker from all error messages used with the ProjectClockError, and refactored the timesheet file read/write functions into the same file (timesheetReadWrite.ts).",
       "begin": "2024-08-02T03:44:31.810Z",
-      "suspend": [
-        "2024-08-02T04:15:34.062Z"
-      ],
-      "resume": [
-        "2024-08-02T05:28:37.452Z"
-      ],
+      "suspend": ["2024-08-02T04:15:34.062Z"],
+      "resume": ["2024-08-02T05:28:37.452Z"],
       "end": "2024-08-02T07:39:04.467Z"
     },
     {
@@ -424,25 +410,15 @@
       "description": "Edit command descriptions and prompts of 'start' and 'stop' commands to be clearer.",
       "notes": "After adding one more inquirer step to the command, the previous method of passing answers to inquirer questions in tests didn't work anymore. In addition to changing the operation of the commands, I had to create a new function execute() to make the tests work. It uses child_process.exec() instead of child_process.execSync(), and it took a while to learn how to use the asynchronous version of the function.",
       "begin": "2024-08-08T05:36:41.560Z",
-      "suspend": [
-        "2024-08-08T07:36:48.845Z",
-        "2024-08-08T13:12:33.365Z"
-      ],
-      "resume": [
-        "2024-08-08T10:05:37.786Z",
-        "2024-08-09T03:18:26.212Z"
-      ],
+      "suspend": ["2024-08-08T07:36:48.845Z", "2024-08-08T13:12:33.365Z"],
+      "resume": ["2024-08-08T10:05:37.786Z", "2024-08-09T03:18:26.212Z"],
       "end": "2024-08-09T03:53:48.720Z"
     },
     {
       "subject": "Rearrange tests for clarity",
       "begin": "2024-08-12T08:02:49.909Z",
-      "suspend": [
-        "2024-08-12T09:19:19.186Z"
-      ],
-      "resume": [
-        "2024-08-12T10:24:12.064Z"
-      ],
+      "suspend": ["2024-08-12T09:19:19.186Z"],
+      "resume": ["2024-08-12T10:24:12.064Z"],
       "end": "2024-08-12T10:36:36.151Z"
     },
     {
@@ -466,14 +442,8 @@
     {
       "subject": "Change task status 'not started' to 'unstarted'",
       "begin": "2024-08-19T09:35:38.537Z",
-      "suspend": [
-        "2024-08-19T09:42:56.690Z",
-        "2024-08-19T09:51:04.461Z"
-      ],
-      "resume": [
-        "2024-08-19T09:46:34.210Z",
-        "2024-08-19T10:08:25.601Z"
-      ],
+      "suspend": ["2024-08-19T09:42:56.690Z", "2024-08-19T09:51:04.461Z"],
+      "resume": ["2024-08-19T09:46:34.210Z", "2024-08-19T10:08:25.601Z"],
       "end": "2024-08-19T10:08:25.601Z"
     },
     {
@@ -509,12 +479,8 @@
     {
       "subject": "Make error reporting testing consistent in integration tests",
       "begin": "2024-08-20T09:45:50.426Z",
-      "suspend": [
-        "2024-08-20T11:38:40.449Z"
-      ],
-      "resume": [
-        "2024-08-20T11:39:32.078Z"
-      ],
+      "suspend": ["2024-08-20T11:38:40.449Z"],
+      "resume": ["2024-08-20T11:39:32.078Z"],
       "end": "2024-08-20T11:48:47.585Z"
     },
     {
@@ -533,7 +499,9 @@
       "end": "2024-08-21T04:03:00.447Z"
     },
     {
-      "subject": "Remove contractions from prompts and messages (e.g., can't to cannot)"
+      "subject": "Remove contractions from prompts and messages (e.g., can't to cannot)",
+      "begin": "2024-08-21T09:41:23.206Z",
+      "end": "2024-08-21T10:03:03.294Z"
     },
     {
       "subject": "Full task data (full subject, description and notes texts) can be displayed"

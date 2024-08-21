@@ -691,7 +691,7 @@ describe('Stopping the clock', () => {
       }
 
       expect(error).toMatch(
-        `can't stop task '${TASK_SUBJECT}'; the task has already been stopped`
+        `cannot stop task '${TASK_SUBJECT}'; the task has already been stopped`
       );
       expectTaskMemberHasValue(testFilePath, 'end', '2024-01-01T01:00:00.000Z');
     });
@@ -723,7 +723,7 @@ describe('Stopping the clock', () => {
       }
 
       expect(error).toMatch(
-        `can't stop task '${TASK_SUBJECT}'; the task hasn't been started yet`
+        `cannot stop task '${TASK_SUBJECT}'; the task hasn't been started yet`
       );
       expectTaskMemberHasValue(testFilePath, 'end', undefined);
     });

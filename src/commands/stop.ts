@@ -69,12 +69,12 @@ export default async function stop(taskDescriptor: string | undefined) {
   }
   if (!existingTask?.begin) {
     console.error(
-      `can't stop task '${taskDescriptor}'; the task hasn't been started yet`
+      `cannot stop task '${taskDescriptor}'; the task hasn't been started yet`
     );
   }
   if (existingTask?.end) {
     console.error(
-      `can't stop task '${taskDescriptor}'; the task has already been stopped`
+      `cannot stop task '${taskDescriptor}'; the task has already been stopped`
     );
   }
   process.exit(1);

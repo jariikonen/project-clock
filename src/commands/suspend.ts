@@ -83,12 +83,12 @@ export default async function suspend(taskDescriptor: string | undefined) {
   }
   if (isUnstarted(existingTask)) {
     console.error(
-      `can't suspend task '${taskDescriptor}'; the task hasn't been started yet`
+      `cannot suspend task '${taskDescriptor}'; the task hasn't been started yet`
     );
   }
   if (isSuspended(existingTask)) {
     console.error(
-      `can't suspend task '${taskDescriptor}'; the task has already been suspended`
+      `cannot suspend task '${taskDescriptor}'; the task has already been suspended`
     );
   }
   process.exit(1);
