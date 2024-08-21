@@ -1,19 +1,52 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import input from '@inquirer/input';
+import handleExitPrompError from '../common/handleExitPromptError';
+
+function getPClockFileName(projectName: string) {
+  return `${projectName.replace(/\s/g, '_')}.pclock.json`;
+}
+
+async function getProjectName() {
+  const cwd = process.cwd();
+  const defaultName = path.basename(cwd);
+  const defaultPath = path.join(cwd, getPClockFileName(defaultName));
+  const defaultNameToUse = !fs.existsSync(defaultPath)
+    ? defaultName
+    : undefined;
+  let result = '';
+  try {
+    result = await input({
+      message: 'enter name for the project:',
+      default: defaultNameToUse,
+    });
+  } catch (error) {
+    handleExitPrompError(error);
+  }
+  return result;
+}
 
 /**
  * Creates a new timesheet file for a project.
  *
- * Requires the project name as an argument. Exits with an error if the
- * argument is not provided.
+ * Prompts the user for a project name if projectName argument is not given.
+ * The name of the current working directory is offered as the default value if
+ * the file doesn't exist already.
  * @param projectName Name of the new project.
  */
-export default function newTimeSheet(projectName: string) {
-  const projectFileName = `${projectName}.pclock.json`;
+export default async function newTimeSheet(projectName: string | undefined) {
+  // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+  const projectNameToUse = projectName || (await getProjectName());
+  if (!projectNameToUse) {
+    console.error('exiting; no project name');
+    process.exit(1);
+  }
+
+  const projectFileName = getPClockFileName(projectNameToUse);
   const projectFilePath = path.join(process.cwd(), projectFileName);
 
   const newProjectClockData = {
-    projectName,
+    projectName: projectNameToUse,
     tasks: [],
   };
 
@@ -27,11 +60,13 @@ export default function newTimeSheet(projectName: string) {
     );
   } catch (err) {
     if (err instanceof Error && err.message.startsWith('EEXIST')) {
-      console.error('ERROR: timesheet file already exists');
+      console.error(
+        `cannot create timesheet file '${projectFilePath}'; file already exists`
+      );
       process.exit(1);
     } else {
       reportError(err);
     }
   }
-  console.log(`created a new timesheet: ${projectFilePath}`);
+  console.log(`created a new timesheet '${projectFilePath}'`);
 }

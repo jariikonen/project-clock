@@ -518,7 +518,19 @@
       "end": "2024-08-20T11:48:47.585Z"
     },
     {
-      "subject": "Modify 'new' command so that it uses the name of the parent directory as the default value for project name and prompts the user for confirmation"
+      "subject": "Modify the 'new' command so that it uses the name of the parent directory as the default value for project name and prompts the user for confirmation",
+      "begin": "2024-08-20T11:54:05.530Z",
+      "suspend": [
+        "2024-08-20T12:48:51.857Z",
+        "2024-08-20T13:19:31.511Z",
+        "2024-08-20T14:47:02.174Z"
+      ],
+      "resume": [
+        "2024-08-20T12:59:35.289Z",
+        "2024-08-20T14:01:51.828Z",
+        "2024-08-21T03:34:06.478Z"
+      ],
+      "end": "2024-08-21T04:03:00.447Z"
     },
     {
       "subject": "Remove contractions from prompts and messages (e.g., can't to cannot)"

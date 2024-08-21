@@ -23,9 +23,9 @@ program.addHelpText('beforeAll', `pclock (Project Clock) v${version}\n`);
 program
   .command('new')
   .description(
-    'Create a new project timesheet. Requires the project name as an argument.\n\n'
+    'Create a new project timesheet. Prompts the user for a project name, if the project_name argument is not given.\n\n'
   )
-  .argument('<project_name>', 'name of the project')
+  .argument('[project_name]', 'name of the project')
   .action((projectName) => newTimeSheet(projectName));
 
 program

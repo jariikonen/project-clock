@@ -10,10 +10,10 @@ export const ROOT_DIR = path.dirname(path.dirname(path.dirname(__dirname)));
 export const SUBDIR_NAME = 'subdir';
 
 /** This can be used for naming a test project/timesheet. */
-export const PROJECT_NAME = 'testProject';
+export const PROJECT_NAME = 'test project';
 
 /** A timesheet file name that matches the PROJECT_NAME. */
-export const TEST_FILE_NAME = `${PROJECT_NAME}.pclock.json`;
+export const TEST_FILE_NAME = 'test_project.pclock.json';
 
 /** This can be used as a task subject. */
 export const TASK_SUBJECT = 'Test task';
