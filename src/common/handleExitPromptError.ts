@@ -1,8 +1,9 @@
 import { ExitPromptError } from '@inquirer/core';
 
 /**
- * Handles the ExitPromptError from inquirer by displaying message telling that
- * user force closed the process and doing a normal exit (without error code).
+ * Handles the ExitPromptError from inquirer by displaying a message telling
+ * that the user force closed the process and by doing a normal exit (without
+ * error code).
  * @param error
  * @throws All other exceptions but the @inquirer/core.ExitPromptError.
  */

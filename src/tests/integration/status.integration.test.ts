@@ -5,7 +5,7 @@ import { createTestFile } from '../common/testFile';
 import {
   Command,
   faultyTask,
-  moreThanOneTimesheetFiles,
+  moreThanOneTimesheetFile,
   noPermission,
   noTimesheetFile,
 } from '../common/userFriendlyErrorMessages';
@@ -41,8 +41,8 @@ describe('Status command', () => {
       noPermission(testDirName, Command.Status);
     });
 
-    test('"Status" command reports timesheet file errors in a user friendly manner; more than one timesheet files', () => {
-      moreThanOneTimesheetFiles(testDirName, Command.Status);
+    test('"Status" command reports timesheet file errors in a user friendly manner; more than one timesheet file', () => {
+      moreThanOneTimesheetFile(testDirName, Command.Status);
     });
 
     test('"Status" command with a faulty timesheet file returns a user friendly error message (no stack trace or source code paths)', () => {

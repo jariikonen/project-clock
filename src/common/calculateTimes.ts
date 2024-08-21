@@ -1,8 +1,15 @@
 import { Task } from '../types/ProjectClockData';
 import ProjectClockError from './ProjectClockError';
 
+/**
+ * Represents an object used as a return value of the calculateTimes()
+ * function.
+ */
 export interface TaskStatus {
+  /** Task identifier (task subject). */
   task: string;
+
+  /** Status of the task. */
   status:
     | 'unstarted'
     | 'started'
@@ -10,6 +17,8 @@ export interface TaskStatus {
     | 'resumed'
     | 'completed'
     | undefined;
+
+  /** Time spent on the task in microseconds. */
   timeSpent: number;
 }
 

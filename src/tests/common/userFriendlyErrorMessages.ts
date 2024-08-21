@@ -1,3 +1,8 @@
+/**
+ * Functions that can be used for testing that different commands output user
+ * friendly error messages.
+ */
+
 import fs from 'node:fs';
 import path from 'node:path';
 import { execSync } from 'node:child_process';
@@ -6,6 +11,7 @@ import { createTestFile } from './testFile';
 import { getTestPathsFromDirName } from './testPaths';
 import { ProjectClockData } from '../../types/ProjectClockData';
 
+/** Commands accepted by these functions. */
 export enum Command {
   Add = 'add',
   List = 'list',
@@ -16,6 +22,12 @@ export enum Command {
   Suspend = 'suspend',
 }
 
+/**
+ * Tests that command reports timesheet file errors in a user friendly manner,
+ * when there is no timesheet file in the directory.
+ * @param testDirName Name of the test directory.
+ * @param command Command to test.
+ */
 export function noTimesheetFile(testDirName: string, command: Command) {
   const { subdirPath } = getTestPathsFromDirName(testDirName);
   let error = '';
@@ -35,6 +47,12 @@ export function noTimesheetFile(testDirName: string, command: Command) {
   expect(error).not.toMatch('ProjectClockError');
 }
 
+/**
+ * Tests that command reports timesheet file errors in a user friendly manner,
+ * when the user has no permission to access the file.
+ * @param testDirName Name of the test directory.
+ * @param command Command to test.
+ */
 export function noPermission(testDirName: string, command: Command) {
   const { testFilePath, subdirPath } = getTestPathsFromDirName(testDirName);
 
@@ -64,7 +82,13 @@ export function noPermission(testDirName: string, command: Command) {
   expect(error).not.toMatch('ProjectClockError');
 }
 
-export function moreThanOneTimesheetFiles(
+/**
+ * Tests that command reports timesheet file errors in a user friendly manner,
+ * when there are more than one timesheet file in the directory.
+ * @param testDirName Name of the test directory.
+ * @param command Command to test.
+ */
+export function moreThanOneTimesheetFile(
   testDirName: string,
   command: Command
 ) {
@@ -103,6 +127,15 @@ export function moreThanOneTimesheetFiles(
   expect(error).not.toMatch('ProjectClockError');
 }
 
+/**
+ * Tests that command reports in a user friendly manner when the command is
+ * force stopped with ctrl + c during a prompt.
+ * @param testDirName Name of the test directory.
+ * @param command Command to test.
+ * @param testFileDataObj A data object that is used for initializing the file
+ *    used by the command. It has to be designed so that the command prompts
+ *    the user for more information.
+ */
 export function forceStopped(
   testDirName: string,
   command: Command,
@@ -126,6 +159,12 @@ export function forceStopped(
   expect(response).not.toMatch('ProjectClockError');
 }
 
+/**
+ * Tests that command reports timesheet file errors in a user friendly manner,
+ * when there is a faulty task in the timesheet file.
+ * @param testDirName Name of the test directory.
+ * @param command Command to test.
+ */
 export function faultyTask(testDirName: string, command: Command) {
   const { testFilePath, subdirPath } = getTestPathsFromDirName(testDirName);
 

@@ -6,7 +6,7 @@ import { expectTaskEqualsTo } from '../common/testTask';
 import {
   Command,
   forceStopped,
-  moreThanOneTimesheetFiles,
+  moreThanOneTimesheetFile,
   noPermission,
   noTimesheetFile,
 } from '../common/userFriendlyErrorMessages';
@@ -41,8 +41,8 @@ describe('User friendly error messages', () => {
     noPermission(testDirName, Command.Add);
   });
 
-  test('"Add" command reports timesheet file errors in a user friendly manner; more than one timesheet files', () => {
-    moreThanOneTimesheetFiles(testDirName, Command.Add);
+  test('"Add" command reports timesheet file errors in a user friendly manner; more than one timesheet file', () => {
+    moreThanOneTimesheetFile(testDirName, Command.Add);
   });
 
   test('"Add" command gives a user friendly error message when the command is force stopped with CTRL+C', () => {

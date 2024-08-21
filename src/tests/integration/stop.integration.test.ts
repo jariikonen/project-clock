@@ -8,7 +8,7 @@ import { expectTaskMemberHasValue, getTestTask } from '../common/testTask';
 import {
   Command,
   forceStopped,
-  moreThanOneTimesheetFiles,
+  moreThanOneTimesheetFile,
   noPermission,
   noTimesheetFile,
 } from '../common/userFriendlyErrorMessages';
@@ -63,8 +63,8 @@ describe('Stopping the clock', () => {
       noPermission(testDirName, Command.Stop);
     });
 
-    test('"Stop" command reports timesheet file errors in a user friendly manner; more than one timesheet files', () => {
-      moreThanOneTimesheetFiles(testDirName, Command.Stop);
+    test('"Stop" command reports timesheet file errors in a user friendly manner; more than one timesheet file', () => {
+      moreThanOneTimesheetFile(testDirName, Command.Stop);
     });
 
     test('"Stop" command gives a user friendly error message when the command is force stopped with CTRL+C', () => {

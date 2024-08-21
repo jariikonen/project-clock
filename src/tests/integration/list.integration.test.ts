@@ -5,7 +5,7 @@ import { createTestFile } from '../common/testFile';
 import {
   Command,
   faultyTask,
-  moreThanOneTimesheetFiles,
+  moreThanOneTimesheetFile,
   noPermission,
   noTimesheetFile,
 } from '../common/userFriendlyErrorMessages';
@@ -40,8 +40,8 @@ describe('User friendly error messages', () => {
     noPermission(testDirName, Command.List);
   });
 
-  test('"List" command reports timesheet file errors in a user friendly manner; more than one timesheet files', () => {
-    moreThanOneTimesheetFiles(testDirName, Command.List);
+  test('"List" command reports timesheet file errors in a user friendly manner; more than one timesheet file', () => {
+    moreThanOneTimesheetFile(testDirName, Command.List);
   });
 
   test('"List" command reports timesheet file errors in a user friendly manner; faulty task', () => {

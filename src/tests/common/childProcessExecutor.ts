@@ -9,6 +9,8 @@ export const UP = '\x1B\x5B\x41';
  * time, when the process prompts the user for input.
  * @param command The command to be executed.
  * @param inputs Inputs to the process as an array of strings.
+ * @param timeout Timeout in milliseconds. Execution is terminated after given
+ *    time.
  * @returns Stdout output of the process as a string.
  */
 export default async function execute(

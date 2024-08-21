@@ -19,6 +19,7 @@ export function createTestFile(
   fs.writeFileSync(testFilePath, fileJSON, { encoding: 'utf8' });
 }
 
+/** Creates a JSON file out of any object. */
 export function createUnrestrictedTestFile(
   testFileDataObj: object,
   testFilePath: string

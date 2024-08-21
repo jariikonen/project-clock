@@ -60,6 +60,7 @@
 import { Task } from '../types/ProjectClockData';
 import ProjectClockError from './ProjectClockError';
 
+/** Represents the type of a task state. */
 export enum TaskStateType {
   Active = 'active',
   Suspendable = 'suspendable',
@@ -70,16 +71,32 @@ export enum TaskStateType {
   Incomplete = 'incomplete',
 }
 
+/**
+ * Returns the active tasks found in the given task array.
+ * @param tasks Array of tasks.
+ * @param taskDescriptor A string that is expected to match the task subject.
+ */
 export function getActiveTasks(tasks: Task[]) {
   return tasks.filter((task) => task.begin && !task.end);
 }
 
+/**
+ * Returns the active tasks found in the given task array, which
+ * match the given task descriptor.
+ * @param tasks Array of tasks.
+ * @param taskDescriptor A string that is expected to match the task subject.
+ */
 export function getMatchingActiveTasks(tasks: Task[], taskDescriptor: string) {
   return tasks.filter(
     (task) => task.begin && !task.end && task.subject.match(taskDescriptor)
   );
 }
 
+/**
+ * Returns the suspendable tasks found from the given task array.
+ * @param tasks Array of tasks.
+ * @param taskDescriptor A string that is expected to match the task subject.
+ */
 export function getSuspendableTasks(tasks: Task[]) {
   return tasks.filter((task) => {
     // stopped
@@ -104,6 +121,12 @@ export function getSuspendableTasks(tasks: Task[]) {
   });
 }
 
+/**
+ * Returns the suspendable tasks found in the given task array, which
+ * match the given task descriptor.
+ * @param tasks Array of tasks.
+ * @param taskDescriptor A string that is expected to match the task subject.
+ */
 export function getMatchingSuspendableTasks(
   tasks: Task[],
   taskDescriptor: string
@@ -137,6 +160,11 @@ export function getMatchingSuspendableTasks(
   });
 }
 
+/**
+ * Returns the resumbable tasks found in the given task array.
+ * @param tasks Array of tasks.
+ * @param taskDescriptor A string that is expected to match the task subject.
+ */
 export function getResumableTasks(tasks: Task[]) {
   return tasks.filter((task) => {
     // stopped
@@ -157,6 +185,12 @@ export function getResumableTasks(tasks: Task[]) {
   });
 }
 
+/**
+ * Returns the resumable tasks found in the given task array, which
+ * match the given task descriptor.
+ * @param tasks Array of tasks.
+ * @param taskDescriptor A string that is expected to match the task subject.
+ */
 export function getMatchingResumableTasks(
   tasks: Task[],
   taskDescriptor: string
@@ -184,10 +218,21 @@ export function getMatchingResumableTasks(
   });
 }
 
+/**
+ * Returns the stoppable/active tasks found in the given task array.
+ * @param tasks Array of tasks.
+ * @param taskDescriptor A string that is expected to match the task subject.
+ */
 export function getStoppableTasks(tasks: Task[]) {
   return getActiveTasks(tasks);
 }
 
+/**
+ * Returns the stoppable/active tasks found in the given task array, which
+ * match the given task descriptor.
+ * @param tasks Array of tasks.
+ * @param taskDescriptor A string that is expected to match the task subject.
+ */
 export function getMatchingStoppableTasks(
   tasks: Task[],
   taskDescriptor: string
@@ -195,6 +240,14 @@ export function getMatchingStoppableTasks(
   return getMatchingActiveTasks(tasks, taskDescriptor);
 }
 
+/**
+ * Filters tasks in the given task array based on the given task state type. If
+ * task descriptor is given, the tasks are also filtered based on that and the
+ * task state type.
+ * @param tasks Array of tasks.
+ * @param taskType Task state type based on which the tasks are filtered.
+ * @param taskDescriptor A string that is expected to match the task subject.
+ */
 export function filterTasks(
   tasks: Task[],
   taskType: TaskStateType,

@@ -11,7 +11,7 @@ import execute, { DOWN } from '../common/childProcessExecutor';
 import {
   Command,
   forceStopped,
-  moreThanOneTimesheetFiles,
+  moreThanOneTimesheetFile,
   noPermission,
   noTimesheetFile,
 } from '../common/userFriendlyErrorMessages';
@@ -100,8 +100,8 @@ describe('Resume command', () => {
       noPermission(testDirName, Command.Resume);
     });
 
-    test('"Resume" command reports timesheet file errors in a user friendly manner; more than one timesheet files', () => {
-      moreThanOneTimesheetFiles(testDirName, Command.Resume);
+    test('"Resume" command reports timesheet file errors in a user friendly manner; more than one timesheet file', () => {
+      moreThanOneTimesheetFile(testDirName, Command.Resume);
     });
 
     test('"Resume" command gives a user friendly error message when the command is force stopped with CTRL+C', () => {

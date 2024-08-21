@@ -14,6 +14,7 @@ import promptToConfirmOrSelectTask from './promptToConfirmOrSelectTask';
  * null. This way the caller knows that the task is not of the specific type
  * and can continue with that information.
  * @param tasks An array of task objects from which the task is selected.
+ * @param taskType Task state type to look for.
  * @param taskDescriptor A regex search string that is expected to match a task
  *    subject.
  * @param verb A verb that represents an action to be performed on tasks.
@@ -21,7 +22,7 @@ import promptToConfirmOrSelectTask from './promptToConfirmOrSelectTask';
  *    descriptor exists.
  * @returns Task selected by user or null.
  */
-export default async function getTask(
+export default async function getTaskOfType(
   tasks: Task[],
   taskType: TaskStateType,
   taskDescriptor: string | undefined,
