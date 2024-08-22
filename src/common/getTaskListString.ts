@@ -5,7 +5,7 @@ import TimePeriod, { TimeParams } from './TimePeriod';
 type ListMode = 'table' | 'simple';
 
 /** Amount of padding added to the sides of the table (left, right). */
-export type TablePadding = [number, number];
+export type TablePadding = [left: number, right: number];
 
 function calculateColWidths(
   width: number,
@@ -60,7 +60,7 @@ function createTable(
 }
 
 function formatCell(content: string, width: number): string {
-  if (content.length > width) {
+  if (content.length > width - 1) {
     return `${content.slice(0, width - 4)}... `;
   }
   return content.padEnd(width, ' ');
@@ -69,7 +69,7 @@ function formatCell(content: string, width: number): string {
 function createRows(
   contentRows: string[][],
   colWidths: number[],
-  tablePadding: [number, number]
+  tablePadding: TablePadding
 ): string[] {
   const resultRows: string[] = [];
   contentRows.forEach((row) => {
@@ -77,8 +77,8 @@ function createRows(
     row.forEach((cell, i) => {
       rowStr += formatCell(cell, colWidths[i]);
     });
-    const paddingLeft = new Array(tablePadding[0] + 1).join(' ');
-    const paddingRight = new Array(tablePadding[1] + 1).join(' ');
+    const paddingLeft = ' '.repeat(tablePadding[0]);
+    const paddingRight = ' '.repeat(tablePadding[1]);
     resultRows.push(`${paddingLeft}${rowStr}${paddingRight}`);
   });
   return resultRows;
@@ -88,7 +88,7 @@ function createSimpleTable(
   head: string[],
   rows: string[][],
   colWidths: number[],
-  tablePadding: [number, number]
+  tablePadding: TablePadding
 ) {
   const headRow = createRows([head], colWidths, tablePadding);
   const contentRows = createRows(rows, colWidths, tablePadding);

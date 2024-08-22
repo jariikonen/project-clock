@@ -567,7 +567,10 @@
     },
     {
       "subject": "Fix padding in simple table rendering",
-      "description": "Currently, no (right) padding is used if the text is exactly the length of the cell width."
+      "description": "Currently, no (right) padding is used if the text is exactly the length of the cell width.",
+      "notes": "There actually isn't explicit cell padding in the implementation. The contents were truncated if they were longer than the cell width and the last four characters were replaced with an ellipsis and a whitespace. I changed the code so that the content is truncated if it is longer than cell width - 1.",
+      "begin": "2024-08-22T11:50:19.413Z",
+      "end": "2024-08-22T12:30:37.608Z"
     },
     {
       "subject": "Try adding colors to getTaskListString()'s simple rendering and see if that affects the output from child_process.execSync()",
