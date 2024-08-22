@@ -12,123 +12,59 @@ npm install -g project-clock
 
 ## Usage
 
-### Creating a new timesheet
-
-Create a new timesheet file for your project with the `new` command:
-
-```sh
-~/projects/testproject$ pclock new
-project name: (testproject)
 ```
+pclock (Project Clock) v0.0.0
 
-If no parameters are provided, application prompts for the name of the project. Default value is the name of the parent directory.
+Usage: pclock [options] [command]
 
-You can also give the project name as a parameter:
+CLI app to clock time spent on a project
 
-```sh
-pclock new testproject
+Options:
+  -V, --version                     output the version number
+  -v, --verbose                     print more verbose output
+  -a --active                       list just the active tasks
+  -c --complete                     list just the completed tasks
+  -i --incomplete                   list just the incomplete tasks
+  -n --not-started                  list just the tasks that have not been started
+  -h, --help                        display help for command
+
+Commands:
+  new [project_name]                Create a new project timesheet. Prompts the user for a project name, if the project_name argument is not given.
+
+  start [task_descriptor]           Start a task. If the command is called without the task descriptor argument, it will first look for any unstarted
+                                    tasks. If a single such task is found, the user is asked if this is the one to be started. If more than one such
+                                    task are found, user is asked which of the tasks to start. If no unstarted tasks are found, user is asked if a new
+                                    task should be created. If user wants to create a new task, user is prompted for a subject for the new task and the
+                                    current timestamp is provided as the default subject.
+
+                                    If task descriptor is provided, a task whose subject matches the descriptor is looked for. If such a task is found,
+                                    the user is confirmed if it is the right task. If the task is correct, it is started. If such a task is not found,
+                                    the user is confirmed whether to create a new task with the task descriptor as its subject. If many tasks match with
+                                    the descriptor, user is prompted which of the tasks to start.
+
+  stop [task_descriptor]            Stop the clock. If the command is called without the task descriptor argument, it will look for active tasks (i.e.,
+                                    a task that is started but not stopped). If one such task is found, the user is confirmed whether this is the
+                                    correct task. If it is, the task is stopped by setting the "end" value of the task to current timestamp. If more
+                                    than one such task are found, the user is prompted which one of the tasks to stop. If no such task is found, the
+                                    command exits with an error.
+
+                                    If task descriptor is provided, a tasks whose subject matches the descriptor is looked for. If such a task is found
+                                    the user is confirmed whether it is the correct task to stop. if it is, the task is stopped. If more than one such
+                                    task is found, the user is prompted which one of the tasks to stop. If no such task is found, the command exits with
+                                    an error.
+
+  status [-v]                       Output status information.
+
+  list|ls [-acinv]                  List tasks on the timesheet.
+
+  suspend|pause [task_descriptor]   Suspend a task.
+
+  resume|unpause [task_descriptor]  Resume a task.
+
+  add [task_subject]                Add a new task. Prompts the user for a task subject if the task_subject argument is not given.
+
+  show [task_descriptor]            Display the full task data (subject, description, notes and time data). Prompts the user to select a task if the
+                                    task_descriptor argument is not given.
+
+  help [command]                    display help for command
 ```
-
-or just start the clock using the `start` command:
-
-```sh
-pclock start
-```
-
-If there is no timesheet file in the directory, a new one is created and a prompt asking for the project name is shown.
-
-A timesheet is essentially a json file with a name following this pattern: _<project_name>.pclock.json_.
-
-### Starting and stopping the clock and describing the tasks
-
-Use the `start` command to start the clock:
-
-```sh
-pclock start [<subject>]
-```
-
-With `start` wtihout any parameters, current timestamp is used as the subject for the task. You may also write the subject directly after the `start` command in quotes:
-
-```sh
-pclock start 'Implement clock functions'
-```
-
-After a task is started, its subject can be set with the `set-subject` command:
-
-```sh
-pclock set-subject 'Implement clock functions'
-```
-
-When the work is done, the clock can be stopped with the `stop` command:
-
-```sh
-pclock stop [<task>]
-```
-
-Stop command marks the task as complete. Clock can also be paused with the `pause` (alias `suspend`) command:
-
-```sh
-pclock pause [<task>]
-```
-
-This suspends the task, meaning it is not shown complete in the listings of the timesheet. Paused clock can be unpaused with `unpause` (alias `resume`) command:
-
-```sh
-pclock unpause [<task>]
-```
-
-The task being stopped, paused or unpaused can be specified with a regular expression that matches the tasks subject. If task is not specified the command affects the last started or the last stopped task (in this order).
-
-A longer description of the task can be specified using the `--description` option, which can also be used with start and stop commands:
-
-```sh
-pclock stop --description 'Create a skeleton with empty function definitions.'
-```
-
-There is also a `set-description` command that can be used for setting the message of the last started or the last stopped task:
-
-```sh
-pclock set-description 'Create a skeleton with empty function definitions.'
-```
-
-New lines can be appended to the description with the `append` command:
-
-```sh
-pclock append [--paragraph] 'Create a test for start function and implement the function.'
-```
-
-If the `--paragraph` option is used two line breaks are added before the new string.
-
-### Editing older task descriptions
-
-`Stop`, `pause` and `unpause` commands accept a task specifier as a parameter. Without it they will affect the last started (not complete) or last completed task. It is also possible to specify the task for commands like `set-subject` or `set-description` that do not accept a task specifier as parameter, with the `--task` option:
-
-```sh
-pclock set-subject 'Designing the basic structure' --task 'Creating the basic structure'
-```
-
-Sets the subject for a task whose previous subject matches with "Creating the basic structure". Following command appends new text as a new paragraph to the description of a task with a subject starting with "Creating the":
-
-```sh
-pclock set-description -p --task '^Creating the' 'Defining the basic structure of the project using key user stories ...'
-```
-
-### Listing tasks and project statistics
-
-Command `ls-tasks` (alias `lst`) lists the tasks on the timesheet along with the times spent on them:
-
-```sh
-pclock ls-tasks [--complete | --started | --not-started]
-```
-
-Options can be used for narrowing the set of listed tasks.
-
-### Getting current status
-
-The tasks that have been started but are still incomplete, along with some other status information, can be listed with the `status` command:
-
-```sh
-pclock status
-```
-
-The other status information consists of, e.g., the number of complete and incomplete tasks on the timesheet.

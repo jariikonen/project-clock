@@ -634,7 +634,14 @@
       "subject": "Use of quotation marks in user entered texts and program output"
     },
     {
-      "subject": "Update and review README.md and command descriptions"
+      "subject": "Better filtering algorithm (e.g., match-sorter) for filtering tasks"
+    },
+    {
+      "subject": "Update and review README.md and command descriptions",
+      "begin": "2024-08-22T11:40:55.379Z",
+      "suspend": [
+        "2024-08-22T11:44:14.263Z"
+      ]
     },
     {
       "subject": "Add missing TSDoc comments, combine related functions in common directory into the same files when necessary and remove unnecessary functions",
@@ -672,7 +679,8 @@
         "2024-08-20T07:32:32.696Z",
         "2024-08-20T09:28:01.126Z",
         "2024-08-20T09:41:38.461Z",
-        "2024-08-22T11:34:40.866Z"
+        "2024-08-22T11:34:40.866Z",
+        "2024-08-22T11:40:10.880Z"
       ],
       "resume": [
         "2024-08-02T08:51:55.636Z",
@@ -686,7 +694,8 @@
         "2024-08-20T07:20:56.057Z",
         "2024-08-20T09:26:25.645Z",
         "2024-08-20T09:40:20.554Z",
-        "2024-08-22T11:22:21.278Z"
+        "2024-08-22T11:22:21.278Z",
+        "2024-08-22T11:36:29.356Z"
       ]
     }
   ]
