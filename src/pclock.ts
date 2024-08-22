@@ -10,6 +10,7 @@ import list from './commands/list';
 import suspend from './commands/suspend';
 import resume from './commands/resume';
 import add from './commands/add';
+import show from './commands/show';
 
 const program = new Command();
 
@@ -99,5 +100,16 @@ program
     'task subject; a string defining the subject of the task'
   )
   .action((taskSubject) => add(taskSubject));
+
+program
+  .command('show')
+  .description(
+    'Display the full task data (subject, description, notes and time data). Prompts the user to select a task if the task_descriptor argument is not given.\n\n'
+  )
+  .argument(
+    '[task_descriptor]',
+    'task descriptor; a string that is expected to match a task subject'
+  )
+  .action((taskDescriptor) => show(taskDescriptor));
 
 program.parse();

@@ -62,8 +62,14 @@
       "subject": "A new project timesheet can be created",
       "description": "Create tests for testing that the command 'new' works and edit the code so that the tests are passed. Use the commander library for the implementation and study how the library is used. Previous test for argumentless call had to be rewritten too.",
       "begin": "2024-07-05T10:24:35.655Z",
-      "suspend": ["2024-07-05T12:48:14.935Z", "2024-07-06T08:26:23.033Z"],
-      "resume": ["2024-07-06T05:42:52.001Z", "2024-07-06T08:45:43.944Z"],
+      "suspend": [
+        "2024-07-05T12:48:14.935Z",
+        "2024-07-06T08:26:23.033Z"
+      ],
+      "resume": [
+        "2024-07-06T05:42:52.001Z",
+        "2024-07-06T08:45:43.944Z"
+      ],
       "end": "2024-07-06T12:24:58.481Z"
     },
     {
@@ -230,8 +236,12 @@
     {
       "subject": "Explore the i18n library options",
       "begin": "2024-07-20T08:35:19.321Z",
-      "suspend": ["2024-07-20T08:49:09.485Z"],
-      "resume": ["2024-07-20T09:03:44.690Z"],
+      "suspend": [
+        "2024-07-20T08:49:09.485Z"
+      ],
+      "resume": [
+        "2024-07-20T09:03:44.690Z"
+      ],
       "end": "2024-07-20T09:35:58.887Z"
     },
     {
@@ -263,8 +273,12 @@
       "subject": "Modify 'start' and 'stop' commands so that they report timesheet file errors in a user friendly manner",
       "description": "I created tests for testing that the file errors are handled and modified the functions so that the tests pass. I also removed the unnecessary 'ERROR:' marker from all error messages used with the ProjectClockError, and refactored the timesheet file read/write functions into the same file (timesheetReadWrite.ts).",
       "begin": "2024-08-02T03:44:31.810Z",
-      "suspend": ["2024-08-02T04:15:34.062Z"],
-      "resume": ["2024-08-02T05:28:37.452Z"],
+      "suspend": [
+        "2024-08-02T04:15:34.062Z"
+      ],
+      "resume": [
+        "2024-08-02T05:28:37.452Z"
+      ],
       "end": "2024-08-02T07:39:04.467Z"
     },
     {
@@ -410,15 +424,25 @@
       "description": "Edit command descriptions and prompts of 'start' and 'stop' commands to be clearer.",
       "notes": "After adding one more inquirer step to the command, the previous method of passing answers to inquirer questions in tests didn't work anymore. In addition to changing the operation of the commands, I had to create a new function execute() to make the tests work. It uses child_process.exec() instead of child_process.execSync(), and it took a while to learn how to use the asynchronous version of the function.",
       "begin": "2024-08-08T05:36:41.560Z",
-      "suspend": ["2024-08-08T07:36:48.845Z", "2024-08-08T13:12:33.365Z"],
-      "resume": ["2024-08-08T10:05:37.786Z", "2024-08-09T03:18:26.212Z"],
+      "suspend": [
+        "2024-08-08T07:36:48.845Z",
+        "2024-08-08T13:12:33.365Z"
+      ],
+      "resume": [
+        "2024-08-08T10:05:37.786Z",
+        "2024-08-09T03:18:26.212Z"
+      ],
       "end": "2024-08-09T03:53:48.720Z"
     },
     {
       "subject": "Rearrange tests for clarity",
       "begin": "2024-08-12T08:02:49.909Z",
-      "suspend": ["2024-08-12T09:19:19.186Z"],
-      "resume": ["2024-08-12T10:24:12.064Z"],
+      "suspend": [
+        "2024-08-12T09:19:19.186Z"
+      ],
+      "resume": [
+        "2024-08-12T10:24:12.064Z"
+      ],
       "end": "2024-08-12T10:36:36.151Z"
     },
     {
@@ -442,8 +466,14 @@
     {
       "subject": "Change task status 'not started' to 'unstarted'",
       "begin": "2024-08-19T09:35:38.537Z",
-      "suspend": ["2024-08-19T09:42:56.690Z", "2024-08-19T09:51:04.461Z"],
-      "resume": ["2024-08-19T09:46:34.210Z", "2024-08-19T10:08:25.601Z"],
+      "suspend": [
+        "2024-08-19T09:42:56.690Z",
+        "2024-08-19T09:51:04.461Z"
+      ],
+      "resume": [
+        "2024-08-19T09:46:34.210Z",
+        "2024-08-19T10:08:25.601Z"
+      ],
       "end": "2024-08-19T10:08:25.601Z"
     },
     {
@@ -479,8 +509,12 @@
     {
       "subject": "Make error reporting testing consistent in integration tests",
       "begin": "2024-08-20T09:45:50.426Z",
-      "suspend": ["2024-08-20T11:38:40.449Z"],
-      "resume": ["2024-08-20T11:39:32.078Z"],
+      "suspend": [
+        "2024-08-20T11:38:40.449Z"
+      ],
+      "resume": [
+        "2024-08-20T11:39:32.078Z"
+      ],
       "end": "2024-08-20T11:48:47.585Z"
     },
     {
@@ -506,7 +540,25 @@
     {
       "subject": "Full task data (full subject, description and notes texts) can be displayed",
       "begin": "2024-08-21T10:14:08.040Z",
-      "suspend": ["2024-08-21T10:47:32.209Z"]
+      "suspend": [
+        "2024-08-21T10:47:32.209Z",
+        "2024-08-21T11:52:15.780Z",
+        "2024-08-21T13:26:01.959Z",
+        "2024-08-21T15:26:57.667Z",
+        "2024-08-22T04:06:07.388Z",
+        "2024-08-22T07:53:00.486Z",
+        "2024-08-22T10:08:19.040Z",
+        "2024-08-22T11:18:21.249Z"
+      ],
+      "resume": [
+        "2024-08-21T11:14:03.853Z",
+        "2024-08-21T12:32:43.104Z",
+        "2024-08-21T14:42:12.840Z",
+        "2024-08-22T03:36:07.124Z",
+        "2024-08-22T05:54:50.486Z",
+        "2024-08-22T08:41:54.564Z",
+        "2024-08-22T10:16:02.502Z"
+      ]
     },
     {
       "subject": "Fix a test outputting unnecessarily to stdout",
@@ -516,6 +568,10 @@
     {
       "subject": "Fix padding in simple table rendering",
       "description": "Currently, no (right) padding is used if the text is exactly the length of the cell width."
+    },
+    {
+      "subject": "Try adding colors to getTaskListString()'s simple rendering and see if that affects the output from child_process.execSync()",
+      "description": "I had to create a simpler list rendering function because the output from cli-table3 was truncated when the app was ran using child_process.execSync() in integration tests. If I can modify the simpler rendering method to add color to the lists, I could remove cli-table3 from the project and just use my own list rendering function."
     },
     {
       "subject": "Subject, description and notes of a task can be set and edited"
@@ -528,10 +584,6 @@
     },
     {
       "subject": "Modify the commands so that user is asked which timesheet to use if there are more than one timesheet in the directory if the timesheet is not selected using the --timesheet flag"
-    },
-    {
-      "subject": "Try adding colors to getTaskListString()'s simple rendering and see if that affects the output from child_process.execSync()",
-      "description": "I had to create a simpler list rendering function because the output from cli-table3 was truncated when the app was ran using child_process.execSync() in integration tests. If I can modify the simpler rendering method to add color to the lists, I could remove cli-table3 from the project and just use my own list rendering function."
     },
     {
       "subject": "A new project timesheet can be created by starting the clock"
@@ -619,7 +671,8 @@
         "2024-08-19T10:40:33.016Z",
         "2024-08-20T07:32:32.696Z",
         "2024-08-20T09:28:01.126Z",
-        "2024-08-20T09:41:38.461Z"
+        "2024-08-20T09:41:38.461Z",
+        "2024-08-22T11:34:40.866Z"
       ],
       "resume": [
         "2024-08-02T08:51:55.636Z",
@@ -632,7 +685,8 @@
         "2024-08-19T10:39:43.650Z",
         "2024-08-20T07:20:56.057Z",
         "2024-08-20T09:26:25.645Z",
-        "2024-08-20T09:40:20.554Z"
+        "2024-08-20T09:40:20.554Z",
+        "2024-08-22T11:22:21.278Z"
       ]
     }
   ]

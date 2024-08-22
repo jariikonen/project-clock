@@ -23,7 +23,7 @@ function exitWithNothingToDo(verb: string) {
  * @returns Task selected by user or null.
  * @throws If the array of `tasks` argument is empty.
  */
-export default async function promptForTask(
+export default async function promptToConfirmOrSelectTask(
   tasks: Task[],
   adjective: string,
   verb: string
