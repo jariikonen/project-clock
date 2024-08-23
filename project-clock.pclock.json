@@ -574,7 +574,14 @@
     },
     {
       "subject": "Try adding colors to getTaskListString()'s simple rendering and see if that affects the output from child_process.execSync()",
-      "description": "I had to create a simpler list rendering function because the output from cli-table3 was truncated when the app was ran using child_process.execSync() in integration tests. If I can modify the simpler rendering method to add color to the lists, I could remove cli-table3 from the project and just use my own list rendering function."
+      "description": "I had to create a simpler list rendering function because the output from cli-table3 was truncated when the app was ran using child_process.execSync() in integration tests. If I can modify the simpler rendering method to add color to the lists, I could remove cli-table3 from the project and just use my own list rendering function.",
+      "notes": "Adding colors to output with ANSI escape codes seems to be possible in a testable way. A library called pretty-ansi (https://github.com/mrazauskas/pretty-ansi) can also help with testing the output.",
+      "begin": "2024-08-23T05:43:38.361Z",
+      "end": "2024-08-23T07:23:52.981Z"
+    },
+    {
+      "subject": "Remove cli-table3 dependency from the project and add colors to my own output functions",
+      "description": "Since my own table implementation does the job just as well as cli-table3, the latter should be removed from the project. Also, since the colors can quite simply be added to output functions in a testable way, the output functions should be refactored as a slightly more general framework that allows colors to be added to outputs in a consistent way."
     },
     {
       "subject": "Subject, description and notes of a task can be set and edited"
@@ -640,6 +647,10 @@
       "subject": "Better filtering algorithm (e.g., match-sorter) for filtering tasks"
     },
     {
+      "subject": "See if the code in commands could be made clearer",
+      "description": "Especially, the code of the 'status' command is a bit complicated. Maybe 'list' and 'show' commands could be improved too."
+    },
+    {
       "subject": "Update and review README.md and command descriptions",
       "begin": "2024-08-22T11:40:55.379Z",
       "suspend": [
@@ -683,7 +694,8 @@
         "2024-08-20T09:28:01.126Z",
         "2024-08-20T09:41:38.461Z",
         "2024-08-22T11:34:40.866Z",
-        "2024-08-22T11:40:10.880Z"
+        "2024-08-22T11:40:10.880Z",
+        "2024-08-23T07:56:12.451Z"
       ],
       "resume": [
         "2024-08-02T08:51:55.636Z",
@@ -698,8 +710,12 @@
         "2024-08-20T09:26:25.645Z",
         "2024-08-20T09:40:20.554Z",
         "2024-08-22T11:22:21.278Z",
-        "2024-08-22T11:36:29.356Z"
+        "2024-08-22T11:36:29.356Z",
+        "2024-08-23T07:23:59.011Z"
       ]
+    },
+    {
+      "subject": "Upgrade dependencies"
     }
   ]
 }
