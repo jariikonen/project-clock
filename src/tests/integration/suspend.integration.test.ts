@@ -56,18 +56,22 @@ describe('Suspend command', () => {
 
   describe('User friendly error messages', () => {
     test('"Suspend" command reports timesheet file errors in a user friendly manner; no timesheet file', () => {
+      expect.hasAssertions();
       noTimesheetFile(testDirName, Command.Suspend);
     });
 
     test('"Suspend" command reports timesheet file errors in a user friendly manner; no permission', () => {
+      expect.hasAssertions();
       noPermission(testDirName, Command.Suspend);
     });
 
     test('"Suspend" command reports timesheet file errors in a user friendly manner; more than one timesheet file', () => {
+      expect.hasAssertions();
       moreThanOneTimesheetFile(testDirName, Command.Suspend);
     });
 
     test('"Suspend" command gives a user friendly error message when the command is force stopped with CTRL+C', () => {
+      expect.hasAssertions();
       forceStopped(testDirName, Command.Suspend, {
         projectName: PROJECT_NAME,
         tasks: [

@@ -10,6 +10,8 @@ import { PROJECT_NAME, ROOT_DIR } from './constants';
 import { createTestFile } from './testFile';
 import { getTestPathsFromDirName } from './testPaths';
 import { ProjectClockData } from '../../types/ProjectClockData';
+import execute, { DOWN } from '../common/childProcessExecutor';
+import { ERROR_MESSAGE_TIMESHEET_INSPECTION } from '../../common/constants';
 
 /** Commands accepted by these functions. */
 export enum Command {
@@ -20,6 +22,7 @@ export enum Command {
   Status = 'status',
   Stop = 'stop',
   Suspend = 'suspend',
+  Show = 'show',
 }
 
 /**
@@ -165,7 +168,12 @@ export function forceStopped(
  * @param testDirName Name of the test directory.
  * @param command Command to test.
  */
-export function faultyTask(testDirName: string, command: Command) {
+export async function faultyTask(
+  testDirName: string,
+  command: Command,
+  inputs: string[] = [],
+  argument = ''
+) {
   const { testFilePath, subdirPath } = getTestPathsFromDirName(testDirName);
 
   // initialize test environment
@@ -186,16 +194,15 @@ export function faultyTask(testDirName: string, command: Command) {
   // test
   let error = '';
   try {
-    execSync(`cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js ${command}`, {
-      stdio: 'pipe',
-    });
+    await execute(
+      `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js ${command} ${argument}`,
+      inputs
+    );
   } catch (err) {
     const e = err as Error;
     error = e.message;
   }
-  expect(error).toMatch(
-    'An error occurred while inspecting the timesheet file'
-  );
+  expect(error).toMatch(ERROR_MESSAGE_TIMESHEET_INSPECTION);
   expect(error).toMatch(
     "invalid time period '2024-01-01T01:00:00.000Z' => '2024-01-01T00:00:00.000Z' (faulty task); start date is later than end date"
   );

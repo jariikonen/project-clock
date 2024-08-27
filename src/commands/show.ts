@@ -1,12 +1,25 @@
 import calculateTimes from '../common/calculateTimes';
+import { ERROR_MESSAGE_TIMESHEET_INSPECTION } from '../common/constants';
+import handleExitPromptError from '../common/handleExitPromptError';
+import handleProjectClockError from '../common/handleProjectClockError';
 import {
   createSeparatedSectionsStr,
   sideHeadingTextMultiple,
 } from '../common/outputFormatting';
+import ProjectClockError from '../common/ProjectClockError';
 import promptToConfirmOrSelectTask from '../common/promptToConfirmOrSelectTask';
 import TimePeriod, { TimeParams } from '../common/TimePeriod';
 import { readTimesheet } from '../common/timesheetReadWrite';
-import { Task } from '../types/ProjectClockData';
+import { ProjectClockSettings, Task } from '../types/ProjectClockData';
+
+async function promptTask(tasks: Task[]): Promise<Task> {
+  try {
+    return await promptToConfirmOrSelectTask(tasks, '', 'show');
+  } catch (error) {
+    handleExitPromptError(error);
+  }
+  throw new ProjectClockError('internal error: this should not have happened');
+}
 
 function createTaskDataStr(task: Task, timeParams: TimeParams | undefined) {
   const consoleWidth = process.stdout.columns;
@@ -25,9 +38,25 @@ function createTaskDataStr(task: Task, timeParams: TimeParams | undefined) {
       'time spent': `${timeSpent.hoursAndMinutesStr()}${daysHoursAndMinutesStr}`,
     },
     consoleWidth,
+    true,
     paddingRight,
     true
   );
+}
+
+function outputTaskData(
+  tasks: Task[],
+  projectSettings: ProjectClockSettings | undefined
+): void {
+  const taskStrings: string[] = [];
+  tasks.forEach((task) => {
+    taskStrings.push(createTaskDataStr(task, projectSettings?.timeParams));
+  });
+  // If Node.js property process.stdout.columns is not set, the consoleWidth
+  // is given a default value of 80.
+  const consoleWidth = process.stdout.columns ? process.stdout.columns : 80;
+  const separatorStr = `${'-'.repeat(consoleWidth)}`;
+  console.log(createSeparatedSectionsStr(taskStrings, separatorStr));
 }
 
 /**
@@ -46,18 +75,15 @@ export default async function show(taskDescriptor: string | undefined) {
 
   const tasksToShow = taskDescriptor
     ? tasks.filter((task) => task.subject.match(taskDescriptor))
-    : [await promptToConfirmOrSelectTask(tasks, '', 'show')];
-  if (!tasksToShow) {
-    console.error(
-      `cannot show task(s) matching '${taskDescriptor}'; none found`
-    );
+    : [await promptTask(tasks)];
+  if (tasksToShow.length === 0) {
+    console.error(`no task(s) matching '${taskDescriptor}' found`);
     process.exit(1);
   }
 
-  const taskStrings: string[] = [];
-  tasksToShow.forEach((task) => {
-    taskStrings.push(createTaskDataStr(task, projectSettings?.timeParams));
-  });
-  const separatorStr = `${'-'.repeat(process.stdout.columns)}`;
-  console.log(createSeparatedSectionsStr(taskStrings, separatorStr));
+  try {
+    outputTaskData(tasksToShow, projectSettings);
+  } catch (error) {
+    handleProjectClockError(error, ERROR_MESSAGE_TIMESHEET_INSPECTION);
+  }
 }

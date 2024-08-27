@@ -1,56 +1,116 @@
-export type Padding = [left: number, right: number, firstLine: number];
+export interface Padding {
+  /** Padding on the left side of the string. */
+  left: number;
+
+  /** Padding on the right side of the string. */
+  right: number;
+
+  /** First line left padding. */
+  firstLineLeftPadding: number;
+
+  /**
+   * An extra cut that can be removed from the first line (e.g., when side
+   * heading is longer than the left padding).
+   */
+  firstLineExtraCut: number;
+
+  /**
+   * Boolean indicating whether the right padding should be applied as
+   * whitespace.
+   */
+  padEnd: boolean;
+}
 
 function createLine(
   text: string,
   start: number,
   end: number,
+  width: number,
   padding: Padding,
   firstLine: boolean,
   addNewLine: boolean
 ) {
   const newLineStr = addNewLine ? '\n' : '';
-  return firstLine
-    ? `${' '.repeat(padding[2])}${text.slice(start, end).trim()}${' '.repeat(padding[1])}${newLineStr}`
-    : `${' '.repeat(padding[0])}${text.slice(start, end).trim()}${' '.repeat(padding[1])}${newLineStr}`;
+  let line = '';
+  if (padding.padEnd) {
+    line = firstLine
+      ? (
+          ' '.repeat(padding.firstLineLeftPadding) +
+          text.slice(start, end).trim()
+        ).padEnd(
+          width -
+            padding.left -
+            padding.firstLineExtraCut +
+            padding.firstLineLeftPadding,
+          ' '
+        ) + newLineStr
+      : (' '.repeat(padding.left) + text.slice(start, end).trim()).padEnd(
+          width,
+          ' '
+        ) + newLineStr;
+  } else {
+    line = firstLine
+      ? ' '.repeat(padding.firstLineLeftPadding) +
+        text.slice(start, end).trim() +
+        newLineStr
+      : ' '.repeat(padding.left) + text.slice(start, end).trim() + newLineStr;
+  }
+  return line;
 }
 
+function findNextNonWhitespace(text: string, start: number) {
+  return start + text.slice(start).search(/[^ ]/);
+}
+
+/**
+ * A function used by splitIntoLinesAccordingToWidth() to find the index at
+ * which to split.
+ */
 function findEnd(
   text: string,
   start: number,
   width: number
-): [number, boolean, boolean] {
+): [end: number, lastLine: boolean, addNewLine: boolean] {
   const slice = text.slice(start, start + width);
-
   const newLineCharIndex = slice.indexOf('\n');
-  if (newLineCharIndex > 0) {
+
+  // newline within the slice
+  if (newLineCharIndex > -1) {
     return [
-      start + newLineCharIndex,
-      text.length < start + newLineCharIndex,
+      start + newLineCharIndex + 1,
+      text.length <= start + newLineCharIndex + 1,
       true,
     ];
   }
 
-  if (text.length < start + width) {
+  // last line
+  if (text.length <= start + width) {
     return [text.length, true, false];
   }
-  const lastLine = start + width >= text.length;
+
+  const lastLine = false;
   if (slice.length === width && text.charAt(start + width) !== ' ') {
+    // truncate at the beginning of the last whitespace or at the end of the
+    // slice
     const index = start + slice.lastIndexOf(' ');
     return index > start
-      ? [index, lastLine, false]
+      ? [findNextNonWhitespace(text, index), lastLine, false]
       : [start + width, lastLine, false];
   }
-  return [start + slice.length, lastLine, false];
+  // truncate at the end of the last whitespace beginning at the end of the
+  // slice (white space at the end of the line is trimmed later)
+  return [findNextNonWhitespace(text, start + width), lastLine, false];
 }
 
 /**
  * Splits the text into lines along the last whitespace characters within the
  * width. Takes also into account newline characters. Returns the lines as an
- * array of strings. Strings do not include newline characters.
+ * array of strings. Strings do not include newline characters. Width must be
+ * given a value larger than 0 or a default of 80 is used.
  * @param text String to be splitted.
- * @param width Maximum width of a line.
- * @param padding Padding added to lines as a 3-tuple having the following
- *    semantics: 0 - left, 1 - right and 2 - first line.
+ * @param width Maximum width of a line (must be greater than zero or the
+ *    default of 80 is used).
+ * @param padding Padding added to lines as a Paddign object.
  * @returns An array of lines of text.
  */
 export function splitIntoLinesAccordingToWidth(
@@ -58,13 +118,21 @@ export function splitIntoLinesAccordingToWidth(
   width: number,
   padding: Padding
 ): string[] {
-  const textWidth = width - padding[0] - padding[1];
+  // Node.js property process.stdout.columns is not set in tests, which leads
+  // the width being undefined. Since the while loop requires the lastLine to
+  // be true to stop, and the lastLine is never true if the width is 0 or less,
+  // the width must be given a positive value. 80-column rule is a classic line
+  // width convention, so that is used as the default value.
+  const widthToUse = width > 0 ? width : 80;
+  const textWidth = widthToUse - padding.left - padding.right;
   const lines: string[] = [];
   let start = 0;
   let [end, lastLine, addNewLine] = findEnd(text, start, textWidth);
   let firstLine = true;
   while (!lastLine) {
-    lines.push(createLine(text, start, end, padding, firstLine, addNewLine));
+    lines.push(
+      createLine(text, start, end, widthToUse, padding, firstLine, addNewLine)
+    );
 
     start = end;
     [end, lastLine, addNewLine] = findEnd(text, start, textWidth);
@@ -73,7 +141,9 @@ export function splitIntoLinesAccordingToWidth(
     }
   }
   if (start < text.length) {
-    lines.push(createLine(text, start, end, padding, firstLine, addNewLine));
+    lines.push(
+      createLine(text, start, end, widthToUse, padding, firstLine, addNewLine)
+    );
   }
   return lines;
 }
@@ -86,6 +156,8 @@ export function splitIntoLinesAccordingToWidth(
  * @param heading Heading added on the left, before the content.
  * @param content The text content added after the heading.
  * @param width Maximum text width.
+ * @param padEnd Boolean indicating whether the right side of the content
+ *    should be padded with whitespace to the given width.
  * @param paddingRight Padding added to the rigth side of text. This reduces
  *    the actual width of the text.
  * @param paddingLeft Padding added to the left side of the text. This reduces
@@ -96,19 +168,27 @@ export function sideHeadingText(
   heading: string,
   content: string,
   width: number,
+  padEnd: boolean,
   paddingRight: number,
   paddingLeft?: number
 ) {
   const headingStr = `${heading}: `;
   const paddingLeftToUse = paddingLeft ?? headingStr.length;
-  const firstLineLeftPadding = paddingLeft
-    ? paddingLeftToUse - headingStr.length
-    : 0;
-  const lines = splitIntoLinesAccordingToWidth(content, width, [
-    paddingLeftToUse,
-    paddingRight,
+  const firstLineLeftPadding =
+    paddingLeft && paddingLeft > headingStr.length
+      ? paddingLeftToUse - headingStr.length
+      : 0;
+  const firstLineExtraCut =
+    paddingLeft && paddingLeft < headingStr.length
+      ? headingStr.length - paddingLeft
+      : 0;
+  const lines = splitIntoLinesAccordingToWidth(content, width, {
+    left: paddingLeftToUse,
+    right: paddingRight,
     firstLineLeftPadding,
-  ]);
+    firstLineExtraCut,
+    padEnd,
+  });
   return `${headingStr}${lines.join('\n')}`;
 }
 
@@ -128,6 +208,8 @@ function findLongest(texts: string[]) {
  *    record. Part headings are entered as the keys of the record and the
  *    content as values.
  * @param width Maximum width of the text.
+ * @param padEnd Boolean indicating whether the right side of the content
+ *    should be padded with whitespace to the given width.
  * @param paddingRight Padding added to the right side of the text.
  * @param indentAccordingToLongest Boolean indicating whether the contents are
  *    indented according to the width of the longest heading or individually
@@ -137,6 +219,7 @@ function findLongest(texts: string[]) {
 export function sideHeadingTextMultiple(
   parts: Record<string, string | undefined>,
   width: number,
+  padEnd: boolean,
   paddingRight: number,
   indentAccordingToLongest: boolean
 ) {
@@ -149,7 +232,14 @@ export function sideHeadingTextMultiple(
   headings.forEach((heading, i) => {
     if (contents[i]) {
       sections.push(
-        sideHeadingText(heading, contents[i], width, paddingRight, paddingLeft)
+        sideHeadingText(
+          heading,
+          contents[i],
+          width,
+          padEnd,
+          paddingRight,
+          paddingLeft
+        )
       );
     }
   });
@@ -167,5 +257,5 @@ export function createSeparatedSectionsStr(
   sections: string[],
   separatorStr: string
 ) {
-  return `${`${separatorStr}\n`}${sections.join(`\n${separatorStr}`)}${`\n${separatorStr}`}`;
+  return `${`${separatorStr}\n`}${sections.join(`\n${separatorStr}\n`)}${`\n${separatorStr}`}`;
 }

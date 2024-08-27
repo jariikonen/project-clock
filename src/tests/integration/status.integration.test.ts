@@ -34,19 +34,23 @@ afterEach(() => {
 describe('Status command', () => {
   describe('User friendly error messages', () => {
     test('"Status" command reports timesheet file errors in a user friendly manner; no timesheet file', () => {
+      expect.hasAssertions();
       noTimesheetFile(testDirName, Command.Status);
     });
 
     test('"Status" command reports timesheet file errors in a user friendly manner; no permission', () => {
+      expect.hasAssertions();
       noPermission(testDirName, Command.Status);
     });
 
     test('"Status" command reports timesheet file errors in a user friendly manner; more than one timesheet file', () => {
+      expect.hasAssertions();
       moreThanOneTimesheetFile(testDirName, Command.Status);
     });
 
-    test('"Status" command with a faulty timesheet file returns a user friendly error message (no stack trace or source code paths)', () => {
-      faultyTask(testDirName, Command.Status);
+    test('"Status" command with a faulty timesheet file returns a user friendly error message (no stack trace or source code paths)', async () => {
+      expect.hasAssertions();
+      await faultyTask(testDirName, Command.Status);
     });
   });
 

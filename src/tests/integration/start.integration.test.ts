@@ -61,18 +61,22 @@ describe('Starting the clock', () => {
 
   describe('User friendly error messages', () => {
     test('"Start" command reports timesheet file errors in a user friendly manner; no timesheet file', () => {
+      expect.hasAssertions();
       noTimesheetFile(testDirName, Command.Start);
     });
 
     test('"Start" command reports timesheet file errors in a user friendly manner; no permission', () => {
+      expect.hasAssertions();
       noPermission(testDirName, Command.Start);
     });
 
     test('"Start" command reports timesheet file errors in a user friendly manner; more than one timesheet file', () => {
+      expect.hasAssertions();
       moreThanOneTimesheetFile(testDirName, Command.Start);
     });
 
     test('"Start" command gives a user friendly error message when the command is force stopped with CTRL+C', () => {
+      expect.hasAssertions();
       forceStopped(testDirName, Command.Start, {
         projectName: PROJECT_NAME,
         tasks: [
