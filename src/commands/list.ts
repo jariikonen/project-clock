@@ -1,4 +1,7 @@
-import calculateTimes, { TaskStatus } from '../common/calculateTimes';
+import chalk from 'chalk';
+import calculateTimes, {
+  TaskStatusInformation,
+} from '../common/calculateTimes';
 import calculateTotalTime from '../common/calculateTotalTime';
 import getTaskListString from '../common/getTaskListString';
 import ProjectClockError from '../common/ProjectClockError';
@@ -40,7 +43,7 @@ function filterTasks(options: ListOptions, tasks: Task[]) {
 }
 
 function getRequestedTaskListStr(
-  times: TaskStatus[],
+  times: TaskStatusInformation[],
   timeParams: TimeParams | undefined,
   includeSeconds: boolean
 ) {
@@ -49,8 +52,7 @@ function getRequestedTaskListStr(
     times,
     timeParams,
     consoleWidth,
-    includeSeconds,
-    'simple'
+    includeSeconds
   );
   if (times.length > 0) {
     return taskTable.toString();
@@ -75,9 +77,9 @@ function getTotalTimePeriodStr(
       ? ` (${timePeriod.daysHoursAndMinutesStr(includeSeconds)}, ${timePeriod.conversionRateDayStr()})`
       : '';
   if (hoursAndMinutes) {
-    return `${numberOfTasks} ${taskMultiple}, total time spent: ${hoursAndMinutes}${daysHoursAndMinutes}`;
+    return `${chalk.bold(`${numberOfTasks} ${taskMultiple}, total time spent:`)} ${hoursAndMinutes}${daysHoursAndMinutes}`;
   }
-  return `${numberOfTasks} ${taskMultiple}, total time spent: -`;
+  return `${chalk.bold(`${numberOfTasks} ${taskMultiple}, total time spent:`)} -`;
 }
 
 /**
@@ -89,7 +91,7 @@ export default function list(options: ListOptions) {
   const { projectName, projectSettings, tasks } = timesheetData;
   const requestedTasks = filterTasks(options, tasks);
 
-  let requestedTimes: TaskStatus[] = [];
+  let requestedTimes: TaskStatusInformation[] = [];
   try {
     requestedTimes = calculateTimes(requestedTasks);
   } catch (error) {
@@ -116,7 +118,7 @@ export default function list(options: ListOptions) {
     requestedTimes.length
   );
 
-  console.log(`Project: '${projectName}'\n`);
+  console.log(`${chalk.bold('Project:')} '${projectName}'\n`);
   if (requestedTaskListStr) {
     console.log(requestedTaskListStr);
   }

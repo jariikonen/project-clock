@@ -1,28 +1,35 @@
 import { Task } from '../types/ProjectClockData';
 import ProjectClockError from './ProjectClockError';
 
+/** Represents the status of a task. */
+export enum TaskStatus {
+  Unstarted = 'unstarted',
+  Started = 'started',
+  Suspended = 'suspended',
+  Resumed = 'resumed',
+  Completed = 'completed',
+}
+
 /**
  * Represents an object used as a return value of the calculateTimes()
  * function.
  */
-export interface TaskStatus {
+export interface TaskStatusInformation {
   /** Task identifier (task subject). */
   task: string;
 
   /** Status of the task. */
-  status:
-    | 'unstarted'
-    | 'started'
-    | 'suspended'
-    | 'resumed'
-    | 'completed'
-    | undefined;
+  status: TaskStatus;
 
   /** Time spent on the task in microseconds. */
   timeSpent: number;
 }
 
-const emptyTaskStatus = { task: '', status: undefined, timeSpent: 0 };
+const emptyTaskStatus: TaskStatusInformation = {
+  task: '',
+  status: TaskStatus.Unstarted,
+  timeSpent: 0,
+};
 
 function getTaskSubjectStr(task: Task) {
   return task.subject.length > 25
@@ -49,12 +56,15 @@ function handleSuspendAndResume(
   resume: string[] | undefined,
   end: string | undefined,
   task: Task
-): TaskStatus {
+): TaskStatusInformation {
   const beginDate = new Date(begin);
-  const taskStatus: TaskStatus = { ...emptyTaskStatus, task: task.subject };
+  const TaskStatusInformation: TaskStatusInformation = {
+    ...emptyTaskStatus,
+    task: task.subject,
+  };
   if (suspend[0]) {
-    taskStatus.status = 'suspended';
-    taskStatus.timeSpent = calculateDifference(
+    TaskStatusInformation.status = TaskStatus.Suspended;
+    TaskStatusInformation.timeSpent = calculateDifference(
       beginDate,
       new Date(suspend[0]),
       task
@@ -62,15 +72,15 @@ function handleSuspendAndResume(
   }
   if (suspend.length === 1 && resume?.length === 1) {
     if (!end) {
-      taskStatus.status = 'resumed';
-      taskStatus.timeSpent += calculateDifference(
+      TaskStatusInformation.status = TaskStatus.Resumed;
+      TaskStatusInformation.timeSpent += calculateDifference(
         new Date(resume[0]),
         new Date(),
         task
       );
     } else {
-      taskStatus.status = 'completed';
-      taskStatus.timeSpent += calculateDifference(
+      TaskStatusInformation.status = TaskStatus.Completed;
+      TaskStatusInformation.timeSpent += calculateDifference(
         new Date(resume[0]),
         new Date(end),
         task
@@ -79,22 +89,22 @@ function handleSuspendAndResume(
   } else if (suspend.length > 1 && resume) {
     resume.forEach((resumeDateStr, i) => {
       if (suspend[i + 1]) {
-        taskStatus.status = 'suspended';
-        taskStatus.timeSpent += calculateDifference(
+        TaskStatusInformation.status = TaskStatus.Suspended;
+        TaskStatusInformation.timeSpent += calculateDifference(
           new Date(resumeDateStr),
           new Date(suspend[i + 1]),
           task
         );
       } else if (end) {
-        taskStatus.status = 'completed';
-        taskStatus.timeSpent += calculateDifference(
+        TaskStatusInformation.status = TaskStatus.Completed;
+        TaskStatusInformation.timeSpent += calculateDifference(
           new Date(resumeDateStr),
           new Date(end),
           task
         );
       } else {
-        taskStatus.status = 'resumed';
-        taskStatus.timeSpent += calculateDifference(
+        TaskStatusInformation.status = TaskStatus.Resumed;
+        TaskStatusInformation.timeSpent += calculateDifference(
           new Date(resumeDateStr),
           new Date(),
           task
@@ -102,7 +112,7 @@ function handleSuspendAndResume(
       }
     });
   }
-  return taskStatus;
+  return TaskStatusInformation;
 }
 
 function checkTask(task: Task) {
@@ -166,20 +176,20 @@ function checkTask(task: Task) {
 /**
  * Calculates the times spent on each task.
  * @param tasks Array of Task objects.
- * @returns An array of TaskStatus objects holding the status and time usage
- *   information for each task.
+ * @returns An array of TaskStatusInformation objects holding the status and
+ *    time usage information for each task.
  */
-export default function calculateTimes(tasks: Task[]): TaskStatus[] {
-  const statusArray: TaskStatus[] = tasks.map((task) => {
+export default function calculateTimes(tasks: Task[]): TaskStatusInformation[] {
+  const statusInformationArray: TaskStatusInformation[] = tasks.map((task) => {
     checkTask(task);
     const { begin, suspend, resume, end } = task;
     if (!begin) {
-      return { task: task.subject, status: 'unstarted', timeSpent: 0 };
+      return { task: task.subject, status: TaskStatus.Unstarted, timeSpent: 0 };
     }
     if (!suspend && !end) {
       return {
         task: task.subject,
-        status: 'started',
+        status: TaskStatus.Started,
         timeSpent: calculateDifference(new Date(begin), new Date(), task),
       };
     }
@@ -188,7 +198,7 @@ export default function calculateTimes(tasks: Task[]): TaskStatus[] {
       const endDate = new Date(end);
       return {
         task: task.subject,
-        status: 'completed',
+        status: TaskStatus.Completed,
         timeSpent: calculateDifference(beginDate, endDate, task),
       };
     }
@@ -200,5 +210,5 @@ export default function calculateTimes(tasks: Task[]): TaskStatus[] {
     );
   });
 
-  return statusArray;
+  return statusInformationArray;
 }

@@ -1,5 +1,8 @@
+import chalk from 'chalk';
 import { readTimesheet } from '../common/timesheetReadWrite';
-import calculateTimes, { TaskStatus } from '../common/calculateTimes';
+import calculateTimes, {
+  TaskStatusInformation,
+} from '../common/calculateTimes';
 import TimePeriod, { TimeParams } from '../common/TimePeriod';
 import ProjectClockError from '../common/ProjectClockError';
 import calculateTotalTime from '../common/calculateTotalTime';
@@ -17,7 +20,7 @@ function multiple(term: string, number: number) {
 }
 
 function getActiveTaskListStr(
-  activeTimes: TaskStatus[],
+  activeTimes: TaskStatusInformation[],
   timeParams: TimeParams | undefined,
   includeSeconds: boolean
 ) {
@@ -27,15 +30,14 @@ function getActiveTaskListStr(
     timeParams,
     consoleWidth,
     includeSeconds,
-    'simple',
     [2, 0]
   );
 
   const [term, counter] = multiple('task', activeTimes.length);
   if (activeTimes.length > 0) {
-    return `${counter} active ${term}:\n${taskTable.toString()}`;
+    return `${chalk.bold(`${counter} active ${term}:`)}\n${taskTable.toString()}`;
   }
-  return `${counter} active ${term}`;
+  return `${chalk.bold(`${counter} active ${term}`)}`;
 }
 
 function getTotalTimePeriodStr(
@@ -50,7 +52,7 @@ function getTotalTimePeriodStr(
       ? ` (${timePeriod.daysHoursAndMinutesStr(includeSeconds)}, ${timePeriod.conversionRateDayStr()})`
       : '';
   if (hoursAndMinutes) {
-    return `total time spent: ${hoursAndMinutes}${daysHoursAndMinutes}`;
+    return `${chalk.bold('total time spent:')} ${hoursAndMinutes}${daysHoursAndMinutes}`;
   }
   return '';
 }
@@ -68,8 +70,8 @@ export default function status(options: StatusOptions) {
   const incompleteTasks = tasks.filter((task) => !task.end);
   const completeTasks = tasks.filter((task) => task.end);
 
-  let activeTimes: TaskStatus[] = [];
-  let allTimes: TaskStatus[] = [];
+  let activeTimes: TaskStatusInformation[] = [];
+  let allTimes: TaskStatusInformation[] = [];
   try {
     activeTimes = calculateTimes(activeTasks);
     allTimes = calculateTimes(tasks);
@@ -95,9 +97,9 @@ export default function status(options: StatusOptions) {
     includeSeconds
   );
 
-  console.log(`Project: '${projectName}'\n`);
+  console.log(`${chalk.bold('Project:')} '${projectName}'`);
   console.log(
-    `Tasks (complete/incomplete/total): ${completeTasks.length}/${incompleteTasks.length}/${tasks.length}`
+    `${chalk.bold('Tasks (complete/incomplete/total):')} ${completeTasks.length}/${incompleteTasks.length}/${tasks.length}`
   );
   if (activeTaskListStr) {
     console.log(`\n${activeTaskListStr}`);

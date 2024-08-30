@@ -1,6 +1,9 @@
 import { TASK_SUBJECT } from '../common/constants';
 import { ProjectClockData } from '../../types/ProjectClockData';
-import calculateTimes, { TaskStatus } from '../../common/calculateTimes';
+import calculateTimes, {
+  TaskStatus,
+  TaskStatusInformation,
+} from '../../common/calculateTimes';
 import ProjectClockError from '../../common/ProjectClockError';
 
 function calculateDifference(start: string, end: string) {
@@ -16,9 +19,9 @@ describe('calculateTimes()', () => {
         },
       ];
 
-      const expectedStatus: TaskStatus = {
+      const expectedStatus: TaskStatusInformation = {
         task: TASK_SUBJECT,
-        status: 'unstarted',
+        status: TaskStatus.Unstarted,
         timeSpent: 0,
       };
 
@@ -36,9 +39,9 @@ describe('calculateTimes()', () => {
         },
       ];
 
-      const expectedStatus: TaskStatus = {
+      const expectedStatus: TaskStatusInformation = {
         task: TASK_SUBJECT,
-        status: 'started',
+        status: TaskStatus.Started,
         timeSpent: calculateDifference(begin, new Date().toISOString()),
       };
 
@@ -63,9 +66,9 @@ describe('calculateTimes()', () => {
         },
       ];
 
-      const expectedStatus: TaskStatus = {
+      const expectedStatus: TaskStatusInformation = {
         task: TASK_SUBJECT,
-        status: 'suspended',
+        status: TaskStatus.Suspended,
         timeSpent: 30 * 60 * 1000,
       };
 
@@ -89,9 +92,9 @@ describe('calculateTimes()', () => {
         },
       ];
 
-      const expectedStatus: TaskStatus = {
+      const expectedStatus: TaskStatusInformation = {
         task: TASK_SUBJECT,
-        status: 'resumed',
+        status: TaskStatus.Resumed,
         timeSpent:
           30 * 60 * 1000 +
           calculateDifference(resume, new Date().toISOString()),
@@ -118,9 +121,9 @@ describe('calculateTimes()', () => {
         },
       ];
 
-      const expectedStatus: TaskStatus = {
+      const expectedStatus: TaskStatusInformation = {
         task: TASK_SUBJECT,
-        status: 'completed',
+        status: TaskStatus.Completed,
         timeSpent: 93 * 60 * 1000 + 33333,
       };
 
@@ -146,9 +149,9 @@ describe('calculateTimes()', () => {
         },
       ];
 
-      const expectedStatus: TaskStatus = {
+      const expectedStatus: TaskStatusInformation = {
         task: TASK_SUBJECT,
-        status: 'completed',
+        status: TaskStatus.Completed,
         timeSpent: 30 * 60 * 1000 + 33 * 60 * 1000 + 33333,
       };
 
@@ -176,9 +179,9 @@ describe('calculateTimes()', () => {
         },
       ];
 
-      const expectedStatus: TaskStatus = {
+      const expectedStatus: TaskStatusInformation = {
         task: TASK_SUBJECT,
-        status: 'suspended',
+        status: TaskStatus.Suspended,
         timeSpent: 30 * 60 * 1000 + 30 * 60 * 1000 + 33 * 60 * 1000 + 33333,
       };
 
@@ -210,9 +213,9 @@ describe('calculateTimes()', () => {
         },
       ];
 
-      const expectedStatus: TaskStatus = {
+      const expectedStatus: TaskStatusInformation = {
         task: TASK_SUBJECT,
-        status: 'resumed',
+        status: TaskStatus.Resumed,
         timeSpent:
           30 * 60 * 1000 +
           30 * 60 * 1000 +
@@ -254,9 +257,9 @@ describe('calculateTimes()', () => {
         },
       ];
 
-      const expectedStatus: TaskStatus = {
+      const expectedStatus: TaskStatusInformation = {
         task: TASK_SUBJECT,
-        status: 'completed',
+        status: TaskStatus.Completed,
         timeSpent:
           30 * 60 * 1000 +
           30 * 60 * 1000 +
@@ -502,20 +505,20 @@ describe('calculateTimes()', () => {
         },
       ];
 
-      const expectedStatuses: TaskStatus[] = [
+      const expectedStatuses: TaskStatusInformation[] = [
         {
           task: 'Task 1',
-          status: 'unstarted',
+          status: TaskStatus.Unstarted,
           timeSpent: 0,
         },
         {
           task: 'Task 2',
-          status: 'completed',
+          status: TaskStatus.Completed,
           timeSpent: 60 * 60 * 1000,
         },
         {
           task: 'Task 3',
-          status: 'completed',
+          status: TaskStatus.Completed,
           timeSpent: 5.5 * 60 * 60 * 1000,
         },
       ];

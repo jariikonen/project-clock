@@ -1,11 +1,7 @@
-import CliTable3 from 'cli-table3';
-import { TaskStatus } from './calculateTimes';
+import { TaskStatus, TaskStatusInformation } from './calculateTimes';
+import { CellStyling, createRows, TablePadding } from './outputFormatting';
+import { styleTaskStatus } from './styling';
 import TimePeriod, { TimeParams } from './TimePeriod';
-
-type ListMode = 'table' | 'simple';
-
-/** Amount of padding added to the sides of the table (left, right). */
-export type TablePadding = [left: number, right: number];
 
 function calculateColWidths(
   width: number,
@@ -18,108 +14,31 @@ function calculateColWidths(
   ];
 }
 
-function createTable(
-  times: TaskStatus[],
-  timeParams: TimeParams | undefined,
-  width: number,
-  includeSeconds: boolean,
-  padding: TablePadding
-) {
-  const taskTable = new CliTable3({
-    chars: {
-      top: '',
-      'top-mid': '',
-      'top-left': '',
-      'top-right': '',
-      bottom: '',
-      'bottom-mid': '',
-      'bottom-left': '',
-      'bottom-right': '',
-      left: '',
-      'left-mid': '',
-      mid: '',
-      'mid-mid': '',
-      right: '',
-      'right-mid': '',
-      middle: ' ',
-    },
-    style: { 'padding-left': padding[0], 'padding-right': padding[1] },
-    head: ['Task', 'Time', 'Status'],
-    colWidths: calculateColWidths(width, padding),
-    wordWrap: true,
-  });
+type TaskRowTuple = [task: string, time: string, status: TaskStatus];
 
-  times.forEach((task) => {
-    const time = new TimePeriod(task.timeSpent, timeParams).hoursAndMinutesStr(
-      includeSeconds
-    );
-    taskTable.push([task.task, time || '-', task.status]);
-  });
-
-  return taskTable.toString();
-}
-
-function formatCell(content: string, width: number): string {
-  if (content.length > width - 1) {
-    return `${content.slice(0, width - 4)}... `;
-  }
-  return content.padEnd(width, ' ');
-}
-
-function createRows(
-  contentRows: string[][],
-  colWidths: number[],
-  tablePadding: TablePadding
-): string[] {
-  const resultRows: string[] = [];
-  contentRows.forEach((row) => {
-    let rowStr = '';
-    row.forEach((cell, i) => {
-      rowStr += formatCell(cell, colWidths[i]);
-    });
-    const paddingLeft = ' '.repeat(tablePadding[0]);
-    const paddingRight = ' '.repeat(tablePadding[1]);
-    resultRows.push(`${paddingLeft}${rowStr}${paddingRight}`);
-  });
-  return resultRows;
-}
-
-function createSimpleTable(
+function createListTable(
   head: string[],
-  rows: string[][],
+  rows: TaskRowTuple[],
   colWidths: number[],
   tablePadding: TablePadding
 ) {
-  const headRow = createRows([head], colWidths, tablePadding);
-  const contentRows = createRows(rows, colWidths, tablePadding);
+  const headStyles: CellStyling = {
+    cell: {
+      color: 'green',
+      modifiers: ['bold', 'inverse'],
+    },
+  };
+  const rowStyles: (CellStyling | undefined)[][] = rows.map((row) => {
+    const statusStyling: CellStyling = {
+      content: styleTaskStatus(row[2]),
+    };
+    const timeStyling = statusStyling;
+    return [undefined, timeStyling, statusStyling];
+  });
+  const headRow = createRows([head], colWidths, tablePadding, headStyles);
+  const contentRows = createRows(rows, colWidths, tablePadding, rowStyles);
   const table = [headRow, ...contentRows];
   return table.join('\n');
-}
-
-function createSimple(
-  times: TaskStatus[],
-  timeParams: TimeParams | undefined,
-  width: number,
-  includeSeconds: boolean,
-  padding: TablePadding
-) {
-  const head = ['Task', 'Time', 'Status'];
-  const colWidths = calculateColWidths(width, padding);
-  const rows = times.reduce((accum, current) => {
-    const time = new TimePeriod(
-      current.timeSpent,
-      timeParams
-    ).hoursAndMinutesStr(includeSeconds);
-    return [
-      ...accum,
-      [
-        current.task.toString(),
-        time || '-',
-        current.status ? current.status.toString() : '-',
-      ],
-    ];
-  }, []);
-  return createSimpleTable(head, rows, colWidths, padding);
 }
 
 /**
@@ -134,19 +53,24 @@ function createSimple(
  * @returns A tabular list of tasks as a string.
  */
 export default function getTaskListString(
-  times: TaskStatus[],
+  times: TaskStatusInformation[],
   timeParams: TimeParams | undefined,
   width: number,
   includeSeconds: boolean,
-  listMode: ListMode,
   padding: TablePadding = [0, 0]
 ): string {
-  switch (listMode) {
-    case 'table':
-      return createTable(times, timeParams, width, includeSeconds, padding);
-    case 'simple':
-      return createSimple(times, timeParams, width, includeSeconds, padding);
-    default:
-      throw new Error('switch ran out of options');
-  }
+  const head = ['Task', 'Time', 'Status'];
+  const colWidths = calculateColWidths(width, padding);
+  const rows: TaskRowTuple[] = times.map((taskStatusInformation) => {
+    const time = new TimePeriod(
+      taskStatusInformation.timeSpent,
+      timeParams
+    ).hoursAndMinutesStr(includeSeconds);
+    return [
+      taskStatusInformation.task,
+      time || '-',
+      taskStatusInformation.status,
+    ];
+  });
+  return createListTable(head, rows, colWidths, padding);
 }

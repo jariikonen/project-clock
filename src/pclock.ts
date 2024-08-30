@@ -14,6 +14,8 @@ import show from './commands/show';
 
 const program = new Command();
 
+program.option('--no-color', 'turns off the color output');
+
 program
   .name('pclock')
   .description('CLI app to clock time spent on a project')

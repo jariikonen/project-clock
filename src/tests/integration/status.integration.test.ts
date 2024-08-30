@@ -1,4 +1,5 @@
 import { execSync } from 'child_process';
+import prettyAnsi from 'pretty-ansi';
 import { PROJECT_NAME, ROOT_DIR, TASK_SUBJECT } from '../common/constants';
 import { createTestDir, removeTestDir } from '../common/testDirectory';
 import { createTestFile } from '../common/testFile';
@@ -54,7 +55,7 @@ describe('Status command', () => {
     });
   });
 
-  describe('Correct output', () => {
+  describe('Correct output (FORCE_COLOR=0)', () => {
     test('"Status" command responds with correct output when there is a single timesheet file', () => {
       // initialize test environment
       const twoHoursAgo = new Date(
@@ -97,7 +98,10 @@ describe('Status command', () => {
       // test
       const response = execSync(
         `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js status`,
-        { encoding: 'utf8' }
+        {
+          encoding: 'utf8',
+          env: { ...process.env, FORCE_COLOR: '0' },
+        }
       );
       expect(response).toMatch(`Project: '${PROJECT_NAME}'`);
       expect(response).toMatch('Tasks (complete/incomplete/total): 1/3/4');
@@ -124,7 +128,10 @@ describe('Status command', () => {
       // test
       const response = execSync(
         `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js status`,
-        { encoding: 'utf8' }
+        {
+          encoding: 'utf8',
+          env: { ...process.env, FORCE_COLOR: '0' },
+        }
       );
       expect(response).toMatch(`Project: '${PROJECT_NAME}'`);
       expect(response).toMatch('Tasks (complete/incomplete/total): 0/1/1');
@@ -167,7 +174,10 @@ describe('Status command', () => {
       // test
       const response = execSync(
         `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js status`,
-        { encoding: 'utf8' }
+        {
+          encoding: 'utf8',
+          env: { ...process.env, FORCE_COLOR: '0' },
+        }
       );
       expect(response).toMatch(`Project: '${PROJECT_NAME}'`);
       expect(response).toMatch('Tasks (complete/incomplete/total): 1/3/4');
@@ -176,6 +186,97 @@ describe('Status command', () => {
       expect(response).toMatch('Second active task2h');
       expect(response).toMatch('total time spent: 7h 30min');
       expect(response).not.toMatch('total time spent: 7h 30min (');
+    });
+  });
+
+  describe('Colors and stylings', () => {
+    beforeEach(() => {
+      const twoHoursAgo = new Date(
+        new Date().getTime() - 120 * 60 * 1000
+      ).toISOString();
+
+      createTestFile(
+        {
+          projectName: PROJECT_NAME,
+          projectSettings: {
+            timeParams: {
+              day: 8,
+              week: 5,
+              month: 20,
+              year: 260,
+            },
+          },
+          tasks: [
+            {
+              subject: 'Started task',
+              begin: twoHoursAgo,
+            },
+            {
+              subject: 'Suspended task',
+              begin: '2024-01-01T00:00:00.000Z',
+              suspend: ['2024-01-01T01:00:00.000Z'],
+            },
+            {
+              subject: 'Resumed task',
+              begin: '2024-01-01T00:00:00.000Z',
+              suspend: ['2024-01-01T01:00:00.000Z'],
+              resume: [twoHoursAgo],
+            },
+          ],
+        },
+        testFilePath
+      );
+    });
+
+    test('colors and stylings are displayed (FORCE_COLOR=1)', () => {
+      const response = prettyAnsi(
+        execSync(`cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js status`, {
+          encoding: 'utf8',
+          env: { ...process.env, FORCE_COLOR: '1' },
+        })
+      );
+      expect(response).toMatch(`<bold>Project:</intensity> '${PROJECT_NAME}'`);
+      expect(response).toMatch(
+        '<bold>Tasks (complete/incomplete/total):</intensity> 0/3/3'
+      );
+      expect(response).toMatch('<bold>3 active tasks:</intensity>');
+      expect(response).toMatch(
+        '<inverse><bold><green>Task</color></intensity></inverse><inverse><bold><green>Time</color></intensity></inverse><inverse><bold><green>Status</color></intensity></inverse>'
+      );
+    });
+
+    test('correct status colors', () => {
+      const response = prettyAnsi(
+        execSync(`cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js status`, {
+          encoding: 'utf8',
+          env: { ...process.env, FORCE_COLOR: '1' },
+        })
+      );
+      expect(response).toMatch(
+        'Started task<red>2h</color><red>started</color>'
+      );
+      expect(response).toMatch(
+        'Suspended task<yellow>1h</color><yellow>suspended</color>'
+      );
+      expect(response).toMatch(
+        'Resumed task<red>3h</color><red>resumed</color>'
+      );
+    });
+
+    test('colors are not displayed when FORCE_COLOR=0', () => {
+      const response = prettyAnsi(
+        execSync(`cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js status`, {
+          encoding: 'utf8',
+          env: { ...process.env, FORCE_COLOR: '0' },
+        })
+      );
+      expect(response).not.toMatch('<bold>');
+      expect(response).not.toMatch('</intensity>');
+      expect(response).not.toMatch('<red>');
+      expect(response).not.toMatch('<yellow>');
+      expect(response).not.toMatch('</color>');
+      expect(response).toMatch(`Project: '${PROJECT_NAME}'`);
+      expect(response).toMatch('TaskTimeStatus');
     });
   });
 });

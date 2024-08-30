@@ -1,22 +1,22 @@
-import { TaskStatus } from '../../common/calculateTimes';
+import { TaskStatus, TaskStatusInformation } from '../../common/calculateTimes';
 import calculateTotalTime from '../../common/calculateTotalTime';
 
 describe('calculateTotalTime()', () => {
   test('calculateTotalTime() calculates total time correctly', () => {
-    const taskStatuses: TaskStatus[] = [
+    const taskStatuses: TaskStatusInformation[] = [
       {
         task: 'Task 1',
-        status: 'unstarted',
+        status: TaskStatus.Unstarted,
         timeSpent: 0,
       },
       {
         task: 'Task 2',
-        status: 'completed',
+        status: TaskStatus.Completed,
         timeSpent: 60 * 60 * 1000,
       },
       {
         task: 'Task 3',
-        status: 'completed',
+        status: TaskStatus.Completed,
         timeSpent: 5.5 * 60 * 60 * 1000,
       },
     ];

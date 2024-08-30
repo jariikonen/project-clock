@@ -1,3 +1,5 @@
+import { applyStyle, Style } from './styling';
+
 export interface Padding {
   /** Padding on the left side of the string. */
   left: number;
@@ -258,4 +260,97 @@ export function createSeparatedSectionsStr(
   separatorStr: string
 ) {
   return `${`${separatorStr}\n`}${sections.join(`\n${separatorStr}\n`)}${`\n${separatorStr}`}`;
+}
+
+/** Amount of padding added to the sides of a table (left, right). */
+export type TablePadding = [left: number, right: number];
+
+/**
+ * Represents colors and modifiers that are applied either to a whole table
+ * cell, just to the content of the cell, or both. Contains two Style objects;
+ * one applied to the whole cell and the other only to the contents of the
+ * cell.
+ */
+export interface CellStyling {
+  /** Style applied to the whole cell */
+  cell?: Style;
+
+  /** Style applied just to the content of the cell. */
+  content?: Style;
+}
+
+/**
+ * Formats a table cell. A table cell is essentially a string padded to it's
+ * width with whitespace characters. A table row can be created by
+ * concatenating cells together. The style can be applied to the whole cell
+ * (e.g., background color, inverse) or just to the content of the cell (e.g.,
+ * strikethrough won't go through the whole cell).
+ * @param content The content of the cell as a string.
+ * @param width The width of the cell.
+ * @param style Style applied to the cell, or it's content, or both.
+ * @returns The formatted cell as a string.
+ */
+export function formatCell(
+  content: string,
+  width: number,
+  style: CellStyling | undefined
+): string {
+  let contentToUse = content;
+  if (content.length > width - 1) {
+    contentToUse = `${content.slice(0, width - 4)}...`;
+  }
+  let styledContent = applyStyle(contentToUse, style?.content);
+  const escapeCodesWidth = styledContent.length - contentToUse.length;
+  styledContent = styledContent.padEnd(width + escapeCodesWidth, ' ');
+
+  if (style) {
+    styledContent = applyStyle(styledContent, style.cell);
+  }
+
+  return styledContent;
+}
+
+/**
+ * Creates table rows. Table rows are created by concatenating together cells,
+ * that are strings padded to their width with whitespace characters. Tables
+ * can be crated by combining multiple rows together.
+ * @param contents Contents of each row's cells as arrays of strings.
+ * @param colWidths Column/cell widths as an array.
+ * @param tablePadding Padding applied to the whole table as a tupple (left,
+ *    right).
+ * @param styles Styles applied to rows as a single CellStyling object or
+ *    arrays of CellStyling objects. If there is only one styling object, the
+ *    same style is applied to all cells on every row. If there is one styling
+ *    object per row, the style is applied to all cells of the row. Each cell
+ *    in a row can also be given its own style.
+ * @returns The formatted table row as a string.
+ */
+export function createRows(
+  contents: string[][],
+  colWidths: number[],
+  tablePadding: TablePadding,
+  styles?:
+    | CellStyling
+    | (CellStyling | undefined)[]
+    | (CellStyling | undefined)[][]
+): string[] {
+  const resultRows: string[] = [];
+  contents.forEach((row, i) => {
+    let rowStr = '';
+    row.forEach((cell, j) => {
+      if (styles && Array.isArray(styles)) {
+        if (styles[i] && Array.isArray(styles[i])) {
+          rowStr += formatCell(cell, colWidths[j], styles[i][j]);
+        } else if (styles[i]) {
+          rowStr += formatCell(cell, colWidths[j], styles[i]);
+        }
+      } else {
+        rowStr += formatCell(cell, colWidths[j], styles);
+      }
+    });
+    const paddingLeft = ' '.repeat(tablePadding[0]);
+    const paddingRight = ' '.repeat(tablePadding[1]);
+    resultRows.push(`${paddingLeft}${rowStr}${paddingRight}`);
+  });
+  return resultRows;
 }
