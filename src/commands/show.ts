@@ -8,6 +8,7 @@ import {
 } from '../common/outputFormatting';
 import ProjectClockError from '../common/ProjectClockError';
 import promptToConfirmOrSelectTask from '../common/promptToConfirmOrSelectTask';
+import { styleTaskStatus } from '../common/styling';
 import TimePeriod, { TimeParams } from '../common/TimePeriod';
 import { readTimesheet } from '../common/timesheetReadWrite';
 import { ProjectClockSettings, Task } from '../types/ProjectClockData';
@@ -40,7 +41,8 @@ function createTaskDataStr(task: Task, timeParams: TimeParams | undefined) {
     consoleWidth,
     true,
     paddingRight,
-    true
+    true,
+    { status: styleTaskStatus(taskStatus.status) }
   );
 }
 

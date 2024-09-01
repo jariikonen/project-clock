@@ -1,4 +1,5 @@
 import { execSync } from 'child_process';
+import prettyAnsi from 'pretty-ansi';
 import { PROJECT_NAME, ROOT_DIR, TASK_SUBJECT } from '../common/constants';
 import { createTestDir, removeTestDir } from '../common/testDirectory';
 import { createTestFile } from '../common/testFile';
@@ -94,7 +95,7 @@ describe('Correct functioning, no task descriptor argument given', () => {
     });
   });
 
-  describe('when there is only one task on the timesheet', () => {
+  describe('when there is only one task on the timesheet, color and stylings OFF', () => {
     beforeEach(() => {
       createTestFile(
         {
@@ -114,6 +115,7 @@ describe('Correct functioning, no task descriptor argument given', () => {
         `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js show`,
         {
           encoding: 'utf8',
+          env: { ...process.env, FORCE_COLOR: '0' },
         }
       );
       expect(response).toMatch(
@@ -124,7 +126,7 @@ describe('Correct functioning, no task descriptor argument given', () => {
     test('displays correct output when the prompt is answered yes', () => {
       const response = execSync(
         `cd ${subdirPath} && printf 'Y\n' | node ${ROOT_DIR}/bin/pclock.js show`,
-        { encoding: 'utf8' }
+        { encoding: 'utf8', env: { ...process.env, FORCE_COLOR: '0' } }
       );
       expect(response).toMatch(
         `there is one task on the timesheet (${TASK_SUBJECT}); show this task?`
@@ -136,7 +138,7 @@ describe('Correct functioning, no task descriptor argument given', () => {
     test('displays correct output when the prompt is answered no', () => {
       const response = execSync(
         `cd ${subdirPath} && printf 'n\n' | node ${ROOT_DIR}/bin/pclock.js show`,
-        { encoding: 'utf8' }
+        { encoding: 'utf8', env: { ...process.env, FORCE_COLOR: '0' } }
       );
       expect(response).toMatch(
         `there is one task on the timesheet (${TASK_SUBJECT}); show this task?`
@@ -145,7 +147,39 @@ describe('Correct functioning, no task descriptor argument given', () => {
     });
   });
 
-  describe('there are more than one task on the timesheet', () => {
+  describe('when there is only one task on the timesheet, color and stylings ON', () => {
+    beforeEach(() => {
+      createTestFile(
+        {
+          projectName: PROJECT_NAME,
+          tasks: [
+            {
+              subject: TASK_SUBJECT,
+            },
+          ],
+        },
+        testFilePath
+      );
+    });
+
+    test('displays correct output when the prompt is answered yes', () => {
+      const response = prettyAnsi(
+        execSync(
+          `cd ${subdirPath} && printf 'Y\n' | node ${ROOT_DIR}/bin/pclock.js show`,
+          { encoding: 'utf8', env: { ...process.env, FORCE_COLOR: '1' } }
+        )
+      );
+      expect(response).toMatch(
+        `there is one task on the timesheet (${TASK_SUBJECT}); show this task?`
+      );
+      expect(response).toMatch('<bold>subject:</intensity>     Test task');
+      expect(response).toMatch(
+        '<bold>status:</intensity> <blue>     unstarted</color>'
+      );
+    });
+  });
+
+  describe('there are more than one task on the timesheet, color and stylings OFF', () => {
     beforeEach(() => {
       createTestFile(
         {
@@ -167,7 +201,7 @@ describe('Correct functioning, no task descriptor argument given', () => {
     test('prompts to select a task when there is more than one task on the timesheet', () => {
       const response = execSync(
         `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js show`,
-        { encoding: 'utf8' }
+        { encoding: 'utf8', env: { ...process.env, FORCE_COLOR: '0' } }
       );
       expect(response).toMatch(
         'there are more than one task on the timesheet; select the task to show:'
@@ -177,7 +211,8 @@ describe('Correct functioning, no task descriptor argument given', () => {
     test('displays correct output when the first one is selected', async () => {
       const response = await execute(
         `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js show`,
-        ['\n']
+        ['\n'],
+        { ...process.env, FORCE_COLOR: '0' }
       );
       expect(response).toMatch(
         'there are more than one task on the timesheet; select the task to show:'
@@ -189,7 +224,8 @@ describe('Correct functioning, no task descriptor argument given', () => {
     test('displays correct output when the second one is selected', async () => {
       const response = await execute(
         `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js show`,
-        [`${DOWN}\n`]
+        [`${DOWN}\n`],
+        { ...process.env, FORCE_COLOR: '0' }
       );
       expect(response).toMatch(
         'there are more than one task on the timesheet; select the task to show:'
@@ -201,7 +237,8 @@ describe('Correct functioning, no task descriptor argument given', () => {
     test('displays correct output when option "none" is selected', async () => {
       const response = await execute(
         `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js show`,
-        [`${DOWN}${DOWN}\n`]
+        [`${DOWN}${DOWN}\n`],
+        { ...process.env, FORCE_COLOR: '0' }
       );
       expect(response).toMatch(
         'there are more than one task on the timesheet; select the task to show:'
@@ -209,9 +246,63 @@ describe('Correct functioning, no task descriptor argument given', () => {
       expect(response).toMatch('nothing to show');
     });
   });
+
+  describe('there are more than one task on the timesheet, color and stylings ON', () => {
+    beforeEach(() => {
+      createTestFile(
+        {
+          projectName: PROJECT_NAME,
+          tasks: [
+            {
+              subject: 'first task',
+            },
+            {
+              subject: 'second task',
+              begin: '2024-01-01T00:00:00.000Z',
+            },
+          ],
+        },
+        testFilePath
+      );
+    });
+
+    test('displays correct output when the first one is selected', async () => {
+      const response = prettyAnsi(
+        await execute(
+          `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js show`,
+          ['\n'],
+          { ...process.env, FORCE_COLOR: '1' }
+        )
+      );
+      expect(response).toMatch(
+        'there are more than one task on the timesheet; select the task to show:'
+      );
+      expect(response).toMatch('<bold>subject:</intensity>     first task');
+      expect(response).toMatch(
+        '<bold>status:</intensity> <blue>     unstarted</color>'
+      );
+    });
+
+    test('displays correct output when the second one is selected', async () => {
+      const response = prettyAnsi(
+        await execute(
+          `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js show`,
+          [`${DOWN}\n`],
+          { ...process.env, FORCE_COLOR: '1' }
+        )
+      );
+      expect(response).toMatch(
+        'there are more than one task on the timesheet; select the task to show:'
+      );
+      expect(response).toMatch('<bold>subject:</intensity>     second task');
+      expect(response).toMatch(
+        '<bold>status:</intensity> <red>     started</color>'
+      );
+    });
+  });
 });
 
-describe('Correct functioning, task descriptor argument given', () => {
+describe('Correct functioning, task descriptor argument given, color and stylings OFF', () => {
   test('exits with an error when a matching task is not found', () => {
     // initialize test environment
     createTestFile(
@@ -234,6 +325,7 @@ describe('Correct functioning, task descriptor argument given', () => {
         `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js show '${taskSubject}' found`,
         {
           stdio: 'pipe',
+          env: { ...process.env, FORCE_COLOR: '0' },
         }
       );
     } catch (err) {
@@ -264,6 +356,7 @@ describe('Correct functioning, task descriptor argument given', () => {
       `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js show '${TASK_SUBJECT}'`,
       {
         encoding: 'utf8',
+        env: { ...process.env, FORCE_COLOR: '0' },
       }
     );
     expect(response).toMatch(`subject:     ${TASK_SUBJECT}`);
@@ -294,6 +387,7 @@ describe('Correct functioning, task descriptor argument given', () => {
       `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js show 'task'`,
       {
         encoding: 'utf8',
+        env: { ...process.env, FORCE_COLOR: '0' },
       }
     );
     expect(response).toMatch('subject:     first task');
@@ -301,5 +395,77 @@ describe('Correct functioning, task descriptor argument given', () => {
     expect(response).toMatch('subject:     second task');
     expect(response).toMatch('status:      completed');
     expect(response).toMatch('time spent:  1h');
+  });
+});
+
+describe('Correct functioning, task descriptor argument given, color and stylings ON', () => {
+  test('displays correct information when only one matching task is found', () => {
+    // initialize test environment
+    createTestFile(
+      {
+        projectName: PROJECT_NAME,
+        tasks: [
+          {
+            subject: TASK_SUBJECT,
+          },
+        ],
+      },
+      testFilePath
+    );
+
+    // test
+    const response = prettyAnsi(
+      execSync(
+        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js show '${TASK_SUBJECT}'`,
+        {
+          encoding: 'utf8',
+          env: { ...process.env, FORCE_COLOR: '1' },
+        }
+      )
+    );
+    expect(response).toMatch(`<bold>subject:</intensity>     ${TASK_SUBJECT}`);
+    expect(response).toMatch(
+      '<bold>status:</intensity> <blue>     unstarted</color>'
+    );
+  });
+
+  test('displays correct information when many matching tasks are found', () => {
+    // initialize test environment
+    createTestFile(
+      {
+        projectName: PROJECT_NAME,
+        tasks: [
+          {
+            subject: 'first task',
+          },
+          {
+            subject: 'second task',
+            begin: '2024-01-01T00:00:00.000Z',
+            end: '2024-01-01T01:00:00.000Z',
+          },
+        ],
+      },
+      testFilePath
+    );
+
+    // test
+    const response = prettyAnsi(
+      execSync(
+        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js show 'task'`,
+        {
+          encoding: 'utf8',
+          env: { ...process.env, FORCE_COLOR: '1' },
+        }
+      )
+    );
+    expect(response).toMatch('<bold>subject:</intensity>     first task');
+    expect(response).toMatch(
+      '<bold>status:</intensity> <blue>     unstarted</color>'
+    );
+    expect(response).toMatch('<bold>subject:</intensity>     second task');
+    expect(response).toMatch(
+      '<bold>status:</intensity> <green>     completed</color>'
+    );
+    expect(response).toMatch('<bold>time spent:</intensity>  1h');
   });
 });

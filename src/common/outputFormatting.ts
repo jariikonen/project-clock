@@ -1,3 +1,4 @@
+import chalk from 'chalk';
 import { applyStyle, Style } from './styling';
 
 export interface Padding {
@@ -11,18 +12,27 @@ export interface Padding {
   firstLineLeftPadding: number;
 
   /**
-   * An extra cut that can be removed from the first line (e.g., when side
-   * heading is longer than the left padding).
-   */
-  firstLineExtraCut: number;
-
-  /**
-   * Boolean indicating whether the right padding should be applied as
-   * whitespace.
+   * Boolean indicating whether the right padding should be applied
+   * as whitespace.
    */
   padEnd: boolean;
 }
 
+/**
+ * A function used by splitIntoLinesAccordingToWidth() to create the new lines
+ * by adding paddings and newline characters.
+ * @param text The whole text to split into lines.
+ * @param start The start index of the current text slice.
+ * @param end The end index of the current text slice.
+ * @param width Maximum width of the line.
+ * @param padding Padding object containing information on how to pad the line.
+ * @param firstLine Boolean indicating whether this is the first line of a
+ *    paragraph (first line can be given a different width).
+ * @param addNewLine Boolean indicating whether this line ends in a new line
+ *    character.
+ * @param firstLineWidth A different width for the first line.
+ * @returns The line as a string.
+ */
 function createLine(
   text: string,
   start: number,
@@ -30,7 +40,8 @@ function createLine(
   width: number,
   padding: Padding,
   firstLine: boolean,
-  addNewLine: boolean
+  addNewLine: boolean,
+  firstLineWidth = width
 ) {
   const newLineStr = addNewLine ? '\n' : '';
   let line = '';
@@ -39,13 +50,7 @@ function createLine(
       ? (
           ' '.repeat(padding.firstLineLeftPadding) +
           text.slice(start, end).trim()
-        ).padEnd(
-          width -
-            padding.left -
-            padding.firstLineExtraCut +
-            padding.firstLineLeftPadding,
-          ' '
-        ) + newLineStr
+        ).padEnd(firstLineWidth, ' ') + newLineStr
       : (' '.repeat(padding.left) + text.slice(start, end).trim()).padEnd(
           width,
           ' '
@@ -67,6 +72,9 @@ function findNextNonWhitespace(text: string, start: number) {
 /**
  * A function used by splitIntoLinesAccordingToWidth() to find the index at
  * which to split.
+ * @param text The whole text to be splitted into lines.
+ * @param start Start index of the current text slice.
+ * @param width Maximum width of the line.
  */
 function findEnd(
   text: string,
@@ -113,12 +121,15 @@ function findEnd(
  * @param width Maximum width of a line (must be greater than zero or the
  *    default of 80 is used).
  * @param padding Padding added to lines as a Paddign object.
+ * @param firstLineWidth The first line can be given a different width. This is
+ *    necessary, e.g., when a side heading is added to the first line.
  * @returns An array of lines of text.
  */
 export function splitIntoLinesAccordingToWidth(
   text: string,
   width: number,
-  padding: Padding
+  padding: Padding,
+  firstLineWidth = width
 ): string[] {
   // Node.js property process.stdout.columns is not set in tests, which leads
   // the width being undefined. Since the while loop requires the lastLine to
@@ -133,7 +144,16 @@ export function splitIntoLinesAccordingToWidth(
   let firstLine = true;
   while (!lastLine) {
     lines.push(
-      createLine(text, start, end, widthToUse, padding, firstLine, addNewLine)
+      createLine(
+        text,
+        start,
+        end,
+        widthToUse,
+        padding,
+        firstLine,
+        addNewLine,
+        firstLineWidth
+      )
     );
 
     start = end;
@@ -144,7 +164,16 @@ export function splitIntoLinesAccordingToWidth(
   }
   if (start < text.length) {
     lines.push(
-      createLine(text, start, end, widthToUse, padding, firstLine, addNewLine)
+      createLine(
+        text,
+        start,
+        end,
+        widthToUse,
+        padding,
+        firstLine,
+        addNewLine,
+        firstLineWidth
+      )
     );
   }
   return lines;
@@ -164,6 +193,9 @@ export function splitIntoLinesAccordingToWidth(
  *    the actual width of the text.
  * @param paddingLeft Padding added to the left side of the text. This reduces
  *    the actual width of the text.
+ * @param colorLevel The color output level can be customized with this
+ *    argument for the sake of testability (see
+ *    chalk.level {@link https://github.com/chalk/chalk?tab=readme-ov-file#chalklevel}).
  * @returns The whole text as a string.
  */
 export function sideHeadingText(
@@ -172,26 +204,38 @@ export function sideHeadingText(
   width: number,
   padEnd: boolean,
   paddingRight: number,
-  paddingLeft?: number
+  paddingLeft = 0,
+  contentStyle?: Style,
+  colorLevel: chalk.Level = 1
 ) {
-  const headingStr = `${heading}: `;
-  const paddingLeftToUse = paddingLeft ?? headingStr.length;
+  // chalk level can be overridden for the sake of testability
+  chalk.level = process.env.FORCE_COLOR
+    ? (parseInt(process.env.FORCE_COLOR, 10) as chalk.Level)
+    : colorLevel;
+
+  const headingContentStr = `${heading}:`;
+  const styledHeadingStr = `${chalk.bold(headingContentStr)} `;
+  const headingWidth = headingContentStr.length + 1;
+  const paddingLeftToUse = paddingLeft || headingWidth;
+
   const firstLineLeftPadding =
-    paddingLeft && paddingLeft > headingStr.length
-      ? paddingLeftToUse - headingStr.length
+    paddingLeft && paddingLeft > headingWidth
+      ? paddingLeftToUse - headingWidth
       : 0;
-  const firstLineExtraCut =
-    paddingLeft && paddingLeft < headingStr.length
-      ? headingStr.length - paddingLeft
-      : 0;
-  const lines = splitIntoLinesAccordingToWidth(content, width, {
-    left: paddingLeftToUse,
-    right: paddingRight,
-    firstLineLeftPadding,
-    firstLineExtraCut,
-    padEnd,
-  });
-  return `${headingStr}${lines.join('\n')}`;
+  const firstLineWidth = width - headingWidth;
+
+  const lines = splitIntoLinesAccordingToWidth(
+    content,
+    width,
+    {
+      left: paddingLeftToUse,
+      right: paddingRight,
+      firstLineLeftPadding,
+      padEnd,
+    },
+    firstLineWidth
+  );
+  return `${styledHeadingStr}${applyStyle(lines.join('\n'), contentStyle)}`;
 }
 
 function findLongest(texts: string[]) {
@@ -223,7 +267,8 @@ export function sideHeadingTextMultiple(
   width: number,
   padEnd: boolean,
   paddingRight: number,
-  indentAccordingToLongest: boolean
+  indentAccordingToLongest: boolean,
+  partStylings: Record<string, Style> = {}
 ) {
   const headings = Object.keys(parts);
   const contents = Object.values(parts);
@@ -232,6 +277,9 @@ export function sideHeadingTextMultiple(
     : undefined;
   const sections: string[] = [];
   headings.forEach((heading, i) => {
+    const contentStyle = partStylings[heading]
+      ? partStylings[heading]
+      : undefined;
     if (contents[i]) {
       sections.push(
         sideHeadingText(
@@ -240,7 +288,8 @@ export function sideHeadingTextMultiple(
           width,
           padEnd,
           paddingRight,
-          paddingLeft
+          paddingLeft,
+          contentStyle
         )
       );
     }

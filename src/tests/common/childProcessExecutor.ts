@@ -9,17 +9,19 @@ export const UP = '\x1B\x5B\x41';
  * time, when the process prompts the user for input.
  * @param command The command to be executed.
  * @param inputs Inputs to the process as an array of strings.
+ * @param env Environment key-value pairs. Default process.env.
  * @param timeout Timeout in milliseconds. Execution is terminated after given
- *    time.
+ *    time. Default 500.
  * @returns Stdout output of the process as a string.
  */
 export default async function execute(
   command: string,
   inputs?: string[],
+  env = process.env,
   timeout = 500
 ): Promise<string> {
   return new Promise((resolve, reject) => {
-    const proc = child_process.exec(command, { timeout }, (error) => {
+    const proc = child_process.exec(command, { env, timeout }, (error) => {
       if (error) {
         reject(error);
       }

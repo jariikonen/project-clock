@@ -1,3 +1,4 @@
+import prettyAnsi from 'pretty-ansi';
 import {
   createSeparatedSectionsStr,
   sideHeadingText,
@@ -15,6 +16,7 @@ describe('splitLinesAccordingToWidth()', () => {
 
   test('width = 80, padEnd = false, padding.right = 1', () => {
     const width = 80;
+    const padEnd = false;
     const paddingRight = 1;
     const expectedLines = [
       '-'.repeat(width - paddingRight),
@@ -27,14 +29,14 @@ describe('splitLinesAccordingToWidth()', () => {
       left: 0,
       right: paddingRight,
       firstLineLeftPadding: 0,
-      firstLineExtraCut: 0,
-      padEnd: false,
+      padEnd,
     });
     expect(response).toEqual(expectedLines);
   });
 
   test('width = 80, padEnd = true, padding.right = 1', () => {
     const width = 80;
+    const padEnd = true;
     const paddingRight = 1;
     const expectedLines = [
       '-'.repeat(width - paddingRight).padEnd(width, ' '),
@@ -50,8 +52,7 @@ describe('splitLinesAccordingToWidth()', () => {
       left: 0,
       right: paddingRight,
       firstLineLeftPadding: 0,
-      firstLineExtraCut: 0,
-      padEnd: true,
+      padEnd,
     });
     expect(response).toEqual(expectedLines);
   });
@@ -72,7 +73,6 @@ describe('splitLinesAccordingToWidth()', () => {
       left: paddingLeft,
       right: paddingRight,
       firstLineLeftPadding,
-      firstLineExtraCut: 0,
       padEnd: false,
     });
     expect(response).toEqual(expectedLines);
@@ -100,7 +100,6 @@ describe('splitLinesAccordingToWidth()', () => {
       left: paddingLeft,
       right: paddingRight,
       firstLineLeftPadding,
-      firstLineExtraCut: 0,
       padEnd: true,
     });
     expect(response).toEqual(expectedLines);
@@ -122,7 +121,6 @@ describe('splitLinesAccordingToWidth()', () => {
       left: paddingLeft,
       right: paddingRight,
       firstLineLeftPadding,
-      firstLineExtraCut: 0,
       padEnd: false,
     });
     expect(response).toEqual(expectedLines);
@@ -133,6 +131,7 @@ describe('splitLinesAccordingToWidth()', () => {
     const paddingRight = 1;
     const paddingLeft = 10;
     const firstLineLeftPadding = 0;
+    const firstLineWidth = width - paddingLeft;
     const expectedLines = [
       '-'
         .repeat(width - paddingLeft - paddingRight)
@@ -145,13 +144,17 @@ describe('splitLinesAccordingToWidth()', () => {
       '          ----------     ----------'.padEnd(width, ' '),
     ];
 
-    const response = splitIntoLinesAccordingToWidth(testText, width, {
-      left: paddingLeft,
-      right: paddingRight,
-      firstLineLeftPadding,
-      firstLineExtraCut: 0,
-      padEnd: true,
-    });
+    const response = splitIntoLinesAccordingToWidth(
+      testText,
+      width,
+      {
+        left: paddingLeft,
+        right: paddingRight,
+        firstLineLeftPadding,
+        padEnd: true,
+      },
+      firstLineWidth
+    );
     expect(response).toEqual(expectedLines);
   });
 
@@ -171,7 +174,6 @@ describe('splitLinesAccordingToWidth()', () => {
       left: 0,
       right: paddingRight,
       firstLineLeftPadding: 0,
-      firstLineExtraCut: 0,
       padEnd: false,
     });
     expect(response).toEqual(expectedLines);
@@ -191,7 +193,6 @@ describe('splitLinesAccordingToWidth()', () => {
       left: 0,
       right: paddingRight,
       firstLineLeftPadding: 0,
-      firstLineExtraCut: 0,
       padEnd: true,
     });
     expect(response).toEqual(expectedLines);
@@ -214,7 +215,6 @@ describe('splitLinesAccordingToWidth()', () => {
         left: 0,
         right: paddingRight,
         firstLineLeftPadding: 0,
-        firstLineExtraCut: 0,
         padEnd: false,
       }
     );
@@ -222,7 +222,18 @@ describe('splitLinesAccordingToWidth()', () => {
   });
 });
 
-describe('sideHeadingText()', () => {
+describe('sideHeadingText(), color and stylings OFF', () => {
+  let oldEnv = {};
+
+  beforeEach(() => {
+    oldEnv = process.env;
+    process.env = { ...oldEnv, FORCE_COLOR: '0' };
+  });
+
+  afterEach(() => {
+    process.env = oldEnv;
+  });
+
   const testText = `${tenChars} ${tenChars} ${tenChars} ${tenChars} ${sixtyChars}${fiveSpaces}${tenChars}${fiveSpaces}${tenChars} ${eigthyTwoChars}`;
 
   test('width = 80, padEnd = false, paddingRight = 1', () => {
@@ -416,7 +427,210 @@ describe('sideHeadingText()', () => {
   });
 });
 
-describe('sideHeadingTextMultiple()', () => {
+describe('sideHeadingText(), color and stylings ON', () => {
+  let oldEnv = {};
+
+  beforeEach(() => {
+    oldEnv = process.env;
+    process.env = { ...oldEnv, FORCE_COLOR: '1' };
+  });
+
+  afterEach(() => {
+    process.env = oldEnv;
+  });
+
+  const testText = `${tenChars} ${tenChars} ${tenChars} ${tenChars} ${sixtyChars}${fiveSpaces}${tenChars}${fiveSpaces}${tenChars} ${eigthyTwoChars}`;
+
+  test('width = 80, padEnd = false, paddingRight = 1', () => {
+    const width = 80;
+    const paddingRight = 1;
+    const headingLength = `${tenChars}: `.length;
+    const expectedLines = [
+      `<bold>${tenChars}:</intensity> ${tenChars} ${tenChars} ${tenChars} ${tenChars}`,
+      ' '.repeat(headingLength) + sixtyChars,
+      `${' '.repeat(headingLength)}${tenChars}${fiveSpaces}${tenChars}`,
+      ' '.repeat(headingLength) +
+        '-'.repeat(width - headingLength - paddingRight),
+      ' '.repeat(headingLength) +
+        '-'.repeat(82 - (width - headingLength - paddingRight)),
+    ];
+
+    const response = prettyAnsi(
+      sideHeadingText(tenChars, testText, width, false, paddingRight)
+    );
+    expect(response).toEqual(expectedLines.join('\n'));
+  });
+
+  test('width = 80, padEnd = true, paddingRight = 1', () => {
+    const width = 80;
+    const paddingRight = 1;
+    const headingLength = `${tenChars}: `.length;
+    const escapeCodesLength = '<bold></intensity>'.length;
+    const expectedLines = [
+      `<bold>${tenChars}:</intensity> ${tenChars} ${tenChars} ${tenChars} ${tenChars}`.padEnd(
+        width + escapeCodesLength,
+        ' '
+      ),
+      (' '.repeat(headingLength) + sixtyChars).padEnd(width, ' '),
+      `${' '.repeat(headingLength)}${tenChars}${fiveSpaces}${tenChars}`.padEnd(
+        width,
+        ' '
+      ),
+      (
+        ' '.repeat(headingLength) +
+        '-'.repeat(width - headingLength - paddingRight)
+      ).padEnd(width, ' '),
+      (
+        ' '.repeat(headingLength) +
+        '-'.repeat(82 - (width - headingLength - paddingRight))
+      ).padEnd(width, ' '),
+    ];
+
+    const response = prettyAnsi(
+      sideHeadingText(tenChars, testText, width, true, paddingRight)
+    );
+    expect(response).toEqual(expectedLines.join('\n'));
+  });
+
+  test('width = 80, padEnd = false, paddingRight = 1, paddingLeft = 15', () => {
+    const width = 80;
+    const paddingRight = 1;
+    const paddingLeft = 15;
+    const expectedLines = [
+      `<bold>${tenChars}:</intensity>    ${tenChars} ${tenChars} ${tenChars} ${tenChars}`,
+      ' '.repeat(paddingLeft) + sixtyChars,
+      `${' '.repeat(paddingLeft)}${tenChars}${fiveSpaces}${tenChars}`,
+      ' '.repeat(paddingLeft) + '-'.repeat(width - paddingLeft - paddingRight),
+      ' '.repeat(paddingLeft) +
+        '-'.repeat(82 - (width - paddingLeft - paddingRight)),
+    ];
+
+    const response = prettyAnsi(
+      sideHeadingText(
+        tenChars,
+        testText,
+        width,
+        false,
+        paddingRight,
+        paddingLeft
+      )
+    );
+    expect(response).toEqual(expectedLines.join('\n'));
+  });
+
+  test('width = 80, padEnd = true, paddingRight = 1, paddingLeft = 15', () => {
+    const width = 80;
+    const paddingRight = 1;
+    const paddingLeft = 15;
+    const escapeCodesLength = '<bold></intensity>'.length;
+    const expectedLines = [
+      `<bold>${tenChars}:</intensity>    ${tenChars} ${tenChars} ${tenChars} ${tenChars}`.padEnd(
+        width + escapeCodesLength,
+        ' '
+      ),
+      (' '.repeat(paddingLeft) + sixtyChars).padEnd(width, ' '),
+      `${' '.repeat(paddingLeft)}${tenChars}${fiveSpaces}${tenChars}`.padEnd(
+        width,
+        ' '
+      ),
+      (
+        ' '.repeat(paddingLeft) + '-'.repeat(width - paddingLeft - paddingRight)
+      ).padEnd(width, ' '),
+      (
+        ' '.repeat(paddingLeft) +
+        '-'.repeat(82 - (width - paddingLeft - paddingRight))
+      ).padEnd(width, ' '),
+    ];
+
+    const response = prettyAnsi(
+      sideHeadingText(
+        tenChars,
+        testText,
+        width,
+        true,
+        paddingRight,
+        paddingLeft
+      )
+    );
+    expect(response).toEqual(expectedLines.join('\n'));
+  });
+
+  test('width = 80, padEnd = false, paddingRight = 1, paddingLeft = 5', () => {
+    const width = 80;
+    const paddingRight = 1;
+    const paddingLeft = 5;
+    const expectedLines = [
+      `<bold>${tenChars}:</intensity> ${tenChars} ${tenChars} ${tenChars} ${tenChars}`,
+      ' '.repeat(paddingLeft) + sixtyChars,
+      `${' '.repeat(paddingLeft)}${tenChars}${fiveSpaces}${tenChars}`,
+      ' '.repeat(paddingLeft) + '-'.repeat(width - paddingLeft - paddingRight),
+      ' '.repeat(paddingLeft) +
+        '-'.repeat(82 - (width - paddingLeft - paddingRight)),
+    ];
+
+    const response = prettyAnsi(
+      sideHeadingText(
+        tenChars,
+        testText,
+        width,
+        false,
+        paddingRight,
+        paddingLeft
+      )
+    );
+    expect(response).toEqual(expectedLines.join('\n'));
+  });
+
+  test('width = 80, padEnd = true, paddingRight = 1, paddingLeft = 5', () => {
+    const width = 80;
+    const paddingRight = 1;
+    const paddingLeft = 5;
+    const escapeCodesLength = '<bold></intensity>'.length;
+    const expectedLines = [
+      `<bold>${tenChars}:</intensity> ${tenChars} ${tenChars} ${tenChars} ${tenChars}`.padEnd(
+        width + escapeCodesLength,
+        ' '
+      ),
+      (' '.repeat(paddingLeft) + sixtyChars).padEnd(width, ' '),
+      `${' '.repeat(paddingLeft)}${tenChars}${fiveSpaces}${tenChars}`.padEnd(
+        width,
+        ' '
+      ),
+      (
+        ' '.repeat(paddingLeft) + '-'.repeat(width - paddingLeft - paddingRight)
+      ).padEnd(width, ' '),
+      (
+        ' '.repeat(paddingLeft) +
+        '-'.repeat(82 - (width - paddingLeft - paddingRight))
+      ).padEnd(width, ' '),
+    ];
+
+    const response = prettyAnsi(
+      sideHeadingText(
+        tenChars,
+        testText,
+        width,
+        true,
+        paddingRight,
+        paddingLeft
+      )
+    );
+    expect(response).toEqual(expectedLines.join('\n'));
+  });
+});
+
+describe('sideHeadingTextMultiple(), color and stylings OFF', () => {
+  let oldEnv = {};
+
+  beforeEach(() => {
+    oldEnv = process.env;
+    process.env = { ...oldEnv, FORCE_COLOR: '0' };
+  });
+
+  afterEach(() => {
+    process.env = oldEnv;
+  });
+
   const testText = `${sixtyChars}${fiveSpaces}${tenChars}${fiveSpaces}${tenChars}`;
 
   test('three texts, width = 80, padEnd = false, paddingRight = 1, indentAccordingToLongest = false', () => {
