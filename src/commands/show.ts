@@ -42,11 +42,17 @@ function createTaskDataStr(task: Task, timeParams: TimeParams | undefined) {
     true,
     paddingRight,
     true,
+    true,
     { status: styleTaskStatus(taskStatus.status) }
   );
 }
 
-function outputTaskData(
+/**
+ * Prints full task data to stdout.
+ * @param tasks Array of tasks to print.
+ * @param projectSettings The ProjectClockSettings object to use.
+ */
+export function outputTaskData(
   tasks: Task[],
   projectSettings: ProjectClockSettings | undefined
 ): void {

@@ -662,7 +662,81 @@
       "end": "2024-09-01T03:22:52.012Z"
     },
     {
-      "subject": "Subject, description and notes of a task can be set and edited"
+      "subject": "Subject, description and notes of a task can be set and edited",
+      "notes": "It took quite a lot of time to get the editor mock in the integration tests working and, nevertheless, the solution is not optimal. It relies on the use of external Node.js implementation and the user has to ensure that the script shebang path is correct (unix) and/or that the .js files are executed using compatible Node.js version (Windows). This should be replaced with a solution that does not use an external Node.js installation. Probably the whole @inquirer/editor should be mocked out.",
+      "begin": "2024-09-02T11:09:54.160Z",
+      "suspend": [
+        "2024-09-02T12:17:24.511Z",
+        "2024-09-02T12:36:45.730Z",
+        "2024-09-03T12:55:13.160Z",
+        "2024-09-04T06:09:33.620Z",
+        "2024-09-04T10:19:41.313Z",
+        "2024-09-04T12:50:22.460Z",
+        "2024-09-04T15:14:42.277Z",
+        "2024-09-05T13:22:04.352Z",
+        "2024-09-05T14:46:16.328Z",
+        "2024-09-06T06:54:48.243Z",
+        "2024-09-06T07:51:41.046Z",
+        "2024-09-06T12:55:00.279Z",
+        "2024-09-06T17:23:30.056Z",
+        "2024-09-07T05:41:46.430Z",
+        "2024-09-07T13:53:59.741Z",
+        "2024-09-08T06:01:12.350Z",
+        "2024-09-09T07:30:20.640Z",
+        "2024-09-09T08:29:21.782Z",
+        "2024-09-09T12:52:27.508Z",
+        "2024-09-09T15:06:14.537Z",
+        "2024-09-10T03:33:15.493Z",
+        "2024-09-10T05:37:58.902Z",
+        "2024-09-10T07:15:22.136Z",
+        "2024-09-10T12:07:51.237Z",
+        "2024-09-10T14:13:22.113Z",
+        "2024-09-11T08:20:11.474Z",
+        "2024-09-11T08:39:35.154Z"
+      ],
+      "resume": [
+        "2024-09-02T12:27:40.307Z",
+        "2024-09-03T10:30:16.126Z",
+        "2024-09-04T04:47:33.281Z",
+        "2024-09-04T09:37:47.297Z",
+        "2024-09-04T10:56:18.481Z",
+        "2024-09-04T13:30:25.597Z",
+        "2024-09-05T11:34:27.689Z",
+        "2024-09-05T14:24:18.795Z",
+        "2024-09-06T05:16:36.621Z",
+        "2024-09-06T07:05:36.121Z",
+        "2024-09-06T09:36:44.177Z",
+        "2024-09-06T15:01:42.209Z",
+        "2024-09-07T04:32:48.943Z",
+        "2024-09-07T13:36:03.717Z",
+        "2024-09-08T05:15:29.824Z",
+        "2024-09-09T05:10:06.989Z",
+        "2024-09-09T08:04:39.597Z",
+        "2024-09-09T09:35:27.135Z",
+        "2024-09-09T14:46:39.645Z",
+        "2024-09-10T01:27:07.473Z",
+        "2024-09-10T05:02:42.182Z",
+        "2024-09-10T06:51:44.326Z",
+        "2024-09-10T10:12:05.073Z",
+        "2024-09-10T13:51:19.088Z",
+        "2024-09-11T07:14:23.562Z",
+        "2024-09-11T08:33:31.021Z",
+        "2024-09-11T09:14:22.629Z"
+      ],
+      "end": "2024-09-11T09:44:00.801Z"
+    },
+    {
+      "subject": "Make tests work also in Windows"
+    },
+    {
+      "subject": "Improve prompt readability",
+      "description": "Many prompts are currently very long since they contain both, a description of the situation and the question for the user. They can also contain long field values. These prompts can be improved by outputting the description of the situation separately with a normal intensity font (not bolded), and by using the sideHeading() function to format this output. The prompt (in bold) is then just a simple question to the user that draws the user's attention to what is essential."
+    },
+    {
+      "subject": "Make an alternative test that tests the edit command without the use of an external Node.js binary and make current tests that use the mockEditor.js optional"
+    },
+    {
+      "subject": "Tasks can be removed from the timesheet"
     },
     {
       "subject": "Add a 'script mode' flag that prevents all commands from prompting the user for instructions"
@@ -681,6 +755,12 @@
     },
     {
       "subject": "Modify the status command so that it prints how many hours of work have been done in the current day"
+    },
+    {
+      "subject": "'Start', 'stop', 'suspend' and 'resume' commands display the status information after the operation"
+    },
+    {
+      "subject": "Task listings (in 'status' and 'list') display the date of last action (i.e., 'update' date)"
     },
     {
       "subject": "Command 'new' prompts for project name if it is not given as an argument",
@@ -723,6 +803,31 @@
     },
     {
       "subject": "Better filtering algorithm (e.g., match-sorter) for filtering tasks"
+    },
+    {
+      "subject": "Add user ids (many users can edit and record times)"
+    },
+    {
+      "subject": "Add creation date and creator to tasks"
+    },
+    {
+      "subject": "Tasks can be pushed to GitHub Projects"
+    },
+    {
+      "subject": "Tasks can be pulled from GitHub Projects"
+    },
+    {
+      "subject": "Sub tasks"
+    },
+    {
+      "subject": "Task notes field can contain many notes, each with their own creation and edit times and creator and editor ids",
+      "description": "Make it possible that the task notes field on the timesheet can be an array of objects instead of a string. This probably means that the resulting timesheet format should be handled as a new timesheet file version. The application should be able to handle different file versions."
+    },
+    {
+      "subject": "Is it ok that a user can have many tasks running at the same time?"
+    },
+    {
+      "subject": "Add codes for errors (?)"
     },
     {
       "subject": "Make sure that all commands are tested for friendly output when the command is force stopped on every possible prompt level",
@@ -780,7 +885,10 @@
         "2024-08-20T09:41:38.461Z",
         "2024-08-22T11:34:40.866Z",
         "2024-08-22T11:40:10.880Z",
-        "2024-08-23T07:56:12.451Z"
+        "2024-08-23T07:56:12.451Z",
+        "2024-09-01T04:00:30.342Z",
+        "2024-09-02T12:27:38.307Z",
+        "2024-09-08T06:16:25.037Z"
       ],
       "resume": [
         "2024-08-02T08:51:55.636Z",
@@ -796,7 +904,10 @@
         "2024-08-20T09:40:20.554Z",
         "2024-08-22T11:22:21.278Z",
         "2024-08-22T11:36:29.356Z",
-        "2024-08-23T07:23:59.011Z"
+        "2024-08-23T07:23:59.011Z",
+        "2024-09-01T03:32:41.770Z",
+        "2024-09-02T12:17:43.887Z",
+        "2024-09-08T06:04:50.060Z"
       ]
     },
     {

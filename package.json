@@ -43,6 +43,7 @@
     "@commander-js/extra-typings": "^12.1.0",
     "@inquirer/confirm": "^3.1.14",
     "@inquirer/core": "^9.0.2",
+    "@inquirer/editor": "^2.2.0",
     "@inquirer/input": "^2.2.1",
     "@inquirer/select": "^2.3.10",
     "chalk": "^4.1.2",

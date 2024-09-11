@@ -205,6 +205,7 @@ export function sideHeadingText(
   padEnd: boolean,
   paddingRight: number,
   paddingLeft = 0,
+  boldHeading = true,
   contentStyle?: Style,
   colorLevel: chalk.Level = 1
 ) {
@@ -214,7 +215,9 @@ export function sideHeadingText(
     : colorLevel;
 
   const headingContentStr = `${heading}:`;
-  const styledHeadingStr = `${chalk.bold(headingContentStr)} `;
+  const styledHeadingStr = boldHeading
+    ? `${chalk.bold(headingContentStr)} `
+    : `${headingContentStr} `;
   const headingWidth = headingContentStr.length + 1;
   const paddingLeftToUse = paddingLeft || headingWidth;
 
@@ -268,6 +271,7 @@ export function sideHeadingTextMultiple(
   padEnd: boolean,
   paddingRight: number,
   indentAccordingToLongest: boolean,
+  boldHeadings = true,
   partStylings: Record<string, Style> = {}
 ) {
   const headings = Object.keys(parts);
@@ -289,6 +293,7 @@ export function sideHeadingTextMultiple(
           padEnd,
           paddingRight,
           paddingLeft,
+          boldHeadings,
           contentStyle
         )
       );

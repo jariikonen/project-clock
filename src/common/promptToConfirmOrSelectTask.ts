@@ -8,6 +8,19 @@ function exitWithNothingToDo(verb: string) {
   process.exit(0);
 }
 
+function formMessage(tasks: Task[], adjective: string, verb: string): string {
+  const adjectiveToUse = adjective ? `${adjective} ` : '';
+  if (tasks.length === 1) {
+    return `there is one ${adjectiveToUse}task on the timesheet (${tasks[0].subject}); ${verb} this task?`;
+  }
+  if (tasks.length > 1) {
+    return `there are more than one ${adjectiveToUse}task on the timesheet; select the task to ${verb}:`;
+  }
+  throw new ProjectClockError(
+    'internal error: promptForTask() must not be called with an empty tasks array'
+  );
+}
+
 /**
  * Prompts the user to confirm or select a task. If there is just one task in
  * the `tasks` array, function confirms from the user whether this is the
@@ -20,30 +33,26 @@ function exitWithNothingToDo(verb: string) {
  * @param tasks An array of task objects from which the task is selected.
  * @param adjective An adjective that describes the type of task being sought.
  * @param verb A verb that represents an action to be performed on tasks.
+ * @param message If message is given, it is used instead of a message formed
+ *    from the adjective and the verb arguments.
  * @returns Task selected by user or null.
  * @throws If the array of `tasks` argument is empty.
  */
 export default async function promptToConfirmOrSelectTask(
   tasks: Task[],
   adjective: string,
-  verb: string
+  verb: string,
+  message?: string
 ): Promise<Task> {
-  const adjectiveToUse = adjective ? `${adjective} ` : '';
+  const messageToUse = message ?? formMessage(tasks, adjective, verb);
   if (tasks.length === 1) {
-    if (
-      await promptToConfirm(
-        `there is one ${adjectiveToUse}task on the timesheet (${tasks[0].subject}); ${verb} this task?`
-      )
-    ) {
+    if (await promptToConfirm(messageToUse)) {
       return tasks[0];
     }
     exitWithNothingToDo(verb);
   }
   if (tasks.length > 1) {
-    const selectedTask = await promptToSelectTask(
-      tasks,
-      `there are more than one ${adjectiveToUse}task on the timesheet; select the task to ${verb}:`
-    );
+    const selectedTask = await promptToSelectTask(tasks, messageToUse);
     if (selectedTask) {
       return selectedTask;
     }

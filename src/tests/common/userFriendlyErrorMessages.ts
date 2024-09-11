@@ -10,12 +10,13 @@ import { PROJECT_NAME, ROOT_DIR } from './constants';
 import { createTestFile } from './testFile';
 import { getTestPathsFromDirName } from './testPaths';
 import { ProjectClockData } from '../../types/ProjectClockData';
-import execute, { DOWN } from '../common/childProcessExecutor';
+import execute from './childProcessExecutor';
 import { ERROR_MESSAGE_TIMESHEET_INSPECTION } from '../../common/constants';
 
 /** Commands accepted by these functions. */
 export enum Command {
   Add = 'add',
+  Edit = 'edit',
   List = 'list',
   Resume = 'resume',
   Start = 'start',

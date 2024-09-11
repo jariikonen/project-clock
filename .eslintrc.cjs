@@ -15,6 +15,8 @@ module.exports = {
     '.eslintrc.cjs',
     'rollup.config.js',
     'jest.config.mjs',
+    'mockEditor.js',
+    'mockTest.js',
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {

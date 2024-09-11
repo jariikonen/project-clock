@@ -11,6 +11,12 @@ import suspend from './commands/suspend';
 import resume from './commands/resume';
 import add from './commands/add';
 import show from './commands/show';
+import {
+  edit as editCommand,
+  editDescription,
+  editNotes,
+  editSubject,
+} from './commands/edit';
 
 const program = new Command();
 
@@ -113,5 +119,50 @@ program
     'task descriptor; a string that is expected to match a task subject'
   )
   .action((taskDescriptor) => show(taskDescriptor));
+
+const edit = program
+  .command('edit')
+  .description(
+    'Edit task. Has three sub commands: "subject", "description" and "notes". "Subject" allows you to edit the subject, "description" to edit the description, and "notes" to edit the notes on the task indicated by the task_descriptor argument. Type "help edit" for more information.\n\n'
+  )
+  .argument(
+    '[task_descriptor]',
+    'task descriptor; a string that is expected to match a task subject'
+  )
+  .action((taskDescriptor) => editCommand(taskDescriptor));
+
+edit
+  .command('subject')
+  .description('Edit task subject.')
+  .argument(
+    '[task_descriptor]',
+    'task descriptor; a string that is expected to match a task subject'
+  )
+  .argument('[new_subject]', 'a new subject for the task')
+  .action((taskDescriptor, newSubject) =>
+    editSubject(taskDescriptor, newSubject)
+  );
+
+edit
+  .command('description')
+  .description('Edit task description.')
+  .argument(
+    '[task_descriptor]',
+    'task descriptor; a string that is expected to match a task subject'
+  )
+  .argument('[new_description]', 'a new description for the task')
+  .action((taskDescriptor, newDescription) =>
+    editDescription(taskDescriptor, newDescription)
+  );
+
+edit
+  .command('notes')
+  .description('Edit task notes.')
+  .argument(
+    '[task_descriptor]',
+    'task descriptor; a string that is expected to match a task subject'
+  )
+  .argument('[new_note]', 'a new note to the task')
+  .action((taskDescriptor, newNote) => editNotes(taskDescriptor, newNote));
 
 program.parse();

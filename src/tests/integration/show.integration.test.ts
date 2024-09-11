@@ -95,7 +95,7 @@ describe('Correct functioning, no task descriptor argument given', () => {
     });
   });
 
-  describe('when there is only one task on the timesheet, color and stylings OFF', () => {
+  describe('there is only one task on the timesheet, color and stylings OFF', () => {
     beforeEach(() => {
       createTestFile(
         {
@@ -147,7 +147,7 @@ describe('Correct functioning, no task descriptor argument given', () => {
     });
   });
 
-  describe('when there is only one task on the timesheet, color and stylings ON', () => {
+  describe('there is only one task on the timesheet, color and stylings ON', () => {
     beforeEach(() => {
       createTestFile(
         {
