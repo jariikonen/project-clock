@@ -11,6 +11,7 @@ import {
   noTimesheetFile,
 } from '../common/userFriendlyErrorMessages';
 import { getTestPaths } from '../common/testPaths';
+import execute from '../common/childProcessExecutor';
 
 const testSuiteName = 'add';
 const { testDirName, testDirPath, subdirPath, testFilePath } =
@@ -48,9 +49,9 @@ describe('User friendly error messages', () => {
     moreThanOneTimesheetFile(testDirName, Command.Add);
   });
 
-  test('"Add" command gives a user friendly error message when the command is force stopped with CTRL+C', () => {
+  test('"Add" command gives a user friendly error message when the command is force stopped with CTRL+C', async () => {
     expect.hasAssertions();
-    forceStopped(testDirName, Command.Add, {
+    await forceStopped(testDirName, Command.Add, {
       projectName: PROJECT_NAME,
       tasks: [],
     });
@@ -85,7 +86,7 @@ describe('Correct functioning', () => {
 
   test('"Add" command creates task correctly when the taskSubject argument is passed', () => {
     const response = execSync(
-      `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js add '${TASK_SUBJECT}'`,
+      `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js add "${TASK_SUBJECT}"`,
       {
         encoding: 'utf8',
         stdio: 'pipe',
@@ -108,13 +109,10 @@ describe('Correct functioning', () => {
     );
   });
 
-  test('"Add" command creates task correctly when the task subject is entered through the prompt', () => {
-    const response = execSync(
-      `cd ${subdirPath} && printf "${TASK_SUBJECT}\n" | node ${ROOT_DIR}/bin/pclock.js add`,
-      {
-        encoding: 'utf8',
-        stdio: 'pipe',
-      }
+  test('"Add" command creates task correctly when the task subject is entered through the prompt', async () => {
+    const response = await execute(
+      `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js add`,
+      [`${TASK_SUBJECT}\n`]
     );
     expect(response).toMatch(
       'enter subject for the new task (empty to exit without creating a task):'
@@ -123,13 +121,10 @@ describe('Correct functioning', () => {
     expectTaskIsCreated();
   });
 
-  test('"Add" command does not create any tasks if the user enters an empty subject when prompted', () => {
-    const response = execSync(
-      `cd ${subdirPath} && printf "\n" | node ${ROOT_DIR}/bin/pclock.js add`,
-      {
-        encoding: 'utf8',
-        stdio: 'pipe',
-      }
+  test('"Add" command does not create any tasks if the user enters an empty subject when prompted', async () => {
+    const response = await execute(
+      `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js add`,
+      ['\n']
     );
     expect(response).toMatch(
       'enter subject for the new task (empty to exit without creating a task):'
