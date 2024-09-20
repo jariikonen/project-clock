@@ -81,7 +81,9 @@ export function noPermission(testDirName: string, command: Command) {
     error = e.message;
   }
   expect(error).toMatch('An error occurred while reading the timesheet file');
-  expect(error).toMatch('no permission');
+  const permissionMsg =
+    process.platform === 'win32' ? 'no write permission' : 'no permission';
+  expect(error).toMatch(permissionMsg);
   expect(error).not.toMatch('throw');
   expect(error).not.toMatch('ProjectClockError');
 }
@@ -140,7 +142,7 @@ export function moreThanOneTimesheetFile(
  *    used by the command. It has to be designed so that the command prompts
  *    the user for more information.
  */
-export function forceStopped(
+export async function forceStopped(
   testDirName: string,
   command: Command,
   testFileDataObj: ProjectClockData
@@ -150,17 +152,36 @@ export function forceStopped(
   // initialize test environment
   createTestFile(testFileDataObj, testFilePath);
 
-  // test
-  const response = execSync(
-    `cd ${subdirPath} && printf '^C' | node ${ROOT_DIR}/bin/pclock.js ${command}`,
-    {
-      encoding: 'utf8',
-      stdio: 'pipe',
+  if (process.platform === 'win32') {
+    const debugFilePath = path.join(subdirPath, 'debugFile.txt');
+    try {
+      await execute(
+        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js ${command}`,
+        ['^C'],
+        process.env,
+        5000,
+        false,
+        [],
+        debugFilePath
+      );
+    } catch (error) {
+      /* empty */
     }
-  );
-  expect(response).toMatch('exiting; user force closed the process');
-  expect(response).not.toMatch('throw');
-  expect(response).not.toMatch('ProjectClockError');
+    const debugFileContents = fs.readFileSync(debugFilePath, {
+      encoding: 'utf8',
+    });
+    expect(debugFileContents).toMatch('exiting; user force closed the process');
+    expect(debugFileContents).not.toMatch('throw');
+    expect(debugFileContents).not.toMatch('ProjectClockError');
+  } else {
+    const response = execSync(
+      `cd ${subdirPath} && printf '^C' | node ${ROOT_DIR}/bin/pclock.js ${command}`,
+      { encoding: 'utf8' }
+    );
+    expect(response).toMatch('exiting; user force closed the process');
+    expect(response).not.toMatch('throw');
+    expect(response).not.toMatch('ProjectClockError');
+  }
 }
 
 /**

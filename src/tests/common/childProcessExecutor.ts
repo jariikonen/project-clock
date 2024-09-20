@@ -26,12 +26,43 @@ function getPrompt(data: string): string {
   return data.slice(data.indexOf('?') + 2, endIndex);
 }
 
+function passNextInput(
+  proc: child_process.ChildProcess,
+  inputs: string[] | undefined,
+  step: number,
+  reject: (reason?: any) => void, // eslint-disable-line @typescript-eslint/no-explicit-any
+  output: string,
+  debugMessage: string,
+  debugFilePath: string
+) {
+  if (inputs?.[step]) {
+    writeToFile(debugMessage, debugFilePath);
+    // Key combination CTRL+C does not work in Windows the same way as in Unix-
+    // like systems. Thus on Windows the kill method is used for killing the
+    // child process. This does not result in graceful exit, but instead
+    // returns an error code, which must be noted when handling the result.
+    if (process.platform === 'win32' && inputs[step] === '^C') {
+      writeToFile('>win32: proc.kill()<\n', debugFilePath);
+      proc.kill();
+    } else {
+      proc.stdin?.write(inputs[step], (error) => {
+        if (error) {
+          reject(new Error(`${error.message}\nCOMMAND OUTPUT:\n${output}`));
+        }
+      });
+    }
+    return step + 1;
+  }
+  return step;
+}
+
 function writeToEditor(
   dataStr: string,
   inputs: string[] | undefined,
   step: number,
   proc: child_process.ChildProcess,
   reject: (reason?: any) => void, // eslint-disable-line @typescript-eslint/no-explicit-any
+  output: string,
   debugFilePath: string
 ): [editor: boolean, breakHere: boolean, step: number] {
   if (dataStr === 'finished\n') {
@@ -40,16 +71,17 @@ function writeToEditor(
   if (dataStr.includes(`received ${inputs?.[step - 1]}`)) {
     return [true, true, step];
   }
-  if (inputs?.[step]) {
-    writeToFile(`>${inputs[step]}< dataStr(${dataStr})\n`, debugFilePath);
-    proc.stdin?.write(inputs[step], (error) => {
-      if (error) {
-        reject(error);
-      }
-    });
-    return [true, true, step + 1];
-  }
-  return [true, true, step];
+  let stepToUse = step;
+  stepToUse = passNextInput(
+    proc,
+    inputs,
+    step,
+    reject,
+    output,
+    `>${inputs?.[step]}< dataStr(${dataStr})\n`,
+    debugFilePath
+  );
+  return [true, true, stepToUse];
 }
 
 /**
@@ -61,6 +93,14 @@ function writeToEditor(
  * @param env Environment key-value pairs. Default process.env.
  * @param timeout Timeout in milliseconds. Execution is terminated after given
  *    time. Default 5000.
+ * @param onlyPrompts Boolean to indicate whether the inputs are passed only
+ *    when the output is identified as a proper prompt. Prompts are identified
+ *    based on the assumption that they start with a question mark and end in
+ *    a question mark or a colon.
+ * @param skipPrompts Some prompts can be set to be skipped using this
+ *    parameter. E.g. `@ignore/editor` outputs
+ * @param debugFilePath Some debugging information can be printed to a file by
+ *    passing a path to the file using this parameter.
  * @returns Stdout output of the process as a string.
  */
 export default async function execute(
@@ -73,13 +113,14 @@ export default async function execute(
   debugFilePath = ''
 ): Promise<string> {
   return new Promise((resolve, reject) => {
+    let output = '';
+
     const proc = child_process.exec(command, { env, timeout }, (error) => {
       if (error) {
-        reject(error);
+        reject(new Error(`${error.message}\nCOMMAND OUTPUT:\n${output}`));
       }
     });
 
-    let output = '';
     let step = 0;
     let lastPrompt = '';
     let beginning = true;
@@ -103,6 +144,7 @@ export default async function execute(
           step,
           proc,
           reject,
+          output,
           debugFilePath
         );
         if (breakHere) {
@@ -137,18 +179,19 @@ export default async function execute(
       beginning = false;
       lastPrompt = getPrompt(dataStr);
       output += data;
-      if (inputs?.[step]) {
-        writeToFile(`>${inputs[step]}<\n`, debugFilePath);
-        proc.stdin?.write(inputs[step], (error) => {
-          if (error) {
-            reject(error);
-          }
-        });
-        step += 1;
-      }
+      step = passNextInput(
+        proc,
+        inputs,
+        step,
+        reject,
+        output,
+        `>${inputs?.[step]}<\n`,
+        debugFilePath
+      );
     });
 
     proc.on('close', () => {
+      writeToFile('>close<\n', debugFilePath);
       resolve(output);
     });
   });

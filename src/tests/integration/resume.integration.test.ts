@@ -107,9 +107,9 @@ describe('Resume command', () => {
       moreThanOneTimesheetFile(testDirName, Command.Resume);
     });
 
-    test('"Resume" command gives a user friendly error message when the command is force stopped with CTRL+C', () => {
+    test('"Resume" command gives a user friendly error message when the command is force stopped with CTRL+C', async () => {
       expect.hasAssertions();
-      forceStopped(testDirName, Command.Resume, {
+      await forceStopped(testDirName, Command.Resume, {
         projectName: PROJECT_NAME,
         tasks: [
           {
@@ -204,7 +204,7 @@ describe('Resume command', () => {
       );
     });
 
-    test('resumes the only resumable task found if the user answers yes', () => {
+    test('resumes the only resumable task found if the user answers yes', async () => {
       // initialize test environment
       createTestFile(
         {
@@ -221,9 +221,9 @@ describe('Resume command', () => {
       );
 
       // test
-      const response = execSync(
-        `cd ${subdirPath} && printf 'Y\n' | node ${ROOT_DIR}/bin/pclock.js resume`,
-        { encoding: 'utf8' }
+      const response = await execute(
+        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js resume`,
+        ['Y\n']
       );
       expect(response).toMatch(
         `there is one resumable task on the timesheet (${TASK_SUBJECT}); resume this`
@@ -231,7 +231,7 @@ describe('Resume command', () => {
       expectTaskIsResumed();
     });
 
-    test('resumes the only resumable task found even if it is a bit more complicated suspended task', () => {
+    test('resumes the only resumable task found even if it is a bit more complicated suspended task', async () => {
       // initialize test environment
       createTestFile(
         {
@@ -249,9 +249,9 @@ describe('Resume command', () => {
       );
 
       // test
-      const response = execSync(
-        `cd ${subdirPath} && printf 'Y\n' | node ${ROOT_DIR}/bin/pclock.js resume`,
-        { encoding: 'utf8' }
+      const response = await execute(
+        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js resume`,
+        ['Y\n']
       );
       expect(response).toMatch(
         `there is one resumable task on the timesheet (${TASK_SUBJECT}); resume this`
@@ -259,7 +259,7 @@ describe('Resume command', () => {
       expectTaskIsResumed();
     });
 
-    test('resumes the only resumable task correctly when it is stopped', () => {
+    test('resumes the only resumable task correctly when it is stopped', async () => {
       // initialize test environment
       createTestFile(
         {
@@ -276,9 +276,9 @@ describe('Resume command', () => {
       );
 
       // test
-      const response = execSync(
-        `cd ${subdirPath} && printf 'Y\n' | node ${ROOT_DIR}/bin/pclock.js resume`,
-        { encoding: 'utf8' }
+      const response = await execute(
+        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js resume`,
+        ['Y\n']
       );
       expect(response).toMatch(
         `there is one resumable task on the timesheet (${TASK_SUBJECT}); resume this`
@@ -292,7 +292,7 @@ describe('Resume command', () => {
       expect(task?.end).not.toBeDefined();
     });
 
-    test('resumes the only resumable task correctly when it is stopped and it has been suspended and resumed before', () => {
+    test('resumes the only resumable task correctly when it is stopped and it has been suspended and resumed before', async () => {
       // initialize test environment
       createTestFile(
         {
@@ -311,9 +311,9 @@ describe('Resume command', () => {
       );
 
       // test
-      const response = execSync(
-        `cd ${subdirPath} && printf 'Y\n' | node ${ROOT_DIR}/bin/pclock.js resume`,
-        { encoding: 'utf8' }
+      const response = await execute(
+        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js resume`,
+        ['Y\n']
       );
       expect(response).toMatch(
         `there is one resumable task on the timesheet (${TASK_SUBJECT}); resume this`
@@ -327,7 +327,7 @@ describe('Resume command', () => {
       expect(task?.resume?.length).toEqual(2);
     });
 
-    test('exits without resuming any task if user answers no', () => {
+    test('exits without resuming any task if user answers no', async () => {
       // initialize test environment
       createTestFile(
         {
@@ -344,9 +344,9 @@ describe('Resume command', () => {
       );
 
       // test
-      const response = execSync(
-        `cd ${subdirPath} && printf 'n\n' | node ${ROOT_DIR}/bin/pclock.js resume`,
-        { encoding: 'utf8' }
+      const response = await execute(
+        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js resume`,
+        ['n\n']
       );
       expect(response).toMatch(
         `there is one resumable task on the timesheet (${TASK_SUBJECT}); resume this`
@@ -497,7 +497,7 @@ describe('Resume command', () => {
       let error = '';
       try {
         execSync(
-          `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js resume '${TASK_SUBJECT}'`,
+          `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js resume "${TASK_SUBJECT}"`,
           {
             stdio: 'pipe',
           }
@@ -532,7 +532,7 @@ describe('Resume command', () => {
       let error = '';
       try {
         execSync(
-          `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js resume '${TASK_SUBJECT}'`,
+          `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js resume "${TASK_SUBJECT}"`,
           {
             stdio: 'pipe',
           }
@@ -569,7 +569,7 @@ describe('Resume command', () => {
       let error = '';
       try {
         execSync(
-          `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js resume '${TASK_SUBJECT}'`,
+          `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js resume "${TASK_SUBJECT}"`,
           {
             stdio: 'pipe',
           }
@@ -603,7 +603,7 @@ describe('Resume command', () => {
 
       // test
       const response = execSync(
-        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js resume ${TASK_SUBJECT}`,
+        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js resume "${TASK_SUBJECT}"`,
         { encoding: 'utf8' }
       );
       expect(response).toMatch(
@@ -611,7 +611,7 @@ describe('Resume command', () => {
       );
     });
 
-    test('resumes the correct task when a single matching resumable task is found and the user answers yes', () => {
+    test('resumes the correct task when a single matching resumable task is found and the user answers yes', async () => {
       // initialize test environment
       createTestFile(
         {
@@ -634,9 +634,9 @@ describe('Resume command', () => {
       );
 
       // test
-      const response = execSync(
-        `cd ${subdirPath} && printf 'y\n' | node ${ROOT_DIR}/bin/pclock.js resume ${TASK_SUBJECT}`,
-        { encoding: 'utf8' }
+      const response = await execute(
+        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js resume "${TASK_SUBJECT}"`,
+        ['y\n']
       );
       expect(response).toMatch(
         `there is one matching resumable task on the timesheet (${TASK_SUBJECT}); resume`
@@ -644,7 +644,7 @@ describe('Resume command', () => {
       expectTaskIsResumed();
     });
 
-    test('resumes the task even when the single matching resumable task is a bit more complicated suspended task', () => {
+    test('resumes the task even when the single matching resumable task is a bit more complicated suspended task', async () => {
       // initialize test environment
       createTestFile(
         {
@@ -668,9 +668,9 @@ describe('Resume command', () => {
       );
 
       // test
-      const response = execSync(
-        `cd ${subdirPath} && printf 'y\n' | node ${ROOT_DIR}/bin/pclock.js resume ${TASK_SUBJECT}`,
-        { encoding: 'utf8' }
+      const response = await execute(
+        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js resume "${TASK_SUBJECT}"`,
+        ['y\n']
       );
       expect(response).toMatch(
         `there is one matching resumable task on the timesheet (${TASK_SUBJECT}); resume`
@@ -678,7 +678,7 @@ describe('Resume command', () => {
       expectTaskIsResumed();
     });
 
-    test('resumes the task correctly even when the single matching resumable task is a simple stopped task', () => {
+    test('resumes the task correctly even when the single matching resumable task is a simple stopped task', async () => {
       // initialize test environment
       createTestFile(
         {
@@ -701,9 +701,9 @@ describe('Resume command', () => {
       );
 
       // test
-      const response = execSync(
-        `cd ${subdirPath} && printf 'y\n' | node ${ROOT_DIR}/bin/pclock.js resume ${TASK_SUBJECT}`,
-        { encoding: 'utf8' }
+      const response = await execute(
+        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js resume "${TASK_SUBJECT}"`,
+        ['y\n']
       );
       expect(response).toMatch(
         `there is one matching resumable task on the timesheet (${TASK_SUBJECT}); resume`
@@ -718,7 +718,7 @@ describe('Resume command', () => {
       expect(task?.end).not.toBeDefined();
     });
 
-    test('resumes the task even when the single matching resumable task is a bit more complex stopped task', () => {
+    test('resumes the task even when the single matching resumable task is a bit more complex stopped task', async () => {
       // initialize test environment
       createTestFile(
         {
@@ -743,9 +743,9 @@ describe('Resume command', () => {
       );
 
       // test
-      const response = execSync(
-        `cd ${subdirPath} && printf 'y\n' | node ${ROOT_DIR}/bin/pclock.js resume ${TASK_SUBJECT}`,
-        { encoding: 'utf8' }
+      const response = await execute(
+        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js resume "${TASK_SUBJECT}"`,
+        ['y\n']
       );
       expect(response).toMatch(
         `there is one matching resumable task on the timesheet (${TASK_SUBJECT}); resume`
@@ -762,7 +762,7 @@ describe('Resume command', () => {
       expect(task?.end).not.toBeDefined();
     });
 
-    test('does not resume any tasks when a single matching resumable task is found and the user answers no', () => {
+    test('does not resume any tasks when a single matching resumable task is found and the user answers no', async () => {
       // initialize test environment
       createTestFile(
         {
@@ -785,9 +785,9 @@ describe('Resume command', () => {
       );
 
       // test
-      const response = execSync(
-        `cd ${subdirPath} && printf 'n\n' | node ${ROOT_DIR}/bin/pclock.js resume ${TASK_SUBJECT}`,
-        { encoding: 'utf8' }
+      const response = await execute(
+        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js resume "${TASK_SUBJECT}"`,
+        ['n\n']
       );
       expect(response).toMatch(
         `there is one matching resumable task on the timesheet (${TASK_SUBJECT}); resume`
@@ -808,7 +808,7 @@ describe('Resume command', () => {
       // test
       const matcher = 'resumable task';
       const response = execSync(
-        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js resume '${matcher}'`,
+        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js resume "${matcher}"`,
         { encoding: 'utf8' }
       );
       expect(response).toMatch(
@@ -829,7 +829,7 @@ describe('Resume command', () => {
       // test
       const matcher = 'resumable task';
       const response = execSync(
-        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js resume '${matcher}'`,
+        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js resume "${matcher}"`,
         { encoding: 'utf8' }
       );
       expect(response).toMatch(
@@ -857,7 +857,7 @@ describe('Resume command', () => {
       // test
       const matcher = 'resumable task';
       const response = await execute(
-        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js resume '${matcher}'`,
+        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js resume "${matcher}"`,
         [`${DOWN}${DOWN}\n`]
       );
       expect(response).toMatch(
@@ -879,7 +879,7 @@ describe('Resume command', () => {
       // test
       const matcher = 'resumable task';
       const response = await execute(
-        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js resume '${matcher}'`,
+        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js resume "${matcher}"`,
         [`${DOWN}${DOWN}${DOWN}\n`]
       );
       expect(response).toMatch(
@@ -927,7 +927,7 @@ describe('Resume command', () => {
       let error = '';
       try {
         execSync(
-          `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js resume '${TASK_SUBJECT}'`,
+          `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js resume "${TASK_SUBJECT}"`,
           { encoding: 'utf8', stdio: 'pipe' }
         );
       } catch (err) {
@@ -967,7 +967,7 @@ describe('Resume command', () => {
       let error = '';
       try {
         execSync(
-          `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js resume '${TASK_SUBJECT}'`,
+          `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js resume "${TASK_SUBJECT}"`,
           { encoding: 'utf8', stdio: 'pipe' }
         );
       } catch (err) {
@@ -1015,7 +1015,7 @@ describe('Resume command', () => {
       let error = '';
       try {
         execSync(
-          `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js resume '${TASK_SUBJECT}'`,
+          `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js resume "${TASK_SUBJECT}"`,
           { encoding: 'utf8', stdio: 'pipe' }
         );
       } catch (err) {

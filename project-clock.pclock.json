@@ -726,7 +726,32 @@
       "end": "2024-09-11T09:44:00.801Z"
     },
     {
-      "subject": "Make tests work also in Windows"
+      "subject": "Make tests work also in Windows",
+      "notes": "Testing of force stopping a command with CTRL+C does not work in Windows the same way as in Unix-like systems. Piping the key comination as characters does not work, so the childProcessExecutor.execute() is used, and in that the ^C combination triggers proc.kill() method. This doesn't result in greceful exit, but instead returns an error code, and the error must be handled in the test. Thus a completely different test is used when the Windows platform is detected.\nPiping special characters to commands results in wrong output in Windows. In Windows the output comes from the first part of the command which is piped to the actual command, and not from the actual command. Thus the childProcesExecutor.execute() must be used instead.\nSingle quotation marks do not combine separate words as a single string in a console command in Windows. Double quotation marks must thus be used instead.",
+      "begin": "2024-09-13T09:44:29.559Z",
+      "suspend": [
+        "2024-09-13T10:14:47.156Z",
+        "2024-09-15T15:01:56.916Z",
+        "2024-09-15T15:44:18.197Z",
+        "2024-09-16T06:13:42.036Z",
+        "2024-09-16T08:33:42.341Z",
+        "2024-09-16T12:40:43.094Z",
+        "2024-09-17T06:08:15.155Z",
+        "2024-09-17T07:10:49.587Z",
+        "2024-09-20T11:57:57.190Z",
+        "2024-09-20T12:30:31.162Z"
+      ],
+      "resume": [
+        "2024-09-15T14:33:50.745Z",
+        "2024-09-15T15:10:25.622Z",
+        "2024-09-16T05:26:31.936Z",
+        "2024-09-16T07:28:06.160Z",
+        "2024-09-16T10:41:23.869Z",
+        "2024-09-17T05:09:34.693Z",
+        "2024-09-17T06:48:55.983Z",
+        "2024-09-20T10:53:21.302Z",
+        "2024-09-20T12:08:40.373Z"
+      ]
     },
     {
       "subject": "Improve prompt readability",
