@@ -16,6 +16,7 @@ module.exports = {
     'rollup.config.js',
     'jest.config.mjs',
     'mockEditor.js',
+    'mockEditor.mjs',
     'mockTest.js',
   ],
   parser: '@typescript-eslint/parser',

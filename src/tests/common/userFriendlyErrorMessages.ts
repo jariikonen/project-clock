@@ -152,36 +152,19 @@ export async function forceStopped(
   // initialize test environment
   createTestFile(testFileDataObj, testFilePath);
 
-  if (process.platform === 'win32') {
-    const debugFilePath = path.join(subdirPath, 'debugFile.txt');
-    try {
-      await execute(
-        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js ${command}`,
-        ['^C'],
-        process.env,
-        5000,
-        false,
-        [],
-        debugFilePath
-      );
-    } catch (error) {
-      /* empty */
-    }
-    const debugFileContents = fs.readFileSync(debugFilePath, {
-      encoding: 'utf8',
-    });
-    expect(debugFileContents).toMatch('exiting; user force closed the process');
-    expect(debugFileContents).not.toMatch('throw');
-    expect(debugFileContents).not.toMatch('ProjectClockError');
-  } else {
-    const response = execSync(
-      `cd ${subdirPath} && printf '^C' | node ${ROOT_DIR}/bin/pclock.js ${command}`,
-      { encoding: 'utf8' }
+  let error = '';
+  try {
+    await execute(
+      `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js ${command}`,
+      ['^C']
     );
-    expect(response).toMatch('exiting; user force closed the process');
-    expect(response).not.toMatch('throw');
-    expect(response).not.toMatch('ProjectClockError');
+  } catch (err) {
+    const e = err as Error;
+    error = e.message;
   }
+  expect(error).toMatch('exiting; user force closed the process');
+  expect(error).not.toMatch('throw');
+  expect(error).not.toMatch('ProjectClockError');
 }
 
 /**

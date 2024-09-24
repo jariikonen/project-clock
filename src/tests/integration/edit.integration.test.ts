@@ -15,17 +15,17 @@ import { getTestPaths } from '../common/testPaths';
 import execute, { DOWN } from '../common/childProcessExecutor';
 
 const testSuiteName = 'edit';
-const { testDirName, testDirPath, subdirPath, testFilePath } =
+const { testDirName, testDirPath, subdirPath, testFilePath, editorPath } =
   getTestPaths(testSuiteName);
 
 function outputEditorMockDirections() {
   if (platform() === 'win32') {
     console.error(
-      'running test with mockEditor.js failed; make sure that .js files are run with a recent enough Node.js binary'
+      'Running test using the mockEditor in src/tests/common/executable failed. Make sure that the mockEditor.exe is built. You can use the powershell script buildMockEditor.ps1 to build the executable (cd src/tests/common/executable; .\buildMockEditor.ps1) or follow these instructions: https://nodejs.org/api/single-executable-applications.html.'
     );
   } else {
     console.error(
-      'running test with mockEditor.js failed; make sure that the shebang path in src/tests/common/executable/mockEditor.js points to a recent enough Node.js binary'
+      'Running test using the mockEditor.js script failed. Make sure that the shebang path in src/tests/common/executable/mockEditor.js points to a recent enough Node.js binary that supports ESM imports, and that the file src/tests/common/executable/mockEditor.mjs is executable (chmod 755 mockEditor.mjs).'
     );
   }
 }
@@ -62,15 +62,15 @@ describe('User friendly error messages', () => {
     moreThanOneTimesheetFile(testDirName, Command.Edit);
   });
 
-  test('"Edit" command gives a user friendly error message when the command is force stopped with CTRL+C', () => {
+  test('"Edit" command gives a user friendly error message when the command is force stopped with SIGINT', async () => {
     expect.hasAssertions();
-    forceStopped(testDirName, Command.Edit, {
+    await forceStopped(testDirName, Command.Edit, {
       projectName: PROJECT_NAME,
       tasks: [{ subject: 'first task' }, { subject: 'second task' }],
     });
   });
 
-  test('exits with a friendly error message when user kills the process in a later prompt', () => {
+  test('exits with a friendly error message when user kills the process in a later prompt', async () => {
     const testTasks = [{ subject: TASK_SUBJECT }];
 
     createTestFile(
@@ -81,16 +81,20 @@ describe('User friendly error messages', () => {
       testFilePath
     );
 
-    const response = execSync(
-      `cd ${subdirPath} && echo 'y\n' | node ${ROOT_DIR}/bin/pclock.js edit`,
-      {
-        encoding: 'utf8',
-        env: { ...process.env, FORCE_COLOR: '0' },
-      }
-    );
-    expect(response).toMatch('exiting; user force closed the process');
-    expect(response).not.toMatch('throw');
-    expect(response).not.toMatch('ProjectClockError');
+    let error = '';
+    try {
+      await execute(
+        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js edit`,
+        ['y\n', '^C'],
+        { ...process.env, FORCE_COLOR: '0' }
+      );
+    } catch (err) {
+      const e = err as Error;
+      error = e.message;
+    }
+    expect(error).toMatch('exiting; user force closed the process');
+    expect(error).not.toMatch('throw');
+    expect(error).not.toMatch('ProjectClockError');
   });
 });
 
@@ -115,7 +119,7 @@ describe('correct functioning', () => {
 
         test(`confirms from the user that the task is the one to edit (${field})`, () => {
           const response = execSync(
-            `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js edit ${field}`,
+            `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js edit "${field}"`,
             {
               encoding: 'utf8',
               env: { ...process.env, FORCE_COLOR: '0' },
@@ -126,13 +130,11 @@ describe('correct functioning', () => {
           );
         });
 
-        test(`does not edit the ${field} of any task when no is selected`, () => {
-          const response = execSync(
-            `cd ${subdirPath} && printf 'n\n' | node ${ROOT_DIR}/bin/pclock.js edit ${field}`,
-            {
-              encoding: 'utf8',
-              env: { ...process.env, FORCE_COLOR: '0' },
-            }
+        test(`does not edit the ${field} of any task when no is selected`, async () => {
+          const response = await execute(
+            `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js edit "${field}"`,
+            ['n\n'],
+            { ...process.env, FORCE_COLOR: '0' }
           );
           expect(response).toMatch(
             `there is one task on the timesheet (${TASK_SUBJECT}); edit this task?`
@@ -147,12 +149,12 @@ describe('correct functioning', () => {
           let response;
           try {
             response = await execute(
-              `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js edit ${field}`,
+              `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js edit "${field}"`,
               ['Y\n', field],
               {
                 ...process.env,
                 FORCE_COLOR: '0',
-                EDITOR: `${ROOT_DIR}/src/tests/common/executable/mockEditor.js`,
+                EDITOR: editorPath,
               }
             );
           } catch (error) {
@@ -213,7 +215,7 @@ describe('correct functioning', () => {
 
         test(`${field}, prompts user to select a task`, () => {
           const response = execSync(
-            `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js edit ${field}`,
+            `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js edit "${field}"`,
             {
               encoding: 'utf8',
               env: { ...process.env, FORCE_COLOR: '0' },
@@ -228,12 +230,12 @@ describe('correct functioning', () => {
           let response;
           try {
             response = await execute(
-              `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js edit ${field}`,
+              `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js edit "${field}"`,
               ['\n', field],
               {
                 ...process.env,
                 FORCE_COLOR: '0',
-                EDITOR: `${ROOT_DIR}/src/tests/common/executable/mockEditor.js`,
+                EDITOR: editorPath,
               }
             );
           } catch (error) {
@@ -288,12 +290,12 @@ describe('correct functioning', () => {
           let response;
           try {
             response = await execute(
-              `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js edit ${field}`,
+              `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js edit "${field}"`,
               [`${DOWN}\n`, field],
               {
                 ...process.env,
                 FORCE_COLOR: '0',
-                EDITOR: `${ROOT_DIR}/src/tests/common/executable/mockEditor.js`,
+                EDITOR: editorPath,
               }
             );
           } catch (error) {
@@ -348,12 +350,12 @@ describe('correct functioning', () => {
           let response;
           try {
             response = await execute(
-              `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js edit ${field}`,
+              `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js edit "${field}"`,
               [`${DOWN}${DOWN}\n`, field],
               {
                 ...process.env,
                 FORCE_COLOR: '0',
-                EDITOR: `${ROOT_DIR}/src/tests/common/executable/mockEditor.js`,
+                EDITOR: editorPath,
               }
             );
           } catch (error) {
@@ -399,7 +401,7 @@ describe('correct functioning', () => {
             let error = '';
             try {
               execSync(
-                `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js edit ${field} '${TASK_SUBJECT}'`,
+                `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js edit "${field}" "${TASK_SUBJECT}"`,
                 { encoding: 'utf8', stdio: 'pipe' }
               );
             } catch (err) {
@@ -415,7 +417,7 @@ describe('correct functioning', () => {
         describe(`${field}, one matching task`, () => {
           test(`${field}, confirms from the user that the task is the one to edit`, () => {
             const response = execSync(
-              `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js edit ${field} 'second task'`,
+              `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js edit "${field}" "second task"`,
               { encoding: 'utf8' }
             );
             expect(response).toMatch(
@@ -423,10 +425,10 @@ describe('correct functioning', () => {
             );
           });
 
-          test(`${field}, does not edit any task when no is selected`, () => {
-            const response = execSync(
-              `cd ${subdirPath} && echo 'n\n' | node ${ROOT_DIR}/bin/pclock.js edit ${field} 'second task'`,
-              { encoding: 'utf8' }
+          test(`${field}, does not edit any task when no is selected`, async () => {
+            const response = await execute(
+              `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js edit "${field}" "second task"`,
+              ['n\n']
             );
             expect(response).toMatch(
               'there is one matching task on the timesheet (second task); edit this task?'
@@ -438,12 +440,12 @@ describe('correct functioning', () => {
 
           test(`editing of the ${field} works correctly`, async () => {
             const response = await execute(
-              `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js edit ${field} 'second task'`,
+              `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js edit "${field}" "second task"`,
               ['Y\n', field],
               {
                 ...process.env,
                 FORCE_COLOR: '0',
-                EDITOR: `${ROOT_DIR}/src/tests/common/executable/mockEditor.js`,
+                EDITOR: editorPath,
               }
             );
             expect(response).toMatch(
@@ -496,7 +498,7 @@ describe('correct functioning', () => {
         describe(`${field}, many matching tasks`, () => {
           test(`${field}, prompts user to select a task`, () => {
             const response = execSync(
-              `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js edit ${field} task`,
+              `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js edit "${field}" task`,
               {
                 encoding: 'utf8',
                 env: { ...process.env, FORCE_COLOR: '0' },
@@ -511,12 +513,12 @@ describe('correct functioning', () => {
             let response;
             try {
               response = await execute(
-                `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js edit ${field} task`,
+                `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js edit "${field}" task`,
                 ['\n', field],
                 {
                   ...process.env,
                   FORCE_COLOR: '0',
-                  EDITOR: `${ROOT_DIR}/src/tests/common/executable/mockEditor.js`,
+                  EDITOR: editorPath,
                 }
               );
             } catch (error) {
@@ -571,12 +573,12 @@ describe('correct functioning', () => {
             let response;
             try {
               response = await execute(
-                `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js edit ${field} task`,
+                `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js edit "${field}" task`,
                 [`${DOWN}\n`, field],
                 {
                   ...process.env,
                   FORCE_COLOR: '0',
-                  EDITOR: `${ROOT_DIR}/src/tests/common/executable/mockEditor.js`,
+                  EDITOR: editorPath,
                 }
               );
             } catch (error) {
@@ -631,12 +633,12 @@ describe('correct functioning', () => {
             let response;
             try {
               response = await execute(
-                `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js edit ${field} task`,
+                `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js edit "${field}" task`,
                 [`${DOWN}${DOWN}\n`, field],
                 {
                   ...process.env,
                   FORCE_COLOR: '0',
-                  EDITOR: `${ROOT_DIR}/src/tests/common/executable/mockEditor.js`,
+                  EDITOR: editorPath,
                 }
               );
             } catch (error) {
@@ -685,7 +687,7 @@ describe('correct functioning', () => {
             let error = '';
             try {
               execSync(
-                `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js edit ${field} '${TASK_SUBJECT}' '${newValueArgument}'`,
+                `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js edit "${field}" "${TASK_SUBJECT}" "${newValueArgument}"`,
                 { encoding: 'utf8', stdio: 'pipe' }
               );
             } catch (err) {
@@ -701,7 +703,7 @@ describe('correct functioning', () => {
         describe(`${field}, one matching task`, () => {
           test(`${field}, confirms from the user that the task is the one to edit`, () => {
             const response = execSync(
-              `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js edit ${field} 'second task' '${newValueArgument}'`,
+              `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js edit "${field}" "second task" "${newValueArgument}"`,
               { encoding: 'utf8' }
             );
             expect(response).toMatch(
@@ -709,10 +711,10 @@ describe('correct functioning', () => {
             );
           });
 
-          test(`${field}, does not edit any task when no is selected`, () => {
-            const response = execSync(
-              `cd ${subdirPath} && echo 'n\n' | node ${ROOT_DIR}/bin/pclock.js edit ${field} 'second task' '${newValueArgument}'`,
-              { encoding: 'utf8' }
+          test(`${field}, does not edit any task when no is selected`, async () => {
+            const response = await execute(
+              `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js edit "${field}" "second task" "${newValueArgument}"`,
+              ['n\n']
             );
             expect(response).toMatch(
               'there is one matching task on the timesheet (second task); edit this task?'
@@ -724,7 +726,7 @@ describe('correct functioning', () => {
 
           test(`editing of the ${field} works correctly`, async () => {
             const response = await execute(
-              `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js edit ${field} 'second task' '${newValueArgument}'`,
+              `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js edit "${field}" "second task" "${newValueArgument}"`,
               ['Y\n', 'Y\n'],
               { ...process.env, FORCE_COLOR: '0' }
             );
@@ -778,7 +780,7 @@ describe('correct functioning', () => {
         describe(`${field}, many matching tasks`, () => {
           test(`${field}, prompts user to select a task`, () => {
             const response = execSync(
-              `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js edit ${field} task ${newValueArgument}`,
+              `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js edit "${field}" task "${newValueArgument}"`,
               {
                 encoding: 'utf8',
                 env: { ...process.env, FORCE_COLOR: '0' },
@@ -793,7 +795,7 @@ describe('correct functioning', () => {
             let response;
             try {
               response = await execute(
-                `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js edit ${field} task '${newValueArgument}'`,
+                `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js edit "${field}" task "${newValueArgument}"`,
                 ['\n', 'Y\n'],
                 { ...process.env, FORCE_COLOR: '0' }
               );
@@ -849,7 +851,7 @@ describe('correct functioning', () => {
             let response;
             try {
               response = await execute(
-                `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js edit ${field} task '${newValueArgument}'`,
+                `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js edit "${field}" task "${newValueArgument}"`,
                 [`${DOWN}\n`, 'Y\n'],
                 { ...process.env, FORCE_COLOR: '0' }
               );
@@ -905,7 +907,7 @@ describe('correct functioning', () => {
             let response;
             try {
               response = await execute(
-                `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js edit ${field} task ${newValueArgument}`,
+                `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js edit "${field}" task "${newValueArgument}"`,
                 [`${DOWN}${DOWN}\n`],
                 { ...process.env, FORCE_COLOR: '0' }
               );
@@ -958,13 +960,11 @@ describe('correct functioning', () => {
         );
       });
 
-      test('does not proceed when user answers no', () => {
-        const response = execSync(
-          `cd ${subdirPath} && echo 'n\n' | node ${ROOT_DIR}/bin/pclock.js edit`,
-          {
-            encoding: 'utf8',
-            env: { ...process.env, FORCE_COLOR: '0' },
-          }
+      test('does not proceed when user answers no', async () => {
+        const response = await execute(
+          `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js edit`,
+          ['n\n'],
+          { ...process.env, FORCE_COLOR: '0' }
         );
         expect(response).toMatch(
           `there is one task on the timesheet (${TASK_SUBJECT}); edit this task?`
@@ -972,13 +972,13 @@ describe('correct functioning', () => {
         expect(response).toMatch('nothing to edit');
       });
 
-      test('prompts whether the user wishes to edit the subject, description or notes', () => {
-        const response = execSync(
-          `cd ${subdirPath} && echo 'y\n' | node ${ROOT_DIR}/bin/pclock.js edit`,
-          {
-            encoding: 'utf8',
-            env: { ...process.env, FORCE_COLOR: '0' },
-          }
+      test('prompts whether the user wishes to edit the subject, description or notes', async () => {
+        const response = await execute(
+          `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js edit`,
+          ['y\n', 'n\n', 'n\n', 'n\n'],
+          { ...process.env, FORCE_COLOR: '0' },
+          5000,
+          true
         );
         expect(response).toMatch(
           `there is one task on the timesheet (${TASK_SUBJECT}); edit this task?`
@@ -991,7 +991,7 @@ describe('correct functioning', () => {
           `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js edit`,
           ['Y\n', 'n\n', 'n\n', 'n\n'],
           { ...process.env, FORCE_COLOR: '0' },
-          500,
+          5000,
           true
         );
         expect(response).toMatch(
@@ -1010,9 +1010,9 @@ describe('correct functioning', () => {
           {
             ...process.env,
             FORCE_COLOR: '0',
-            EDITOR: `${ROOT_DIR}/src/tests/common/executable/mockEditor.js`,
+            EDITOR: editorPath,
           },
-          500,
+          5000,
           true,
           ['edit subject of task']
         );
@@ -1033,9 +1033,9 @@ describe('correct functioning', () => {
           {
             ...process.env,
             FORCE_COLOR: '0',
-            EDITOR: `${ROOT_DIR}/src/tests/common/executable/mockEditor.js`,
+            EDITOR: editorPath,
           },
-          500,
+          5000,
           true,
           ['edit description of task']
         );
@@ -1058,9 +1058,9 @@ describe('correct functioning', () => {
           {
             ...process.env,
             FORCE_COLOR: '0',
-            EDITOR: `${ROOT_DIR}/src/tests/common/executable/mockEditor.js`,
+            EDITOR: editorPath,
           },
-          500,
+          5000,
           true,
           ['edit notes of task']
         );
@@ -1083,9 +1083,9 @@ describe('correct functioning', () => {
           {
             ...process.env,
             FORCE_COLOR: '0',
-            EDITOR: `${ROOT_DIR}/src/tests/common/executable/mockEditor.js`,
+            EDITOR: editorPath,
           },
-          500,
+          5000,
           true,
           [
             'edit subject of task',
@@ -1145,7 +1145,7 @@ describe('correct functioning', () => {
           {
             ...process.env,
             FORCE_COLOR: '0',
-            EDITOR: `${ROOT_DIR}/src/tests/common/executable/mockEditor.js`,
+            EDITOR: editorPath,
           }
         );
         expect(response).toMatch(
@@ -1156,13 +1156,13 @@ describe('correct functioning', () => {
         expectTaskEqualsTo(testFilePath, testTasks[1], 'second task');
       });
 
-      test('proceeds to asking about editing when user selects a task', () => {
-        const response = execSync(
-          `cd ${subdirPath} && echo 'y\n' | node ${ROOT_DIR}/bin/pclock.js edit`,
-          {
-            encoding: 'utf8',
-            env: { ...process.env, FORCE_COLOR: '0' },
-          }
+      test('proceeds to asking about editing when user selects a task', async () => {
+        const response = await execute(
+          `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js edit`,
+          ['y\n', 'n\n', 'n\n', 'n\n'],
+          { ...process.env, FORCE_COLOR: '0' },
+          5000,
+          true
         );
         expect(response).toMatch(
           'there are more than one task on the timesheet; select the task to edit:'

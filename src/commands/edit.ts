@@ -54,7 +54,7 @@ type EditableField = 'subject' | 'description' | 'notes';
 
 /**
  * Prompts the user to edit given field value with the users preferred editor.
- * Uses @inquirer/editor.
+ * Uses inquirer/editor.
  */
 async function getEdit(
   field: EditableField,

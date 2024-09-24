@@ -663,7 +663,7 @@
     },
     {
       "subject": "Subject, description and notes of a task can be set and edited",
-      "notes": "It took quite a lot of time to get the editor mock in the integration tests working and, nevertheless, the solution is not optimal. It relies on the use of external Node.js implementation and the user has to ensure that the script shebang path is correct (unix) and/or that the .js files are executed using compatible Node.js version (Windows). This should be replaced with a solution that does not use an external Node.js installation. Probably the whole @inquirer/editor should be mocked out.",
+      "notes": "It took quite a lot of time to get the editor mock in the integration tests working and, nevertheless, the solution is not optimal. The user has to ensure that the script shebang path is correct (unix) and/or that the .js files are executed using compatible Node.js version (Windows). The alternative would probably be to mock away the whole @inquirer/editor.",
       "begin": "2024-09-02T11:09:54.160Z",
       "suspend": [
         "2024-09-02T12:17:24.511Z",
@@ -727,7 +727,7 @@
     },
     {
       "subject": "Make tests work also in Windows",
-      "notes": "Testing of force stopping a command with CTRL+C does not work in Windows the same way as in Unix-like systems. Piping the key comination as characters does not work, so the childProcessExecutor.execute() is used, and in that the ^C combination triggers proc.kill() method. This doesn't result in greceful exit, but instead returns an error code, and the error must be handled in the test. Thus a completely different test is used when the Windows platform is detected.\nPiping special characters to commands results in wrong output in Windows. In Windows the output comes from the first part of the command which is piped to the actual command, and not from the actual command. Thus the childProcesExecutor.execute() must be used instead.\nSingle quotation marks do not combine separate words as a single string in a console command in Windows. Double quotation marks must thus be used instead.",
+      "notes": "It turned out that testing of force stopping a command with CTRL+C does not work the way I had assumed. Piping the key comination as ascii characters does not stop the process. The solution was to make the childProcessExecutor.execute() to stop the process with proc.kill() method when it receives a specific input. This doesn't result in greceful exit, but instead returns a nonzero exit value, and the error must be handled in the test.\nPiping special characters to commands results in wrong output in Windows. In Windows the output comes from the first part of the command which is piped to the actual command, and not from the actual command. Thus, the childProcesExecutor.execute() must be used instead.\nSingle quotation marks do not combine separate words as a single string in a console command in Windows. Double quotation marks must thus be used instead.",
       "begin": "2024-09-13T09:44:29.559Z",
       "suspend": [
         "2024-09-13T10:14:47.156Z",
@@ -740,7 +740,14 @@
         "2024-09-17T07:10:49.587Z",
         "2024-09-20T11:57:57.190Z",
         "2024-09-20T12:30:31.162Z",
-        "2024-09-20T12:48:01.895Z"
+        "2024-09-20T12:48:01.895Z",
+        "2024-09-20T15:53:29.581Z",
+        "2024-09-21T06:10:02.092Z",
+        "2024-09-21T11:31:39.452Z",
+        "2024-09-23T09:00:33.249Z",
+        "2024-09-23T13:29:16.223Z",
+        "2024-09-23T14:51:20.728Z",
+        "2024-09-24T03:04:42.211Z"
       ],
       "resume": [
         "2024-09-15T14:33:50.745Z",
@@ -752,15 +759,23 @@
         "2024-09-17T06:48:55.983Z",
         "2024-09-20T10:53:21.302Z",
         "2024-09-20T12:08:40.373Z",
-        "2024-09-20T12:35:55.215Z"
+        "2024-09-20T12:35:55.215Z",
+        "2024-09-20T15:07:23.369Z",
+        "2024-09-21T04:55:16.082Z",
+        "2024-09-21T09:20:27.357Z",
+        "2024-09-23T07:18:48.706Z",
+        "2024-09-23T10:50:56.842Z",
+        "2024-09-23T14:22:24.524Z",
+        "2024-09-24T01:23:28.019Z"
       ]
+    },
+    {
+      "subject": "Add VSCode settings to project",
+      "description": "At least the line endings must be set to LF, and it would also be nice to get Prettier formatting working in Windows."
     },
     {
       "subject": "Improve prompt readability",
       "description": "Many prompts are currently very long since they contain both, a description of the situation and the question for the user. They can also contain long field values. These prompts can be improved by outputting the description of the situation separately with a normal intensity font (not bolded), and by using the sideHeading() function to format this output. The prompt (in bold) is then just a simple question to the user that draws the user's attention to what is essential."
-    },
-    {
-      "subject": "Make an alternative test that tests the edit command without the use of an external Node.js binary and make current tests that use the mockEditor.js optional"
     },
     {
       "subject": "Tasks can be removed from the timesheet"

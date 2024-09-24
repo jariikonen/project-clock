@@ -9,11 +9,16 @@ export function getTestPathsFromDirName(testDirName: string) {
   const testDirPath = path.join(ROOT_DIR, testDirName);
   const subdirPath = path.join(testDirPath, SUBDIR_NAME);
   const testFilePath = path.join(subdirPath, TEST_FILE_NAME);
+  const editorPath =
+    process.platform === 'win32'
+      ? `${ROOT_DIR}/src/tests/common/executable/mockEditor.exe`
+      : `${ROOT_DIR}/src/tests/common/executable/mockEditor.mjs`;
   return {
     testDirName,
     testDirPath,
     subdirPath,
     testFilePath,
+    editorPath,
   };
 }
 

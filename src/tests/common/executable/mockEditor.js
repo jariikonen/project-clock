@@ -1,8 +1,10 @@
-#!/usr/local/bin/node
-// The shebang path above must point to a recent enough node binary.
-// Script seems to work at least in version 20.11.0.
-
-import fs from 'node:fs';
+/**
+ * The mockEditor.exe single executable application (SEA) used in Windows tests
+ * is built from this file according to these instructions:
+ * https://nodejs.org/api/single-executable-applications.html. The powershell
+ * script buildMockEditor.ps1 can be used for building the .exe file.
+ */
+const fs = require('node:fs');
 
 const tempFilePath = process.argv[2];
 

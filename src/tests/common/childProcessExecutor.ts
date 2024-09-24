@@ -4,6 +4,8 @@ import { writeFileSync } from 'fs';
 
 export const DOWN = '\x1B\x5B\x42';
 export const UP = '\x1B\x5B\x41';
+export const SIGINT = 'SIGINT';
+export const SIGINT_VALUES = ['SIGINT', 'sigint', 'kill', '^C', '^c', '\x03'];
 
 function writeToFile(output: string, path: string) {
   if (path) {
@@ -26,6 +28,16 @@ function getPrompt(data: string): string {
   return data.slice(data.indexOf('?') + 2, endIndex);
 }
 
+function errorHandler(
+  error: Error | null | undefined,
+  output: string,
+  reject: (reason?: any) => void // eslint-disable-line @typescript-eslint/no-explicit-any
+) {
+  if (error) {
+    reject(new Error(`${error.message}\nCOMMAND OUTPUT:\n${output}`));
+  }
+}
+
 function passNextInput(
   proc: child_process.ChildProcess,
   inputs: string[] | undefined,
@@ -37,19 +49,16 @@ function passNextInput(
 ) {
   if (inputs?.[step]) {
     writeToFile(debugMessage, debugFilePath);
-    // Key combination CTRL+C does not work in Windows the same way as in Unix-
-    // like systems. Thus on Windows the kill method is used for killing the
-    // child process. This does not result in graceful exit, but instead
-    // returns an error code, which must be noted when handling the result.
-    if (process.platform === 'win32' && inputs[step] === '^C') {
-      writeToFile('>win32: proc.kill()<\n', debugFilePath);
+    // Process can be stopped using any of the values in SIGINT_VALUES as an
+    // input. This does not result in a graceful exit, but instead returns
+    // an error code, which must be noted when handling the result.
+    if (SIGINT_VALUES.includes(inputs[step])) {
+      writeToFile('>SIGINT: proc.kill()<\n', debugFilePath);
       proc.kill();
     } else {
-      proc.stdin?.write(inputs[step], (error) => {
-        if (error) {
-          reject(new Error(`${error.message}\nCOMMAND OUTPUT:\n${output}`));
-        }
-      });
+      proc.stdin?.write(inputs[step], (error) =>
+        errorHandler(error, output, reject)
+      );
     }
     return step + 1;
   }
@@ -88,15 +97,22 @@ function writeToEditor(
  * Executes the command using child_process.exec() and returns the stdout
  * output of the process as a string. Passes inputs to the process, one at a
  * time, when the process prompts the user for input.
+ *
+ * Process can be stopped using any of the values in SIGINT_VALUES as an input.
+ * This does not result in a graceful exit, but instead returns an error code,
+ * which must be noted when handling the result (the command output can be
+ * found from the error text).
  * @param command The command to be executed.
  * @param inputs Inputs to the process as an array of strings.
  * @param env Environment key-value pairs. Default process.env.
  * @param timeout Timeout in milliseconds. Execution is terminated after given
  *    time. Default 5000.
  * @param onlyPrompts Boolean to indicate whether the inputs are passed only
- *    when the output is identified as a proper prompt. Prompts are identified
- *    based on the assumption that they start with a question mark and end in
- *    a question mark or a colon.
+ *    when the output is identified as a distinct proper prompt. Prompts are
+ *    identified based on an assumption that they start with a question mark
+ *    and end in a question mark or a colon. For example Inquirer prompts can
+ *    output special characters that modify the previously outputted text.
+ *    These are skipped if this parameter is set to true.
  * @param skipPrompts Some prompts can be set to be skipped using this
  *    parameter. E.g. `@ignore/editor` outputs
  * @param debugFilePath Some debugging information can be printed to a file by
@@ -115,11 +131,9 @@ export default async function execute(
   return new Promise((resolve, reject) => {
     let output = '';
 
-    const proc = child_process.exec(command, { env, timeout }, (error) => {
-      if (error) {
-        reject(new Error(`${error.message}\nCOMMAND OUTPUT:\n${output}`));
-      }
-    });
+    const proc = child_process.exec(command, { env, timeout }, (error) =>
+      errorHandler(error, output, reject)
+    );
 
     let step = 0;
     let lastPrompt = '';
@@ -131,8 +145,14 @@ export default async function execute(
       const dataStr = stripAnsi(data);
 
       if (dataStr === 'ready\n') {
-        writeToFile(`editor = true dataStr(${dataStr})\n`, debugFilePath);
+        writeToFile(`>IN EDITOR< dataStr(${dataStr})\n`, debugFilePath);
         editor = true;
+      }
+
+      // mock editor fails to start
+      if (dataStr.includes('Error: Failed launch')) {
+        output += '\nError: Inquirer failed to launch the mock editor!';
+        proc.kill();
       }
 
       // in mockEditor
@@ -158,7 +178,7 @@ export default async function execute(
         (!dataStr.match('\\? ') || (!beginning && dataStr.includes(lastPrompt)))
       ) {
         writeToFile(
-          `>RETURN1< dataStr(${dataStr}) lastPrompt(${lastPrompt})\n`,
+          `>SKIP IRRELEVANT OUTPUT< dataStr(${dataStr}) lastPrompt(${lastPrompt})\n`,
           debugFilePath
         );
         return;
@@ -168,7 +188,7 @@ export default async function execute(
       if (skipPrompts.some((prompt) => dataStr.includes(prompt))) {
         lastPrompt = getPrompt(dataStr);
         writeToFile(
-          `>RETURN2< (${dataStr}) lastPrompt(${lastPrompt})\n`,
+          `>SKIP A PROMPT MARKED TO BE SKIPPED< (${dataStr}) lastPrompt(${lastPrompt})\n`,
           debugFilePath
         );
         return;
