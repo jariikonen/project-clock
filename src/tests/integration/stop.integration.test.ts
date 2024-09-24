@@ -70,9 +70,9 @@ describe('Stopping the clock', () => {
       moreThanOneTimesheetFile(testDirName, Command.Stop);
     });
 
-    test('"Stop" command gives a user friendly error message when the command is force stopped with CTRL+C', () => {
+    test('"Stop" command gives a user friendly error message when the command is force stopped with CTRL+C', async () => {
       expect.hasAssertions();
-      forceStopped(testDirName, Command.Stop, {
+      await forceStopped(testDirName, Command.Stop, {
         projectName: PROJECT_NAME,
         tasks: [
           {
@@ -190,7 +190,7 @@ describe('Stopping the clock', () => {
       );
     });
 
-    test('stops the only active task if user answers yes', () => {
+    test('stops the only active task if user answers yes', async () => {
       // initialize test environment
       createTestFile(
         {
@@ -211,9 +211,9 @@ describe('Stopping the clock', () => {
       );
 
       // test
-      const response = execSync(
-        `cd ${subdirPath} && printf 'Y\n' | node ${ROOT_DIR}/bin/pclock.js stop`,
-        { encoding: 'utf8' }
+      const response = await execute(
+        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js stop`,
+        ['y\n']
       );
       expect(response).toMatch(
         `there is one active task on the timesheet (${TASK_SUBJECT}); stop this`
@@ -221,7 +221,7 @@ describe('Stopping the clock', () => {
       expectTaskIsStopped();
     });
 
-    test('exits without stopping any tasks if user answers no', () => {
+    test('exits without stopping any tasks if user answers no', async () => {
       // initialize test environment
       createTestFile(
         {
@@ -242,9 +242,9 @@ describe('Stopping the clock', () => {
       );
 
       // test
-      const response = execSync(
-        `cd ${subdirPath} && printf 'n\n' | node ${ROOT_DIR}/bin/pclock.js stop`,
-        { encoding: 'utf8' }
+      const response = await execute(
+        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js stop`,
+        ['n\n']
       );
       expect(response).toMatch(
         `there is one active task on the timesheet (${TASK_SUBJECT}); stop this`
@@ -360,7 +360,7 @@ describe('Stopping the clock', () => {
       expect(response).not.toMatch('third unstoppable task');
     });
 
-    test('stops correct task when the first of many active tasks is selected', () => {
+    test('stops correct task when the first of many active tasks is selected', async () => {
       // initialize test environment
       createTestFile(
         {
@@ -380,9 +380,9 @@ describe('Stopping the clock', () => {
       );
 
       // test
-      const response = execSync(
-        `cd ${subdirPath} && printf 'y\n' | node ${ROOT_DIR}/bin/pclock.js stop`,
-        { encoding: 'utf8', stdio: 'pipe' }
+      const response = await execute(
+        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js stop`,
+        ['y\n']
       );
       expect(response).toMatch(
         'there are more than one active task on the timesheet; select the task to'
@@ -449,7 +449,7 @@ describe('Stopping the clock', () => {
       let error = '';
       try {
         execSync(
-          `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js stop '${TASK_SUBJECT}'`,
+          `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js stop "${TASK_SUBJECT}"`,
           {
             stdio: 'pipe',
           }
@@ -463,7 +463,7 @@ describe('Stopping the clock', () => {
       expect(error).not.toMatch('ProjectClockError');
     });
 
-    test('confirms whether the only matching task is to be stopped', () => {
+    test('confirms whether the only matching task is to be stopped', async () => {
       // initialize test environment
       createTestFile(
         {
@@ -485,7 +485,7 @@ describe('Stopping the clock', () => {
 
       // test
       const response = execSync(
-        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js stop '${TASK_SUBJECT}'`,
+        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js stop "${TASK_SUBJECT}"`,
         { encoding: 'utf8' }
       );
       expect(response).toMatch(
@@ -493,7 +493,7 @@ describe('Stopping the clock', () => {
       );
     });
 
-    test('stops the correct task when the user answers yes', () => {
+    test('stops the correct task when the user answers yes', async () => {
       // initialize test environment
       createTestFile(
         {
@@ -514,9 +514,9 @@ describe('Stopping the clock', () => {
       );
 
       // test
-      const response = execSync(
-        `cd ${subdirPath} && printf 'y\n' | node ${ROOT_DIR}/bin/pclock.js stop '${TASK_SUBJECT}'`,
-        { encoding: 'utf8' }
+      const response = await execute(
+        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js stop "${TASK_SUBJECT}"`,
+        ['y\n']
       );
       expect(response).toMatch(
         `there is one matching active task on the timesheet (${TASK_SUBJECT}); stop this`
@@ -524,7 +524,7 @@ describe('Stopping the clock', () => {
       expectTaskIsStopped();
     });
 
-    test('exits without stopping any task when the user answers no', () => {
+    test('exits without stopping any task when the user answers no', async () => {
       // initialize test environment
       createTestFile(
         {
@@ -545,9 +545,9 @@ describe('Stopping the clock', () => {
       );
 
       // test
-      const response = execSync(
-        `cd ${subdirPath} && printf 'n\n' | node ${ROOT_DIR}/bin/pclock.js stop '${TASK_SUBJECT}'`,
-        { encoding: 'utf8' }
+      const response = await execute(
+        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js stop "${TASK_SUBJECT}"`,
+        ['n\n']
       );
       expect(response).toMatch(
         `there is one matching active task on the timesheet (${TASK_SUBJECT}); stop this`
@@ -582,7 +582,7 @@ describe('Stopping the clock', () => {
       // test
       const matcher = 'active task';
       const response = execSync(
-        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js stop '${matcher}'`,
+        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js stop "${matcher}"`,
         { encoding: 'utf8' }
       );
       expect(response).toMatch(
@@ -590,7 +590,7 @@ describe('Stopping the clock', () => {
       );
     });
 
-    test('stops correct task when first of many matching active tasks is selected', () => {
+    test('stops correct task when first of many matching active tasks is selected', async () => {
       // initialize test environment
       createTestFile(
         {
@@ -616,12 +616,9 @@ describe('Stopping the clock', () => {
 
       // test
       const matcher = 'active task';
-      const response = execSync(
-        `cd ${subdirPath} && printf '\n' | node ${ROOT_DIR}/bin/pclock.js stop '${matcher}'`,
-        {
-          encoding: 'utf8',
-          stdio: 'pipe',
-        }
+      const response = await execute(
+        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js stop "${matcher}"`,
+        ['\n']
       );
       expect(response).toMatch(
         'there are more than one matching active task on the timesheet; select the'
@@ -656,7 +653,7 @@ describe('Stopping the clock', () => {
       // test
       const matcher = 'active task';
       const response = await execute(
-        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js stop '${matcher}'`,
+        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js stop "${matcher}"`,
         [`${DOWN}${DOWN}\n`]
       );
       expect(response).toMatch(
@@ -686,7 +683,7 @@ describe('Stopping the clock', () => {
       let error = '';
       try {
         execSync(
-          `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js stop '${TASK_SUBJECT}'`,
+          `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js stop "${TASK_SUBJECT}"`,
           { encoding: 'utf8', stdio: 'pipe' }
         );
       } catch (err) {
@@ -718,7 +715,7 @@ describe('Stopping the clock', () => {
       let error = '';
       try {
         execSync(
-          `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js stop '${TASK_SUBJECT}'`,
+          `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js stop "${TASK_SUBJECT}"`,
           { encoding: 'utf8', stdio: 'pipe' }
         );
       } catch (err) {
