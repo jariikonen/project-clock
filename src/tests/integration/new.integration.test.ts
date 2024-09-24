@@ -10,6 +10,7 @@ import {
 import { createTestFile, getTestFileDataObj } from '../common/testFile';
 import { createTestDir, removeTestDir } from '../common/testDirectory';
 import { getTestPaths } from '../common/testPaths';
+import execute from '../common/childProcessExecutor';
 
 const testSuiteName = 'new';
 const { testDirPath, subdirPath, testFilePath } = getTestPaths(testSuiteName);
@@ -33,7 +34,7 @@ describe('Timesheet creation', () => {
 
   test('Command "new" creates a new timesheet file correctly', () => {
     const response = execSync(
-      `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js new '${PROJECT_NAME}'`,
+      `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js new "${PROJECT_NAME}"`,
       { encoding: 'utf8' }
     );
     expect(response).toMatch(`created a new timesheet '${testFilePath}'`);
@@ -61,7 +62,7 @@ describe('Timesheet creation', () => {
     let error = '';
     try {
       execSync(
-        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js new '${PROJECT_NAME}'`,
+        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js new "${PROJECT_NAME}"`,
         { stdio: 'pipe' }
       );
     } catch (err) {
@@ -92,10 +93,10 @@ describe('Timesheet creation', () => {
     expect(response).toMatch(`(${SUBDIR_NAME})`);
   });
 
-  test('Command "new" creates a timesheet file correctly if default value is accepted in the prompt', () => {
-    const response = execSync(
-      `cd ${subdirPath} && printf "\n" | node ${ROOT_DIR}/bin/pclock.js new`,
-      { encoding: 'utf8' }
+  test('Command "new" creates a timesheet file correctly if default value is accepted in the prompt', async () => {
+    const response = await execute(
+      `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js new`,
+      ['\n']
     );
     const expectedFilePath = path.join(
       subdirPath,
@@ -125,7 +126,7 @@ describe('Timesheet creation', () => {
     expect(response).not.toMatch(SUBDIR_NAME);
   });
 
-  test('Command "new" does not create a new timesheet file if an empty project name is given', () => {
+  test('Command "new" does not create a new timesheet file if an empty project name is given', async () => {
     // empty project name can only be given when file with the default name already exists
     // initialize test environment
     const defaultFilePath = path.join(subdirPath, `${SUBDIR_NAME}.pclock.json`);
@@ -140,10 +141,9 @@ describe('Timesheet creation', () => {
     // test
     let error = '';
     try {
-      execSync(
-        `cd ${subdirPath} && printf "\n" | node ${ROOT_DIR}/bin/pclock.js new`,
-        { encoding: 'utf8', stdio: 'pipe' }
-      );
+      await execute(`cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js new`, [
+        '\n',
+      ]);
     } catch (err) {
       const e = err as Error;
       error = e.message;
@@ -154,10 +154,10 @@ describe('Timesheet creation', () => {
     expect(testDirContents.length).toEqual(1);
   });
 
-  test('Command "new" creates a timesheet file correctly if a project name is entered through the prompt', () => {
-    const response = execSync(
-      `cd ${subdirPath} && printf "${PROJECT_NAME}\n" | node ${ROOT_DIR}/bin/pclock.js new`,
-      { encoding: 'utf8' }
+  test('Command "new" creates a timesheet file correctly if a project name is entered through the prompt', async () => {
+    const response = await execute(
+      `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js new`,
+      [`${PROJECT_NAME}\n`]
     );
     expect(response).toMatch('enter name for the project:');
     expect(response).toMatch(`created a new timesheet '${testFilePath}'`);
