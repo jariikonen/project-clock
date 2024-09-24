@@ -50,9 +50,9 @@ describe('User friendly error messages', () => {
     moreThanOneTimesheetFile(testDirName, Command.Show);
   });
 
-  test('"Show" command reports timesheet file errors in a user friendly manner; when the command is force stopped with CTRL+C', () => {
+  test('"Show" command reports timesheet file errors in a user friendly manner; when the command is force stopped with CTRL+C', async () => {
     expect.hasAssertions();
-    forceStopped(testDirName, Command.Show, {
+    await forceStopped(testDirName, Command.Show, {
       projectName: PROJECT_NAME,
       tasks: [
         {
@@ -123,10 +123,11 @@ describe('Correct functioning, no task descriptor argument given', () => {
       );
     });
 
-    test('displays correct output when the prompt is answered yes', () => {
-      const response = execSync(
-        `cd ${subdirPath} && printf 'Y\n' | node ${ROOT_DIR}/bin/pclock.js show`,
-        { encoding: 'utf8', env: { ...process.env, FORCE_COLOR: '0' } }
+    test('displays correct output when the prompt is answered yes', async () => {
+      const response = await execute(
+        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js show`,
+        ['y\n'],
+        { ...process.env, FORCE_COLOR: '0' }
       );
       expect(response).toMatch(
         `there is one task on the timesheet (${TASK_SUBJECT}); show this task?`
@@ -135,10 +136,11 @@ describe('Correct functioning, no task descriptor argument given', () => {
       expect(response).toMatch('status:      unstarted');
     });
 
-    test('displays correct output when the prompt is answered no', () => {
-      const response = execSync(
-        `cd ${subdirPath} && printf 'n\n' | node ${ROOT_DIR}/bin/pclock.js show`,
-        { encoding: 'utf8', env: { ...process.env, FORCE_COLOR: '0' } }
+    test('displays correct output when the prompt is answered no', async () => {
+      const response = await execute(
+        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js show`,
+        ['n\n'],
+        { ...process.env, FORCE_COLOR: '0' }
       );
       expect(response).toMatch(
         `there is one task on the timesheet (${TASK_SUBJECT}); show this task?`
@@ -162,11 +164,12 @@ describe('Correct functioning, no task descriptor argument given', () => {
       );
     });
 
-    test('displays correct output when the prompt is answered yes', () => {
+    test('displays correct output when the prompt is answered yes', async () => {
       const response = prettyAnsi(
-        execSync(
-          `cd ${subdirPath} && printf 'Y\n' | node ${ROOT_DIR}/bin/pclock.js show`,
-          { encoding: 'utf8', env: { ...process.env, FORCE_COLOR: '1' } }
+        await execute(
+          `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js show`,
+          ['y\n'],
+          { ...process.env, FORCE_COLOR: '1' }
         )
       );
       expect(response).toMatch(
@@ -322,7 +325,7 @@ describe('Correct functioning, task descriptor argument given, color and styling
     let error = '';
     try {
       execSync(
-        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js show '${taskSubject}' found`,
+        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js show "${taskSubject}"`,
         {
           stdio: 'pipe',
           env: { ...process.env, FORCE_COLOR: '0' },
@@ -353,7 +356,7 @@ describe('Correct functioning, task descriptor argument given, color and styling
 
     // test
     const response = execSync(
-      `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js show '${TASK_SUBJECT}'`,
+      `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js show "${TASK_SUBJECT}"`,
       {
         encoding: 'utf8',
         env: { ...process.env, FORCE_COLOR: '0' },
@@ -384,7 +387,7 @@ describe('Correct functioning, task descriptor argument given, color and styling
 
     // test
     const response = execSync(
-      `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js show 'task'`,
+      `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js show task`,
       {
         encoding: 'utf8',
         env: { ...process.env, FORCE_COLOR: '0' },
@@ -416,7 +419,7 @@ describe('Correct functioning, task descriptor argument given, color and styling
     // test
     const response = prettyAnsi(
       execSync(
-        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js show '${TASK_SUBJECT}'`,
+        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js show "${TASK_SUBJECT}"`,
         {
           encoding: 'utf8',
           env: { ...process.env, FORCE_COLOR: '1' },
@@ -450,13 +453,10 @@ describe('Correct functioning, task descriptor argument given, color and styling
 
     // test
     const response = prettyAnsi(
-      execSync(
-        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js show 'task'`,
-        {
-          encoding: 'utf8',
-          env: { ...process.env, FORCE_COLOR: '1' },
-        }
-      )
+      execSync(`cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js show task`, {
+        encoding: 'utf8',
+        env: { ...process.env, FORCE_COLOR: '1' },
+      })
     );
     expect(response).toMatch('<bold>subject:</intensity>     first task');
     expect(response).toMatch(
