@@ -75,9 +75,9 @@ describe('Starting the clock', () => {
       moreThanOneTimesheetFile(testDirName, Command.Start);
     });
 
-    test('"Start" command gives a user friendly error message when the command is force stopped with CTRL+C', () => {
+    test('"Start" command gives a user friendly error message when the command is force stopped with CTRL+C', async () => {
       expect.hasAssertions();
-      forceStopped(testDirName, Command.Start, {
+      await forceStopped(testDirName, Command.Start, {
         projectName: PROJECT_NAME,
         tasks: [
           {
@@ -160,7 +160,7 @@ describe('Starting the clock', () => {
       );
     });
 
-    test('starts correct task when the single unstarted task is confirmed as desired', () => {
+    test('starts correct task when the single unstarted task is confirmed as desired', async () => {
       // initialize test environment
       createTestFile(
         {
@@ -180,9 +180,9 @@ describe('Starting the clock', () => {
       );
 
       // test
-      const response = execSync(
-        `cd ${subdirPath} && printf 'Y\n' | node ${ROOT_DIR}/bin/pclock.js start`,
-        { encoding: 'utf8', stdio: 'pipe' }
+      const response = await execute(
+        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js start`,
+        ['y\n']
       );
       expect(response).toMatch(
         `there is one unstarted task on the timesheet (${TASK_SUBJECT}); start this task`
@@ -298,7 +298,7 @@ describe('Starting the clock', () => {
       expect(response).not.toMatch('seventh unstartable task');
     });
 
-    test('starts correct task when the first of many unstarted tasks is selected', () => {
+    test('starts correct task when the first of many unstarted tasks is selected', async () => {
       // initialize test environment
       createTestFile(
         {
@@ -321,9 +321,9 @@ describe('Starting the clock', () => {
       );
 
       // test
-      const response = execSync(
-        `cd ${subdirPath} && printf '\n' | node ${ROOT_DIR}/bin/pclock.js start`,
-        { encoding: 'utf8', stdio: 'pipe' }
+      const response = await execute(
+        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js start`,
+        ['\n']
       );
       expect(response).toMatch(
         'there are more than one unstarted task on the timesheet; select the task to'
@@ -436,7 +436,7 @@ describe('Starting the clock', () => {
 
       // test
       const response = execSync(
-        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js start '${TASK_SUBJECT}'`,
+        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js start "${TASK_SUBJECT}"`,
         { encoding: 'utf8' }
       );
       expect(response).toMatch(
@@ -444,7 +444,7 @@ describe('Starting the clock', () => {
       );
     });
 
-    test('creates correct task when matching task is not found and user answers yes', () => {
+    test('creates correct task when matching task is not found and user answers yes', async () => {
       // initialize test environment
       createTestFile(
         {
@@ -465,9 +465,9 @@ describe('Starting the clock', () => {
       );
 
       // test
-      const response = execSync(
-        `cd ${subdirPath} && printf 'Y\n' | node ${ROOT_DIR}/bin/pclock.js start '${TASK_SUBJECT}'`,
-        { encoding: 'utf8' }
+      const response = await execute(
+        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js start "${TASK_SUBJECT}"`,
+        ['y\n']
       );
       expect(response).toMatch(
         `no matching unstarted task found; create a new task, '${TASK_SUBJECT}'?`
@@ -475,7 +475,7 @@ describe('Starting the clock', () => {
       expectTaskIsStarted(2);
     });
 
-    test('exits without creating a task when matching task is not found and user answers no', () => {
+    test('exits without creating a task when matching task is not found and user answers no', async () => {
       // initialize test environment
       createTestFile(
         {
@@ -496,9 +496,9 @@ describe('Starting the clock', () => {
       );
 
       // test
-      const response = execSync(
-        `cd ${subdirPath} && printf 'n\n' | node ${ROOT_DIR}/bin/pclock.js start '${TASK_SUBJECT}'`,
-        { encoding: 'utf8' }
+      const response = await execute(
+        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js start "${TASK_SUBJECT}"`,
+        ['n\n']
       );
       expect(response).toMatch(
         `no matching unstarted task found; create a new task, '${TASK_SUBJECT}'?`
@@ -532,7 +532,7 @@ describe('Starting the clock', () => {
 
       // test
       const response = execSync(
-        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js start '${TASK_SUBJECT}'`,
+        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js start "${TASK_SUBJECT}"`,
         { encoding: 'utf8' }
       );
       expect(response).toMatch(
@@ -540,7 +540,7 @@ describe('Starting the clock', () => {
       );
     });
 
-    test('starts correct task when single unstarted task is found and user answers yes', () => {
+    test('starts correct task when single unstarted task is found and user answers yes', async () => {
       // initialize test environment
       createTestFile(
         {
@@ -564,9 +564,9 @@ describe('Starting the clock', () => {
       );
 
       // test
-      const response = execSync(
-        `cd ${subdirPath} && printf 'Y\n' | node ${ROOT_DIR}/bin/pclock.js start '${TASK_SUBJECT}'`,
-        { encoding: 'utf8' }
+      const response = await execute(
+        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js start "${TASK_SUBJECT}"`,
+        ['y\n']
       );
       expect(response).toMatch(
         `there is one matching unstarted task on the timesheet (${TASK_SUBJECT}); start this`
@@ -574,7 +574,7 @@ describe('Starting the clock', () => {
       expectTaskIsStarted(1);
     });
 
-    test('exits without starting a task when single unstarted task is found and user answers no', () => {
+    test('exits without starting a task when single unstarted task is found and user answers no', async () => {
       // initialize test environment
       createTestFile(
         {
@@ -598,9 +598,9 @@ describe('Starting the clock', () => {
       );
 
       // test
-      const response = execSync(
-        `cd ${subdirPath} && printf 'n\n' | node ${ROOT_DIR}/bin/pclock.js start '${TASK_SUBJECT}'`,
-        { encoding: 'utf8' }
+      const response = await execute(
+        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js start "${TASK_SUBJECT}"`,
+        ['n\n']
       );
       expect(response).toMatch(
         `there is one matching unstarted task on the timesheet (${TASK_SUBJECT}); start this`
@@ -632,7 +632,7 @@ describe('Starting the clock', () => {
 
       // test
       const response = execSync(
-        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js start 'matching task'`,
+        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js start "matching task"`,
         { encoding: 'utf8', stdio: 'pipe' }
       );
       expect(response).toMatch(
@@ -667,7 +667,7 @@ describe('Starting the clock', () => {
       let error = '';
       try {
         execSync(
-          `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js start '${TASK_SUBJECT}'`,
+          `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js start "${TASK_SUBJECT}"`,
           { stdio: 'pipe' }
         );
       } catch (err) {
