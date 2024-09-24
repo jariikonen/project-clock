@@ -70,9 +70,9 @@ describe('Suspend command', () => {
       moreThanOneTimesheetFile(testDirName, Command.Suspend);
     });
 
-    test('"Suspend" command gives a user friendly error message when the command is force stopped with CTRL+C', () => {
+    test('"Suspend" command gives a user friendly error message when the command is force stopped with CTRL+C', async () => {
       expect.hasAssertions();
-      forceStopped(testDirName, Command.Suspend, {
+      await forceStopped(testDirName, Command.Suspend, {
         projectName: PROJECT_NAME,
         tasks: [
           {
@@ -175,7 +175,7 @@ describe('Suspend command', () => {
       );
     });
 
-    test('suspends the only suspendable task found if the user answers yes', () => {
+    test('suspends the only suspendable task found if the user answers yes', async () => {
       // initialize test environment
       createTestFile(
         {
@@ -191,9 +191,9 @@ describe('Suspend command', () => {
       );
 
       // test
-      const response = execSync(
-        `cd ${subdirPath} && printf 'Y\n' | node ${ROOT_DIR}/bin/pclock.js suspend`,
-        { encoding: 'utf8' }
+      const response = await execute(
+        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js suspend`,
+        ['y\n']
       );
       expect(response).toMatch(
         `there is one suspendable task on the timesheet (${TASK_SUBJECT}); suspend this`
@@ -201,7 +201,7 @@ describe('Suspend command', () => {
       expectTaskIsSuspended();
     });
 
-    test('exits without suspending any task if user answers no', () => {
+    test('exits without suspending any task if user answers no', async () => {
       // initialize test environment
       createTestFile(
         {
@@ -217,9 +217,9 @@ describe('Suspend command', () => {
       );
 
       // test
-      const response = execSync(
-        `cd ${subdirPath} && printf 'n\n' | node ${ROOT_DIR}/bin/pclock.js suspend`,
-        { encoding: 'utf8' }
+      const response = await execute(
+        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js suspend`,
+        ['n\n']
       );
       expect(response).toMatch(
         `there is one suspendable task on the timesheet (${TASK_SUBJECT}); suspend this`
@@ -424,7 +424,7 @@ describe('Suspend command', () => {
       let error = '';
       try {
         execSync(
-          `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js suspend '${TASK_SUBJECT}'`,
+          `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js suspend "${TASK_SUBJECT}"`,
           {
             stdio: 'pipe',
           }
@@ -457,7 +457,7 @@ describe('Suspend command', () => {
 
       // test
       const response = execSync(
-        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js suspend ${TASK_SUBJECT}`,
+        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js suspend "${TASK_SUBJECT}"`,
         { encoding: 'utf8' }
       );
       expect(response).toMatch(
@@ -465,7 +465,7 @@ describe('Suspend command', () => {
       );
     });
 
-    test('suspends the correct task when a single matching suspendable task is found and the user answers yes', () => {
+    test('suspends the correct task when a single matching suspendable task is found and the user answers yes', async () => {
       // initialize test environment
       createTestFile(
         {
@@ -487,9 +487,9 @@ describe('Suspend command', () => {
       );
 
       // test
-      const response = execSync(
-        `cd ${subdirPath} && printf 'y\n' | node ${ROOT_DIR}/bin/pclock.js suspend ${TASK_SUBJECT}`,
-        { encoding: 'utf8' }
+      const response = await execute(
+        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js suspend "${TASK_SUBJECT}"`,
+        ['y\n']
       );
       expect(response).toMatch(
         `there is one matching suspendable task on the timesheet (${TASK_SUBJECT}); suspend`
@@ -497,7 +497,7 @@ describe('Suspend command', () => {
       expectTaskIsSuspended();
     });
 
-    test('suspends the task even when the single matching suspendable task is a bit more complicated resumed task', () => {
+    test('suspends the task even when the single matching suspendable task is a bit more complicated resumed task', async () => {
       // initialize test environment
       createTestFile(
         {
@@ -521,9 +521,9 @@ describe('Suspend command', () => {
       );
 
       // test
-      const response = execSync(
-        `cd ${subdirPath} && printf 'y\n' | node ${ROOT_DIR}/bin/pclock.js suspend ${TASK_SUBJECT}`,
-        { encoding: 'utf8' }
+      const response = await execute(
+        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js suspend "${TASK_SUBJECT}"`,
+        ['y\n']
       );
       expect(response).toMatch(
         `there is one matching suspendable task on the timesheet (${TASK_SUBJECT}); suspend`
@@ -531,7 +531,7 @@ describe('Suspend command', () => {
       expectTaskIsSuspended();
     });
 
-    test('suspends the task even when the single matching suspendable task is a simple stopped task', () => {
+    test('suspends the task even when the single matching suspendable task is a simple stopped task', async () => {
       // initialize test environment
       createTestFile(
         {
@@ -554,9 +554,9 @@ describe('Suspend command', () => {
       );
 
       // test
-      const response = execSync(
-        `cd ${subdirPath} && printf 'y\n' | node ${ROOT_DIR}/bin/pclock.js suspend ${TASK_SUBJECT}`,
-        { encoding: 'utf8' }
+      const response = await execute(
+        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js suspend "${TASK_SUBJECT}"`,
+        ['y\n']
       );
       expect(response).toMatch(
         `there is one matching suspendable task on the timesheet (${TASK_SUBJECT}); suspend`
@@ -564,7 +564,7 @@ describe('Suspend command', () => {
       expectTaskIsSuspended();
     });
 
-    test('suspends the task even when the single matching suspendable task is a bit more complex stopped task', () => {
+    test('suspends the task even when the single matching suspendable task is a bit more complex stopped task', async () => {
       // initialize test environment
       createTestFile(
         {
@@ -589,9 +589,9 @@ describe('Suspend command', () => {
       );
 
       // test
-      const response = execSync(
-        `cd ${subdirPath} && printf 'y\n' | node ${ROOT_DIR}/bin/pclock.js suspend ${TASK_SUBJECT}`,
-        { encoding: 'utf8' }
+      const response = await execute(
+        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js suspend "${TASK_SUBJECT}"`,
+        ['y\n']
       );
       expect(response).toMatch(
         `there is one matching suspendable task on the timesheet (${TASK_SUBJECT}); suspend`
@@ -599,7 +599,7 @@ describe('Suspend command', () => {
       expectTaskIsSuspended();
     });
 
-    test('does not suspend any tasks when a single matching suspendable task is found and the user answers no', () => {
+    test('does not suspend any tasks when a single matching suspendable task is found and the user answers no', async () => {
       // initialize test environment
       createTestFile(
         {
@@ -621,9 +621,9 @@ describe('Suspend command', () => {
       );
 
       // test
-      const response = execSync(
-        `cd ${subdirPath} && printf 'n\n' | node ${ROOT_DIR}/bin/pclock.js suspend ${TASK_SUBJECT}`,
-        { encoding: 'utf8' }
+      const response = await execute(
+        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js suspend "${TASK_SUBJECT}"`,
+        ['n\n']
       );
       expect(response).toMatch(
         `there is one matching suspendable task on the timesheet (${TASK_SUBJECT}); suspend`
@@ -656,7 +656,7 @@ describe('Suspend command', () => {
       // test
       const matcher = 'suspendable task';
       const response = execSync(
-        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js suspend '${matcher}'`,
+        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js suspend "${matcher}"`,
         { encoding: 'utf8' }
       );
       expect(response).toMatch(
@@ -714,7 +714,7 @@ describe('Suspend command', () => {
       // test
       const matcher = 'suspendable task';
       const response = execSync(
-        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js suspend '${matcher}'`,
+        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js suspend "${matcher}"`,
         { encoding: 'utf8' }
       );
       expect(response).toMatch(
@@ -779,7 +779,7 @@ describe('Suspend command', () => {
       // test
       const matcher = 'suspendable task';
       const response = await execute(
-        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js suspend '${matcher}'`,
+        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js suspend "${matcher}"`,
         [`${DOWN}${DOWN}\n`]
       );
       expect(response).toMatch(
@@ -838,7 +838,7 @@ describe('Suspend command', () => {
       // test
       const matcher = 'suspendable task';
       const response = await execute(
-        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js suspend '${matcher}'`,
+        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js suspend "${matcher}"`,
         [`${DOWN}${DOWN}${DOWN}\n`]
       );
       expect(response).toMatch(
@@ -892,7 +892,7 @@ describe('Suspend command', () => {
       let error = '';
       try {
         execSync(
-          `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js suspend '${TASK_SUBJECT}'`,
+          `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js suspend "${TASK_SUBJECT}"`,
           { encoding: 'utf8', stdio: 'pipe' }
         );
       } catch (err) {
@@ -929,7 +929,7 @@ describe('Suspend command', () => {
       let error = '';
       try {
         execSync(
-          `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js suspend '${TASK_SUBJECT}'`,
+          `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js suspend "${TASK_SUBJECT}"`,
           { encoding: 'utf8', stdio: 'pipe' }
         );
       } catch (err) {
@@ -971,7 +971,7 @@ describe('Suspend command', () => {
       let error = '';
       try {
         execSync(
-          `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js suspend '${TASK_SUBJECT}'`,
+          `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js suspend "${TASK_SUBJECT}"`,
           { encoding: 'utf8', stdio: 'pipe' }
         );
       } catch (err) {
