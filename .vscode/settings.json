@@ -1,0 +1,38 @@
+{
+  // Use LF as the line ending.
+  "files.eol": "\n",
+
+  // Insert spaces when pressing Tab. This setting is overridden based on the
+  // file contents when `editor.detectIndentation` is true.
+  "editor.insertSpaces": true,
+
+  // When opening a file, `editor.tabSize` and `editor.insertSpaces` will be
+  // detected based on the file contents. This is set to false to keep the
+  // values you've explicitly set.
+  "editor.detectIndentation": false,
+
+  // Trim trailing whitespace when saving a file.
+  "files.trimTrailingWhitespace": true,
+
+  "[javascript]": {
+    // Tab size is two spaces.
+    "editor.tabSize": 2,
+
+    // Format code automatically using Prettier.
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnPaste": true,
+    "editor.formatOnType": true,
+    "editor.formatOnSave": true
+  },
+
+  "[typescript]": {
+    // Tab size is two spaces.
+    "editor.tabSize": 2,
+
+    // Format code automatically using Prettier.
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnPaste": true,
+    "editor.formatOnType": true,
+    "editor.formatOnSave": true
+  }
+}

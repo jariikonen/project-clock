@@ -785,7 +785,16 @@
     },
     {
       "subject": "Add VSCode settings to project",
-      "description": "At least the line endings must be set to LF, and it would also be nice to get Prettier formatting working in Windows."
+      "description": "It is important to set project specific settings that the editor reads from the project directory. This includes tab (two spaces) and line ending (LF) settings, as well as getting the ESLint warnings and Prettier formatting working. This way the developers are automatically forced to comply with certain code standards.",
+      "begin": "2024-09-25T07:04:43.180Z",
+      "suspend": [
+        "2024-09-25T07:47:45.158Z"
+      ],
+      "resume": [
+        "2024-09-25T09:06:25.193Z"
+      ],
+      "notes": "I added .vscode/settings.json and .vscode/extensions.json files to the project directory. Settings file contains directives for using LF as the line ending, spaces instead of tabs, and tab widths and code formatting settings for javascript and typescript. Extensions file contains recommendations for linter and code formatter extensions.",
+      "end": "2024-09-25T10:11:20.220Z"
     },
     {
       "subject": "Improve prompt readability",
