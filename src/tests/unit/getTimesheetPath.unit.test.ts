@@ -30,8 +30,8 @@ describe('getTimesheetPath', () => {
   });
 
   afterEach(() => {
-    removeTestDir(subdirPath);
     process.chdir(ROOT_DIR);
+    removeTestDir(subdirPath);
   });
 
   describe('No timesheet file exists', () => {

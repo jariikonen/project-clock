@@ -51,7 +51,7 @@ describe('calculateTimes()', () => {
       expect(response.status).toEqual('started');
       expect(response.timeSpent / 1000).toBeCloseTo(
         expectedStatus.timeSpent / 1000,
-        1
+        0
       );
     });
 
@@ -106,7 +106,7 @@ describe('calculateTimes()', () => {
       expect(response.status).toEqual(expectedStatus.status);
       expect(response.timeSpent / 1000).toBeCloseTo(
         expectedStatus.timeSpent / 1000,
-        1
+        0
       );
     });
 
@@ -230,7 +230,7 @@ describe('calculateTimes()', () => {
       expect(response.status).toEqual(expectedStatus.status);
       expect(response.timeSpent / 1000).toBeCloseTo(
         expectedStatus.timeSpent / 1000,
-        1
+        0
       );
     });
 

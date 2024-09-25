@@ -31,8 +31,8 @@ describe('getTimesheetData()', () => {
   });
 
   afterEach(() => {
-    removeTestDir(subdirPath);
     process.chdir(ROOT_DIR);
+    removeTestDir(subdirPath);
   });
 
   describe('No timesheet file exists', () => {
@@ -112,27 +112,26 @@ describe('getTimesheetData()', () => {
         fs.chmodSync(testFilePath, '000');
       });
 
+      const errorMessage =
+        process.platform === 'win32'
+          ? `no write permission to file '${testFilePath}'` // Windows only supports changing of the write permission
+          : `reading of file '${testFilePath}' denied (no permission)`;
+
       test('getTimesheetData() without an argument throws ProjectClockError', () => {
         expect(() => getTimesheetData()).toThrow(ProjectClockError);
-        expect(() => getTimesheetData()).toThrow(
-          `reading of file '${testFilePath}' denied (no permission)`
-        );
+        expect(() => getTimesheetData()).toThrow(errorMessage);
       });
 
       test('getTimesheetData() with an absolute path leading to an existing timesheet file as an argument throws ProjectClockError', () => {
         expect(() => getTimesheetData(testFilePath)).toThrow(ProjectClockError);
-        expect(() => getTimesheetData(testFilePath)).toThrow(
-          `reading of file '${testFilePath}' denied (no permission)`
-        );
+        expect(() => getTimesheetData(testFilePath)).toThrow(errorMessage);
       });
 
       test('getTimesheetData() with a relative path leading to an existing timesheet file as an argument throws ProjectClockError', () => {
         expect(() => getTimesheetData(TEST_FILE_NAME)).toThrow(
           ProjectClockError
         );
-        expect(() => getTimesheetData(TEST_FILE_NAME)).toThrow(
-          `reading of file '${testFilePath}' denied (no permission)`
-        );
+        expect(() => getTimesheetData(TEST_FILE_NAME)).toThrow(errorMessage);
       });
     });
 
@@ -213,6 +212,11 @@ describe('getTimesheetData()', () => {
         fs.chmodSync(testFilePath2, '000');
       });
 
+      const errorMessage =
+        process.platform === 'win32'
+          ? `no write permission to file '${testFilePath2}'` // Windows only supports changing of the write permission
+          : `reading of file '${testFilePath2}' denied (no permission)`;
+
       test('getTimesheetData() without an argument throws a ProjectClockError', () => {
         expect(() => getTimesheetData()).toThrow(ProjectClockError);
         expect(() => getTimesheetData()).toThrow(
@@ -224,18 +228,14 @@ describe('getTimesheetData()', () => {
         expect(() => getTimesheetData(testFilePath2)).toThrow(
           ProjectClockError
         );
-        expect(() => getTimesheetData(testFilePath2)).toThrow(
-          `reading of file '${testFilePath2}' denied (no permission)`
-        );
+        expect(() => getTimesheetData(testFilePath2)).toThrow(errorMessage);
       });
 
       test('getTimesheetData() with a relative path leading to an existing timesheet file as an argument throws ProjectClockError', () => {
         expect(() => getTimesheetData(testFileName2)).toThrow(
           ProjectClockError
         );
-        expect(() => getTimesheetData(testFilePath2)).toThrow(
-          `reading of file '${testFilePath2}' denied (no permission)`
-        );
+        expect(() => getTimesheetData(testFilePath2)).toThrow(errorMessage);
       });
     });
 
