@@ -92,7 +92,7 @@ describe('User friendly error messages', () => {
       const e = err as Error;
       error = e.message;
     }
-    expect(error).toMatch('exiting; user force closed the process');
+    expect(error).toMatch('Exiting; user force closed the process.');
     expect(error).not.toMatch('throw');
     expect(error).not.toMatch('ProjectClockError');
   });
@@ -125,9 +125,8 @@ describe('correct functioning', () => {
               env: { ...process.env, FORCE_COLOR: '0' },
             }
           );
-          expect(response).toMatch(
-            `there is one task on the timesheet (${TASK_SUBJECT}); edit this task?`
-          );
+          expect(response).toMatch(`One task found: ${TASK_SUBJECT}`);
+          expect(response).toMatch('Edit this task?');
         });
 
         test(`does not edit the ${field} of any task when no is selected`, async () => {
@@ -136,10 +135,9 @@ describe('correct functioning', () => {
             ['n\n'],
             { ...process.env, FORCE_COLOR: '0' }
           );
-          expect(response).toMatch(
-            `there is one task on the timesheet (${TASK_SUBJECT}); edit this task?`
-          );
-          expect(response).toMatch('nothing to edit');
+          expect(response).toMatch(`One task found: ${TASK_SUBJECT}`);
+          expect(response).toMatch('Edit this task?');
+          expect(response).toMatch('Nothing to edit.');
           expectTaskEqualsTo(testFilePath, {
             subject: TASK_SUBJECT,
           });
@@ -155,7 +153,8 @@ describe('correct functioning', () => {
                 ...process.env,
                 FORCE_COLOR: '0',
                 EDITOR: editorPath,
-              }
+              },
+              true
             );
           } catch (error) {
             outputEditorMockDirections();
@@ -221,9 +220,8 @@ describe('correct functioning', () => {
               env: { ...process.env, FORCE_COLOR: '0' },
             }
           );
-          expect(response).toMatch(
-            'there are more than one task on the timesheet; select the task to edit:'
-          );
+          expect(response).toMatch('There are 2 tasks on the timesheet.');
+          expect(response).toMatch('Select the task to edit:');
         });
 
         test(`editing of the ${field} works correctly when the first task is selected`, async () => {
@@ -236,7 +234,8 @@ describe('correct functioning', () => {
                 ...process.env,
                 FORCE_COLOR: '0',
                 EDITOR: editorPath,
-              }
+              },
+              true
             );
           } catch (error) {
             outputEditorMockDirections();
@@ -296,7 +295,8 @@ describe('correct functioning', () => {
                 ...process.env,
                 FORCE_COLOR: '0',
                 EDITOR: editorPath,
-              }
+              },
+              true
             );
           } catch (error) {
             outputEditorMockDirections();
@@ -367,7 +367,7 @@ describe('correct functioning', () => {
             case 'subject':
             case 'description':
             case 'notes':
-              expect(response).toMatch('nothing to edit');
+              expect(response).toMatch('Nothing to edit.');
               expectTaskEqualsTo(testFilePath, testTasks[0], 'first task');
               expectTaskEqualsTo(testFilePath, testTasks[1], 'second task');
               break;
@@ -402,14 +402,18 @@ describe('correct functioning', () => {
             try {
               execSync(
                 `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js edit "${field}" "${TASK_SUBJECT}"`,
-                { encoding: 'utf8', stdio: 'pipe' }
+                {
+                  encoding: 'utf8',
+                  stdio: 'pipe',
+                  env: { ...process.env, FORCE_COLOR: '0' },
+                }
               );
             } catch (err) {
               const e = err as Error;
               error = e.message;
             }
             expect(error).toMatch(
-              `no task(s) matching '${TASK_SUBJECT}' found`
+              `No task(s) matching '${TASK_SUBJECT}' found.`
             );
           });
         });
@@ -418,22 +422,22 @@ describe('correct functioning', () => {
           test(`${field}, confirms from the user that the task is the one to edit`, () => {
             const response = execSync(
               `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js edit "${field}" "second task"`,
-              { encoding: 'utf8' }
+              { encoding: 'utf8', env: { ...process.env, FORCE_COLOR: '0' } }
             );
-            expect(response).toMatch(
-              'there is one matching task on the timesheet (second task); edit this task?'
-            );
+            expect(response).toMatch('One matching task found: second task');
+            expect(response).toMatch('Edit this task?');
           });
 
           test(`${field}, does not edit any task when no is selected`, async () => {
             const response = await execute(
               `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js edit "${field}" "second task"`,
-              ['n\n']
+              ['n\n'],
+              { ...process.env, FORCE_COLOR: '0' },
+              true
             );
-            expect(response).toMatch(
-              'there is one matching task on the timesheet (second task); edit this task?'
-            );
-            expect(response).toMatch('nothing to edit');
+            expect(response).toMatch('One matching task found: second task');
+            expect(response).toMatch('Edit this task?');
+            expect(response).toMatch('Nothing to edit.');
             expectTaskEqualsTo(testFilePath, testTasks[0], 'first task');
             expectTaskEqualsTo(testFilePath, testTasks[1], 'second task');
           });
@@ -441,16 +445,16 @@ describe('correct functioning', () => {
           test(`editing of the ${field} works correctly`, async () => {
             const response = await execute(
               `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js edit "${field}" "second task"`,
-              ['Y\n', field],
+              ['y\n', field],
               {
                 ...process.env,
                 FORCE_COLOR: '0',
                 EDITOR: editorPath,
-              }
+              },
+              true
             );
-            expect(response).toMatch(
-              'there is one matching task on the timesheet (second task); edit this task?'
-            );
+            expect(response).toMatch('One matching task found: second task');
+            expect(response).toMatch('Edit this task?');
             switch (field) {
               case 'subject':
                 expect(response).toMatch('subject:     second tasksubject');
@@ -505,8 +509,9 @@ describe('correct functioning', () => {
               }
             );
             expect(response).toMatch(
-              'there are more than one matching task on the timesheet; select the task to'
+              'There are 2 matching tasks on the timesheet.'
             );
+            expect(response).toMatch('Select the task to edit:');
           });
 
           test(`${field}, editing of the subject works correctly when the first task is selected`, async () => {
@@ -519,7 +524,8 @@ describe('correct functioning', () => {
                   ...process.env,
                   FORCE_COLOR: '0',
                   EDITOR: editorPath,
-                }
+                },
+                true
               );
             } catch (error) {
               outputEditorMockDirections();
@@ -579,7 +585,8 @@ describe('correct functioning', () => {
                   ...process.env,
                   FORCE_COLOR: '0',
                   EDITOR: editorPath,
-                }
+                },
+                true
               );
             } catch (error) {
               outputEditorMockDirections();
@@ -650,7 +657,7 @@ describe('correct functioning', () => {
               case 'subject':
               case 'description':
               case 'notes':
-                expect(response).toMatch('nothing to edit');
+                expect(response).toMatch('Nothing to edit.');
                 expectTaskEqualsTo(testFilePath, testTasks[0], 'first task');
                 expectTaskEqualsTo(testFilePath, testTasks[1], 'second task');
                 break;
@@ -688,14 +695,18 @@ describe('correct functioning', () => {
             try {
               execSync(
                 `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js edit "${field}" "${TASK_SUBJECT}" "${newValueArgument}"`,
-                { encoding: 'utf8', stdio: 'pipe' }
+                {
+                  encoding: 'utf8',
+                  stdio: 'pipe',
+                  env: { ...process.env, FORCE_COLOR: '0' },
+                }
               );
             } catch (err) {
               const e = err as Error;
               error = e.message;
             }
             expect(error).toMatch(
-              `no task(s) matching '${TASK_SUBJECT}' found`
+              `No task(s) matching '${TASK_SUBJECT}' found.`
             );
           });
         });
@@ -704,22 +715,22 @@ describe('correct functioning', () => {
           test(`${field}, confirms from the user that the task is the one to edit`, () => {
             const response = execSync(
               `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js edit "${field}" "second task" "${newValueArgument}"`,
-              { encoding: 'utf8' }
+              { encoding: 'utf8', env: { ...process.env, FORCE_COLOR: '0' } }
             );
-            expect(response).toMatch(
-              'there is one matching task on the timesheet (second task); edit this task?'
-            );
+            expect(response).toMatch('One matching task found: second task');
+            expect(response).toMatch('Edit this task?');
           });
 
           test(`${field}, does not edit any task when no is selected`, async () => {
             const response = await execute(
               `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js edit "${field}" "second task" "${newValueArgument}"`,
-              ['n\n']
+              ['n\n'],
+              { ...process.env, FORCE_COLOR: '0' },
+              true
             );
-            expect(response).toMatch(
-              'there is one matching task on the timesheet (second task); edit this task?'
-            );
-            expect(response).toMatch('nothing to edit');
+            expect(response).toMatch('One matching task found: second task');
+            expect(response).toMatch('Edit this task?');
+            expect(response).toMatch('Nothing to edit.');
             expectTaskEqualsTo(testFilePath, testTasks[0], 'first task');
             expectTaskEqualsTo(testFilePath, testTasks[1], 'second task');
           });
@@ -727,12 +738,12 @@ describe('correct functioning', () => {
           test(`editing of the ${field} works correctly`, async () => {
             const response = await execute(
               `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js edit "${field}" "second task" "${newValueArgument}"`,
-              ['Y\n', 'Y\n'],
-              { ...process.env, FORCE_COLOR: '0' }
+              ['y\n', 'y\n'],
+              { ...process.env, FORCE_COLOR: '0' },
+              true
             );
-            expect(response).toMatch(
-              'there is one matching task on the timesheet (second task); edit this task?'
-            );
+            expect(response).toMatch('One matching task found: second task');
+            expect(response).toMatch('Edit this task?');
             switch (field) {
               case 'subject':
                 expect(response).toMatch(`subject:     ${newValueArgument}`);
@@ -787,8 +798,9 @@ describe('correct functioning', () => {
               }
             );
             expect(response).toMatch(
-              'there are more than one matching task on the timesheet; select the task to'
+              'There are 2 matching tasks on the timesheet.'
             );
+            expect(response).toMatch('Select the task to edit:');
           });
 
           test(`${field}, editing of the subject works correctly when the first task is selected`, async () => {
@@ -796,8 +808,9 @@ describe('correct functioning', () => {
             try {
               response = await execute(
                 `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js edit "${field}" task "${newValueArgument}"`,
-                ['\n', 'Y\n'],
-                { ...process.env, FORCE_COLOR: '0' }
+                ['\n', 'y\n'],
+                { ...process.env, FORCE_COLOR: '0' },
+                true
               );
             } catch (error) {
               outputEditorMockDirections();
@@ -853,7 +866,8 @@ describe('correct functioning', () => {
               response = await execute(
                 `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js edit "${field}" task "${newValueArgument}"`,
                 [`${DOWN}\n`, 'Y\n'],
-                { ...process.env, FORCE_COLOR: '0' }
+                { ...process.env, FORCE_COLOR: '0' },
+                true
               );
             } catch (error) {
               outputEditorMockDirections();
@@ -920,7 +934,7 @@ describe('correct functioning', () => {
               case 'subject':
               case 'description':
               case 'notes':
-                expect(response).toMatch('nothing to edit');
+                expect(response).toMatch('Nothing to edit.');
                 expectTaskEqualsTo(testFilePath, testTasks[0], 'first task');
                 expectTaskEqualsTo(testFilePath, testTasks[1], 'second task');
                 break;
@@ -955,9 +969,8 @@ describe('correct functioning', () => {
             env: { ...process.env, FORCE_COLOR: '0' },
           }
         );
-        expect(response).toMatch(
-          `there is one task on the timesheet (${TASK_SUBJECT}); edit this task?`
-        );
+        expect(response).toMatch(`One task found: ${TASK_SUBJECT}`);
+        expect(response).toMatch('Edit this task?');
       });
 
       test('does not proceed when user answers no', async () => {
@@ -966,10 +979,9 @@ describe('correct functioning', () => {
           ['n\n'],
           { ...process.env, FORCE_COLOR: '0' }
         );
-        expect(response).toMatch(
-          `there is one task on the timesheet (${TASK_SUBJECT}); edit this task?`
-        );
-        expect(response).toMatch('nothing to edit');
+        expect(response).toMatch(`One task found: ${TASK_SUBJECT}`);
+        expect(response).toMatch('Edit this task?');
+        expect(response).toMatch('Nothing to edit.');
       });
 
       test('prompts whether the user wishes to edit the subject, description or notes', async () => {
@@ -977,51 +989,45 @@ describe('correct functioning', () => {
           `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js edit`,
           ['y\n', 'n\n', 'n\n', 'n\n'],
           { ...process.env, FORCE_COLOR: '0' },
-          5000,
           true
         );
-        expect(response).toMatch(
-          `there is one task on the timesheet (${TASK_SUBJECT}); edit this task?`
-        );
-        expect(response).toMatch('do you want to edit the subject');
+        expect(response).toMatch(`One task found: ${TASK_SUBJECT}`);
+        expect(response).toMatch('Edit this task?');
+        expect(response).toMatch('Do you want to edit the subject?');
       });
 
       test('does not change anything when user answers no (subject, description, notes)', async () => {
         const response = await execute(
           `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js edit`,
-          ['Y\n', 'n\n', 'n\n', 'n\n'],
+          ['y\n', 'n\n', 'n\n', 'n\n'],
           { ...process.env, FORCE_COLOR: '0' },
-          5000,
           true
         );
-        expect(response).toMatch(
-          `there is one task on the timesheet (${TASK_SUBJECT}); edit this task?`
-        );
-        expect(response).toMatch('do you want to edit the subject');
-        expect(response).toMatch('do you want to edit the description');
-        expect(response).toMatch('do you want to edit the notes');
+        expect(response).toMatch(`One task found: ${TASK_SUBJECT}`);
+        expect(response).toMatch('Edit this task?');
+        expect(response).toMatch('Do you want to edit the subject?');
+        expect(response).toMatch('Do you want to edit the description?');
+        expect(response).toMatch('Do you want to edit the notes?');
         expectTaskEqualsTo(testFilePath, testTasks[0]);
       });
 
       test('editing of the subject works correctly', async () => {
         const response = await execute(
           `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js edit`,
-          ['Y\n', 'Y\n', 'subject', 'n\n', 'n\n'],
+          ['y\n', 'y\n', 'subject', 'n\n', 'n\n'],
           {
             ...process.env,
             FORCE_COLOR: '0',
             EDITOR: editorPath,
           },
-          5000,
           true,
-          ['edit subject of task']
+          ['Edit subject of task']
         );
-        expect(response).toMatch(
-          `there is one task on the timesheet (${TASK_SUBJECT}); edit this task?`
-        );
-        expect(response).toMatch('do you want to edit the subject');
-        expect(response).toMatch('do you want to edit the description');
-        expect(response).toMatch('do you want to edit the notes');
+        expect(response).toMatch(`One task found: ${TASK_SUBJECT}`);
+        expect(response).toMatch('Edit this task?');
+        expect(response).toMatch('Do you want to edit the subject?');
+        expect(response).toMatch('Do you want to edit the description?');
+        expect(response).toMatch('Do you want to edit the notes?');
         const newSubject = `${TASK_SUBJECT}subject`;
         expectTaskEqualsTo(testFilePath, { subject: newSubject }, newSubject);
       });
@@ -1029,22 +1035,20 @@ describe('correct functioning', () => {
       test('editing of the description works correctly', async () => {
         const response = await execute(
           `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js edit`,
-          ['Y\n', 'n\n', 'Y\n', 'description', 'n\n'],
+          ['y\n', 'n\n', 'y\n', 'description', 'n\n'],
           {
             ...process.env,
             FORCE_COLOR: '0',
             EDITOR: editorPath,
           },
-          5000,
           true,
-          ['edit description of task']
+          ['Edit description of task']
         );
-        expect(response).toMatch(
-          `there is one task on the timesheet (${TASK_SUBJECT}); edit this task?`
-        );
-        expect(response).toMatch('do you want to edit the subject');
-        expect(response).toMatch('do you want to edit the description');
-        expect(response).toMatch('do you want to edit the notes');
+        expect(response).toMatch(`One task found: ${TASK_SUBJECT}`);
+        expect(response).toMatch('Edit this task?');
+        expect(response).toMatch('Do you want to edit the subject?');
+        expect(response).toMatch('Do you want to edit the description?');
+        expect(response).toMatch('Do you want to edit the notes?');
         expectTaskEqualsTo(testFilePath, {
           subject: TASK_SUBJECT,
           description: 'description',
@@ -1054,22 +1058,20 @@ describe('correct functioning', () => {
       test('editing of the notes works correctly', async () => {
         const response = await execute(
           `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js edit`,
-          ['Y\n', 'n\n', 'n\n', 'Y\n', 'notes'],
+          ['y\n', 'n\n', 'n\n', 'y\n', 'notes'],
           {
             ...process.env,
             FORCE_COLOR: '0',
             EDITOR: editorPath,
           },
-          5000,
           true,
-          ['edit notes of task']
+          ['Edit notes of task']
         );
-        expect(response).toMatch(
-          `there is one task on the timesheet (${TASK_SUBJECT}); edit this task?`
-        );
-        expect(response).toMatch('do you want to edit the subject');
-        expect(response).toMatch('do you want to edit the description');
-        expect(response).toMatch('do you want to edit the notes');
+        expect(response).toMatch(`One task found: ${TASK_SUBJECT}`);
+        expect(response).toMatch('Edit this task?');
+        expect(response).toMatch('Do you want to edit the subject?');
+        expect(response).toMatch('Do you want to edit the description?');
+        expect(response).toMatch('Do you want to edit the notes?');
         expectTaskEqualsTo(testFilePath, {
           subject: TASK_SUBJECT,
           notes: 'notes',
@@ -1079,26 +1081,25 @@ describe('correct functioning', () => {
       test('editing every field works correctly', async () => {
         const response = await execute(
           `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js edit`,
-          ['Y\n', 'Y\n', 'subject', 'Y\n', 'description', 'Y\n', 'notes'],
+          ['y\n', 'y\n', 'subject', 'y\n', 'description', 'y\n', 'notes'],
           {
             ...process.env,
             FORCE_COLOR: '0',
             EDITOR: editorPath,
           },
-          5000,
           true,
           [
-            'edit subject of task',
-            'edit description of task',
-            'edit notes of task',
-          ]
+            'Edit subject of task',
+            'Edit description of task',
+            'Edit notes of task',
+          ],
+          10000
         );
-        expect(response).toMatch(
-          `there is one task on the timesheet (${TASK_SUBJECT}); edit this task?`
-        );
-        expect(response).toMatch('do you want to edit the subject');
-        expect(response).toMatch('do you want to edit the description');
-        expect(response).toMatch('do you want to edit the notes');
+        expect(response).toMatch(`One task found: ${TASK_SUBJECT}`);
+        expect(response).toMatch('Edit this task?');
+        expect(response).toMatch('Do you want to edit the subject?');
+        expect(response).toMatch('Do you want to edit the description?');
+        expect(response).toMatch('Do you want to edit the notes?');
         const newSubject = `${TASK_SUBJECT}subject`;
         expectTaskEqualsTo(
           testFilePath,
@@ -1133,9 +1134,8 @@ describe('correct functioning', () => {
             env: { ...process.env, FORCE_COLOR: '0' },
           }
         );
-        expect(response).toMatch(
-          'there are more than one task on the timesheet; select the task to edit:'
-        );
+        expect(response).toMatch('There are 2 tasks on the timesheet.');
+        expect(response).toMatch('Select the task to edit:');
       });
 
       test('does not proceed when user selects option none', async () => {
@@ -1148,10 +1148,9 @@ describe('correct functioning', () => {
             EDITOR: editorPath,
           }
         );
-        expect(response).toMatch(
-          'there are more than one task on the timesheet; select the task to edit:'
-        );
-        expect(response).toMatch('nothing to edit');
+        expect(response).toMatch('There are 2 tasks on the timesheet.');
+        expect(response).toMatch('Select the task to edit:');
+        expect(response).toMatch('Nothing to edit.');
         expectTaskEqualsTo(testFilePath, testTasks[0], 'first task');
         expectTaskEqualsTo(testFilePath, testTasks[1], 'second task');
       });
@@ -1161,13 +1160,11 @@ describe('correct functioning', () => {
           `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js edit`,
           ['y\n', 'n\n', 'n\n', 'n\n'],
           { ...process.env, FORCE_COLOR: '0' },
-          5000,
           true
         );
-        expect(response).toMatch(
-          'there are more than one task on the timesheet; select the task to edit:'
-        );
-        expect(response).toMatch('do you want to edit the subject');
+        expect(response).toMatch('There are 2 tasks on the timesheet.');
+        expect(response).toMatch('Select the task to edit:');
+        expect(response).toMatch('Do you want to edit the subject?');
       });
     });
   });

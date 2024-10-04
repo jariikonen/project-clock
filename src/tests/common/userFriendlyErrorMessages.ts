@@ -162,7 +162,7 @@ export async function forceStopped(
     const e = err as Error;
     error = e.message;
   }
-  expect(error).toMatch('exiting; user force closed the process');
+  expect(error).toMatch('Exiting; user force closed the process.');
   expect(error).not.toMatch('throw');
   expect(error).not.toMatch('ProjectClockError');
 }

@@ -2,22 +2,19 @@ import { Task } from '../types/ProjectClockData';
 import promptToConfirm from './promptToConfirm';
 import ProjectClockError from './ProjectClockError';
 import promptToSelectTask from './promptToSelectTask';
-
-function exitWithNothingToDo(verb: string) {
-  console.log(`nothing to ${verb}`);
-  process.exit(0);
-}
+import { outputMessage, sideHeadingText } from './outputFormatting';
+import capitalize from './capitalize';
+import exitWithNothingToDo from './exitWithNothingToDo';
 
 function formMessage(tasks: Task[], adjective: string, verb: string): string {
-  const adjectiveToUse = adjective ? `${adjective} ` : '';
   if (tasks.length === 1) {
-    return `there is one ${adjectiveToUse}task on the timesheet (${tasks[0].subject}); ${verb} this task?`;
+    return `${capitalize(verb)} this task?`;
   }
   if (tasks.length > 1) {
-    return `there are more than one ${adjectiveToUse}task on the timesheet; select the task to ${verb}:`;
+    return `Select the task to ${verb}:`;
   }
   throw new ProjectClockError(
-    'internal error: promptForTask() must not be called with an empty tasks array'
+    'Internal error: promptForTask() must not be called with an empty tasks array.'
   );
 }
 
@@ -44,14 +41,29 @@ export default async function promptToConfirmOrSelectTask(
   verb: string,
   message?: string
 ): Promise<Task> {
-  const messageToUse = message ?? formMessage(tasks, adjective, verb);
+  const adjectiveToUse = adjective ? `${adjective} ` : '';
+  const messageToUse = message ?? formMessage(tasks, adjectiveToUse, verb);
   if (tasks.length === 1) {
+    const description = sideHeadingText(
+      `One ${adjectiveToUse}task found`,
+      tasks[0].subject,
+      process.stdout.columns,
+      false,
+      1,
+      0,
+      false,
+      { modifiers: ['bold'] }
+    );
+    outputMessage(description);
     if (await promptToConfirm(messageToUse)) {
       return tasks[0];
     }
     exitWithNothingToDo(verb);
   }
   if (tasks.length > 1) {
+    outputMessage(
+      `There are ${tasks.length} ${adjectiveToUse}tasks on the timesheet.`
+    );
     const selectedTask = await promptToSelectTask(tasks, messageToUse);
     if (selectedTask) {
       return selectedTask;
@@ -59,6 +71,6 @@ export default async function promptToConfirmOrSelectTask(
     exitWithNothingToDo(verb);
   }
   throw new ProjectClockError(
-    'internal error: promptForTask() must not be called with an empty tasks array'
+    'Internal error: promptForTask() must not be called with an empty tasks array.'
   );
 }

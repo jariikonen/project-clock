@@ -1,6 +1,11 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import child_process from 'child_process';
 import { writeFileSync } from 'fs';
+import prettyAnsi from 'pretty-ansi';
+import {
+  stripPrettifiedColorAndModifiers,
+  visibleNewline,
+} from './ansiCharacters';
 
 export const DOWN = '\x1B\x5B\x42';
 export const UP = '\x1B\x5B\x41';
@@ -11,21 +16,6 @@ function writeToFile(output: string, path: string) {
   if (path) {
     writeFileSync(path, output, { flag: 'a' });
   }
-}
-
-function stripAnsi(data: string): string {
-  return data.replace(
-    /[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g, // eslint-disable-line no-control-regex
-    ''
-  );
-}
-
-function getPrompt(data: string): string {
-  const trimmedData = data.slice(data.indexOf('?'));
-  const endIndex = trimmedData.lastIndexOf('?')
-    ? trimmedData.lastIndexOf('?')
-    : trimmedData.lastIndexOf(':');
-  return data.slice(data.indexOf('?') + 2, endIndex);
 }
 
 function errorHandler(
@@ -40,57 +30,67 @@ function errorHandler(
 
 function passNextInput(
   proc: child_process.ChildProcess,
-  inputs: string[] | undefined,
+  inputs: string[],
   step: number,
   reject: (reason?: any) => void, // eslint-disable-line @typescript-eslint/no-explicit-any
   output: string,
   debugMessage: string,
   debugFilePath: string
 ) {
-  if (inputs?.[step]) {
-    writeToFile(debugMessage, debugFilePath);
-    // Process can be stopped using any of the values in SIGINT_VALUES as an
-    // input. This does not result in a graceful exit, but instead returns
-    // an error code, which must be noted when handling the result.
-    if (SIGINT_VALUES.includes(inputs[step])) {
-      writeToFile('>SIGINT: proc.kill()<\n', debugFilePath);
-      proc.kill();
-    } else {
-      proc.stdin?.write(inputs[step], (error) =>
-        errorHandler(error, output, reject)
-      );
-    }
-    return step + 1;
+  writeToFile(debugMessage, debugFilePath);
+  // Process can be stopped using any of the values in SIGINT_VALUES as an
+  // input. This does not result in a graceful exit, but instead returns
+  // an error code, which must be noted when handling the result.
+  if (SIGINT_VALUES.includes(inputs[step])) {
+    writeToFile('>SIGINT: proc.kill()<\n', debugFilePath);
+    proc.kill();
+  } else {
+    proc.stdin?.write(inputs[step], (error) =>
+      errorHandler(error, output, reject)
+    );
   }
-  return step;
+  return step + 1;
 }
 
 function writeToEditor(
   dataStr: string,
-  inputs: string[] | undefined,
+  inputs: string[],
   step: number,
   proc: child_process.ChildProcess,
   reject: (reason?: any) => void, // eslint-disable-line @typescript-eslint/no-explicit-any
   output: string,
   debugFilePath: string
 ): [editor: boolean, breakHere: boolean, step: number] {
-  if (dataStr === 'finished\n') {
+  if (dataStr === 'finished<newline>') {
     return [false, false, step];
   }
   if (dataStr.includes(`received ${inputs?.[step - 1]}`)) {
     return [true, true, step];
   }
   let stepToUse = step;
-  stepToUse = passNextInput(
-    proc,
-    inputs,
-    step,
-    reject,
-    output,
-    `>${inputs?.[step]}< dataStr(${dataStr})\n`,
-    debugFilePath
-  );
+  if (inputs?.[step]) {
+    stepToUse = passNextInput(
+      proc,
+      inputs,
+      step,
+      reject,
+      output,
+      `>INPUT: ${visibleNewline(inputs?.[step])}< dataStr(${dataStr})\n`,
+      debugFilePath
+    );
+  }
   return [true, true, stepToUse];
+}
+
+function parseNewPrompt(dataStr: string, lastPrompt: string) {
+  const cleanedDataStr = stripPrettifiedColorAndModifiers(dataStr);
+  const possiblePrompts = cleanedDataStr.match(
+    /\?(\s[A-Za-z();,'"-]+)+(\?|:)/g
+  );
+  const possibleNewPrompts = lastPrompt
+    ? possiblePrompts?.filter((prompt) => !prompt.includes(lastPrompt))
+    : possiblePrompts;
+  return possibleNewPrompts ? possibleNewPrompts?.[0]?.slice(2, -1) : '';
 }
 
 /**
@@ -123,9 +123,9 @@ export default async function execute(
   command: string,
   inputs?: string[],
   env = process.env,
-  timeout = 5000,
   onlyPrompts = false,
   skipPrompts: string[] = [],
+  timeout = 5000,
   debugFilePath = ''
 ): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -142,9 +142,10 @@ export default async function execute(
     let breakHere = false;
 
     proc.stdout?.on('data', (data: string) => {
-      const dataStr = stripAnsi(data);
+      const dataStr = visibleNewline(prettyAnsi(data));
+      output += data;
 
-      if (dataStr === 'ready\n') {
+      if (data === 'ready\n') {
         writeToFile(`>IN EDITOR< dataStr(${dataStr})\n`, debugFilePath);
         editor = true;
       }
@@ -156,8 +157,7 @@ export default async function execute(
       }
 
       // in mockEditor
-      if (onlyPrompts && editor) {
-        output += dataStr;
+      if (onlyPrompts && editor && inputs) {
         [editor, breakHere, step] = writeToEditor(
           dataStr,
           inputs,
@@ -173,9 +173,10 @@ export default async function execute(
       }
 
       // skip irrelevant outputs
+      const newPrompt = parseNewPrompt(dataStr, lastPrompt);
       if (
         onlyPrompts &&
-        (!dataStr.match('\\? ') || (!beginning && dataStr.includes(lastPrompt)))
+        (!newPrompt || (!beginning && dataStr.includes(lastPrompt)))
       ) {
         writeToFile(
           `>SKIP IRRELEVANT OUTPUT< dataStr(${dataStr}) lastPrompt(${lastPrompt})\n`,
@@ -186,7 +187,7 @@ export default async function execute(
 
       // skip real prompts that are marked to be skipped with skipPrompts argument
       if (skipPrompts.some((prompt) => dataStr.includes(prompt))) {
-        lastPrompt = getPrompt(dataStr);
+        lastPrompt = parseNewPrompt(dataStr, lastPrompt);
         writeToFile(
           `>SKIP A PROMPT MARKED TO BE SKIPPED< (${dataStr}) lastPrompt(${lastPrompt})\n`,
           debugFilePath
@@ -195,19 +196,23 @@ export default async function execute(
       }
 
       // a new real prompt that is answered with a string from inputs
-      writeToFile(`>${dataStr}< lastPrompt(${lastPrompt})\n`, debugFilePath);
-      beginning = false;
-      lastPrompt = getPrompt(dataStr);
-      output += data;
-      step = passNextInput(
-        proc,
-        inputs,
-        step,
-        reject,
-        output,
-        `>${inputs?.[step]}<\n`,
+      writeToFile(
+        `>NEW PROMPT: ${newPrompt}< lastPrompt(${lastPrompt}) fullDataStr(${dataStr})\n`,
         debugFilePath
       );
+      beginning = false;
+      lastPrompt = newPrompt;
+      if (inputs?.[step]) {
+        step = passNextInput(
+          proc,
+          inputs,
+          step,
+          reject,
+          output,
+          `>INPUT: ${visibleNewline(inputs?.[step])}<\n`,
+          debugFilePath
+        );
+      }
     });
 
     proc.on('close', () => {

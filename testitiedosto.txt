@@ -1,0 +1,31 @@
+>NEW PROMPT: Enter subject for the new task (empty to exit without creating a task)< lastPrompt() fullDataStr(? Enter subject for the new task (empty to exit without creating a task):<newline><moveCursorToColumn75><newline>)
+>INPUT: <newline><
+>NEW PROMPT: undefined< lastPrompt(Enter subject for the new task (empty to exit without creating a task)) fullDataStr(<eraseLine><newline><moveCursorToColumn1><newline>? Enter subject for the new task (empty to exit without creating a task):<newline><moveCursorToColumn75><newline>)
+>NEW PROMPT: Enter subject for the new task (empty to exit without creating a task)< lastPrompt(undefined) fullDataStr(<eraseLine><newline><moveCursorToColumn1><newline>? Enter subject for the new task (empty to exit without creating a task):<newline><moveCursorToColumn75><newline>)
+>NEW PROMPT: < lastPrompt(Enter subject for the new task (empty to exit without creating a task)) fullDataStr(<newline><showCursor><newline>)
+>close<
+>NEW PROMPT: Enter subject for the new task (empty to exit without creating a task)< lastPrompt() fullDataStr(? Enter subject for the new task (empty to exit without creating a task):<newline><moveCursorToColumn75><newline>)
+>INPUT: <newline><
+>SKIP IRRELEVANT OUTPUT< dataStr(<eraseLine><newline><moveCursorToColumn1><newline>? Enter subject for the new task (empty to exit without creating a task):<newline><moveCursorToColumn75><newline>) lastPrompt(Enter subject for the new task (empty to exit without creating a task))
+>SKIP IRRELEVANT OUTPUT< dataStr(<eraseLine><newline><moveCursorToColumn1><newline>? Enter subject for the new task (empty to exit without creating a task):<newline><moveCursorToColumn75><newline>) lastPrompt(Enter subject for the new task (empty to exit without creating a task))
+>SKIP IRRELEVANT OUTPUT< dataStr(<newline><showCursor><newline>) lastPrompt(Enter subject for the new task (empty to exit without creating a task))
+>close<
+>NEW PROMPT: Enter subject for the new task (empty to exit without creating a task)< lastPrompt() fullDataStr(? Enter subject for the new task (empty to exit without creating a task):<newline><moveCursorToColumn75><newline>)
+>INPUT: <newline><
+>SKIP IRRELEVANT OUTPUT< dataStr(<eraseLine><newline><moveCursorToColumn1><newline>? Enter subject for the new task (empty to exit without creating a task):<newline><moveCursorToColumn75><newline>) lastPrompt(Enter subject for the new task (empty to exit without creating a task))
+>SKIP IRRELEVANT OUTPUT< dataStr(<eraseLine><newline><moveCursorToColumn1><newline>? Enter subject for the new task (empty to exit without creating a task):<newline><moveCursorToColumn75><newline>) lastPrompt(Enter subject for the new task (empty to exit without creating a task))
+>SKIP IRRELEVANT OUTPUT< dataStr(<newline><showCursor><newline>) lastPrompt(Enter subject for the new task (empty to exit without creating a task))
+>close<
+>NEW PROMPT: Enter subject for the new task (empty to exit without creating a task)< lastPrompt() fullDataStr(? Enter subject for the new task (empty to exit without creating a task):<newline><moveCursorToColumn75><newline>)
+>INPUT: <newline><
+>SKIP IRRELEVANT OUTPUT< dataStr(<eraseLine><newline><moveCursorToColumn1><newline>? Enter subject for the new task (empty to exit without creating a task):<newline><moveCursorToColumn75><newline>) lastPrompt(Enter subject for the new task (empty to exit without creating a task))
+>SKIP IRRELEVANT OUTPUT< dataStr(<eraseLine><newline><moveCursorToColumn1><newline>? Enter subject for the new task (empty to exit without creating a task):<newline><moveCursorToColumn75><newline>) lastPrompt(Enter subject for the new task (empty to exit without creating a task))
+>SKIP IRRELEVANT OUTPUT< dataStr(<newline><showCursor><newline>) lastPrompt(Enter subject for the new task (empty to exit without creating a task))
+>close<
+>NEW PROMPT: Enter subject for the new task (empty to exit without creating a task)< lastPrompt() fullDataStr(? Enter subject for the new task (empty to exit without creating a task):<newline><moveCursorToColumn75><newline>)
+>INPUT: <newline><
+>SKIP IRRELEVANT OUTPUT< dataStr(<eraseLine><newline><moveCursorToColumn1><newline>? Enter subject for the new task (empty to exit without creating a task):<newline><moveCursorToColumn75><newline>) lastPrompt(Enter subject for the new task (empty to exit without creating a task))
+>SKIP IRRELEVANT OUTPUT< dataStr(<eraseLine><newline><moveCursorToColumn1><newline>? Enter subject for the new task (empty to exit without creating a task):<newline><moveCursorToColumn75><newline>) lastPrompt(Enter subject for the new task (empty to exit without creating a task))
+>SKIP IRRELEVANT OUTPUT< dataStr(<newline><showCursor><newline>) lastPrompt(Enter subject for the new task (empty to exit without creating a task))
+>SKIP IRRELEVANT OUTPUT< dataStr(Exiting; no task to create.<newline>) lastPrompt(Enter subject for the new task (empty to exit without creating a task))
+>close<

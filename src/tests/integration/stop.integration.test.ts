@@ -125,6 +125,7 @@ describe('Stopping the clock', () => {
       try {
         execSync(`cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js stop`, {
           stdio: 'pipe',
+          env: { ...process.env, FORCE_COLOR: '0' },
         });
       } catch (err) {
         const e = err as Error;
@@ -150,6 +151,7 @@ describe('Stopping the clock', () => {
       try {
         execSync(`cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js stop`, {
           stdio: 'pipe',
+          env: { ...process.env, FORCE_COLOR: '0' },
         });
       } catch (err) {
         const e = err as Error;
@@ -160,7 +162,7 @@ describe('Stopping the clock', () => {
       expect(error).not.toMatch('ProjectClockError');
     });
 
-    test('asks user whether the only active (started but not stopped) task is to be stopped', () => {
+    test('asks user whether the only active (started but not stopped) task is to be stopped', async () => {
       // initialize test environment
       createTestFile(
         {
@@ -181,13 +183,14 @@ describe('Stopping the clock', () => {
       );
 
       // test
-      const response = execSync(
+      const response = await execute(
         `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js stop`,
-        { encoding: 'utf8', stdio: 'pipe' }
+        ['n\n'],
+        { ...process.env, FORCE_COLOR: '0' },
+        true
       );
-      expect(response).toMatch(
-        `there is one active task on the timesheet (${TASK_SUBJECT}); stop this`
-      );
+      expect(response).toMatch(`One active task found: ${TASK_SUBJECT}`);
+      expect(response).toMatch('Stop this task?');
     });
 
     test('stops the only active task if user answers yes', async () => {
@@ -213,11 +216,12 @@ describe('Stopping the clock', () => {
       // test
       const response = await execute(
         `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js stop`,
-        ['y\n']
+        ['y\n'],
+        { ...process.env, FORCE_COLOR: '0' },
+        true
       );
-      expect(response).toMatch(
-        `there is one active task on the timesheet (${TASK_SUBJECT}); stop this`
-      );
+      expect(response).toMatch(`One active task found: ${TASK_SUBJECT}`);
+      expect(response).toMatch('Stop this task?');
       expectTaskIsStopped();
     });
 
@@ -244,11 +248,12 @@ describe('Stopping the clock', () => {
       // test
       const response = await execute(
         `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js stop`,
-        ['n\n']
+        ['n\n'],
+        { ...process.env, FORCE_COLOR: '0' },
+        true
       );
-      expect(response).toMatch(
-        `there is one active task on the timesheet (${TASK_SUBJECT}); stop this`
-      );
+      expect(response).toMatch(`One active task found: ${TASK_SUBJECT}`);
+      expect(response).toMatch('Stop this task?');
       expectTaskIsNotStopped();
     });
 
@@ -281,14 +286,13 @@ describe('Stopping the clock', () => {
       // test
       const response = execSync(
         `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js stop`,
-        { encoding: 'utf8' }
+        { encoding: 'utf8', env: { ...process.env, FORCE_COLOR: '0' } }
       );
-      expect(response).toMatch(
-        'there are more than one active task on the timesheet; select the task to'
-      );
+      expect(response).toMatch('There are 3 active tasks on the timesheet.');
+      expect(response).toMatch('Select the task to stop:');
     });
 
-    test('there is correct amount of options when the user is asked which of the many active tasks found to stop', () => {
+    test('there is correct number of options when the user is asked which of the many active tasks found to stop', () => {
       // initialize test environment
       createTestFile(
         {
@@ -344,11 +348,10 @@ describe('Stopping the clock', () => {
       // test
       const response = execSync(
         `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js stop`,
-        { encoding: 'utf8' }
+        { encoding: 'utf8', env: { ...process.env, FORCE_COLOR: '0' } }
       );
-      expect(response).toMatch(
-        'there are more than one active task on the timesheet; select the task to'
-      );
+      expect(response).toMatch('There are 5 active tasks on the timesheet.');
+      expect(response).toMatch('Select the task to stop:');
       expect(response).toMatch('first stoppable task');
       expect(response).toMatch('second stoppable task');
       expect(response).toMatch('third stoppable task');
@@ -360,7 +363,7 @@ describe('Stopping the clock', () => {
       expect(response).not.toMatch('third unstoppable task');
     });
 
-    test('stops correct task when the first of many active tasks is selected', async () => {
+    test('stops correct task when first of many active tasks is selected', async () => {
       // initialize test environment
       createTestFile(
         {
@@ -382,11 +385,12 @@ describe('Stopping the clock', () => {
       // test
       const response = await execute(
         `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js stop`,
-        ['y\n']
+        ['\n'],
+        { ...process.env, FORCE_COLOR: '0' },
+        true
       );
-      expect(response).toMatch(
-        'there are more than one active task on the timesheet; select the task to'
-      );
+      expect(response).toMatch('There are 2 active tasks on the timesheet.');
+      expect(response).toMatch('Select the task to stop:');
       expectTaskIsStopped('first active task');
     });
 
@@ -419,10 +423,9 @@ describe('Stopping the clock', () => {
         `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js stop`,
         [`${DOWN}${DOWN}\n`]
       );
-      expect(response).toMatch(
-        'there are more than one active task on the timesheet; select the task to'
-      );
-      expect(response).toMatch('nothing to stop');
+      expect(response).toMatch('There are 2 active tasks on the timesheet.');
+      expect(response).toMatch('Select the task to stop:');
+      expect(response).toMatch('Nothing to stop');
       expectTaskIsNotStopped(TASK_SUBJECT);
       expectTaskIsNotStopped('other unstarted task');
     });
@@ -450,9 +453,7 @@ describe('Stopping the clock', () => {
       try {
         execSync(
           `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js stop "${TASK_SUBJECT}"`,
-          {
-            stdio: 'pipe',
-          }
+          { stdio: 'pipe', env: { ...process.env, FORCE_COLOR: '0' } }
         );
       } catch (err) {
         const e = err as Error;
@@ -486,11 +487,12 @@ describe('Stopping the clock', () => {
       // test
       const response = execSync(
         `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js stop "${TASK_SUBJECT}"`,
-        { encoding: 'utf8' }
+        { encoding: 'utf8', env: { ...process.env, FORCE_COLOR: '0' } }
       );
       expect(response).toMatch(
-        `there is one matching active task on the timesheet (${TASK_SUBJECT}); stop this`
+        `One matching active task found: ${TASK_SUBJECT}`
       );
+      expect(response).toMatch('Stop this task?');
     });
 
     test('stops the correct task when the user answers yes', async () => {
@@ -516,11 +518,14 @@ describe('Stopping the clock', () => {
       // test
       const response = await execute(
         `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js stop "${TASK_SUBJECT}"`,
-        ['y\n']
+        ['y\n'],
+        { ...process.env, FORCE_COLOR: '0' },
+        true
       );
       expect(response).toMatch(
-        `there is one matching active task on the timesheet (${TASK_SUBJECT}); stop this`
+        `One matching active task found: ${TASK_SUBJECT}`
       );
+      expect(response).toMatch('Stop this task?');
       expectTaskIsStopped();
     });
 
@@ -547,11 +552,14 @@ describe('Stopping the clock', () => {
       // test
       const response = await execute(
         `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js stop "${TASK_SUBJECT}"`,
-        ['n\n']
+        ['n\n'],
+        { ...process.env, FORCE_COLOR: '0' },
+        true
       );
       expect(response).toMatch(
-        `there is one matching active task on the timesheet (${TASK_SUBJECT}); stop this`
+        `One matching active task found: ${TASK_SUBJECT}`
       );
+      expect(response).toMatch('Stop this task?');
       expectTaskIsNotStopped();
     });
 
@@ -583,11 +591,12 @@ describe('Stopping the clock', () => {
       const matcher = 'active task';
       const response = execSync(
         `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js stop "${matcher}"`,
-        { encoding: 'utf8' }
+        { encoding: 'utf8', env: { ...process.env, FORCE_COLOR: '0' } }
       );
       expect(response).toMatch(
-        'there are more than one matching active task on the timesheet; select the'
+        'There are 2 matching active tasks on the timesheet.'
       );
+      expect(response).toMatch('Select the task to stop:');
     });
 
     test('stops correct task when first of many matching active tasks is selected', async () => {
@@ -618,11 +627,14 @@ describe('Stopping the clock', () => {
       const matcher = 'active task';
       const response = await execute(
         `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js stop "${matcher}"`,
-        ['\n']
+        ['\n'],
+        { ...process.env, FORCE_COLOR: '0' },
+        true
       );
       expect(response).toMatch(
-        'there are more than one matching active task on the timesheet; select the'
+        'There are 2 matching active tasks on the timesheet.'
       );
+      expect(response).toMatch('Select the task to stop:');
       expectTaskIsStopped('first active task');
     });
 
@@ -654,11 +666,14 @@ describe('Stopping the clock', () => {
       const matcher = 'active task';
       const response = await execute(
         `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js stop "${matcher}"`,
-        [`${DOWN}${DOWN}\n`]
+        [`${DOWN}${DOWN}\n`],
+        { ...process.env, FORCE_COLOR: '0' },
+        true
       );
       expect(response).toMatch(
-        'there are more than one matching active task on the timesheet; select the'
+        'There are 2 matching active tasks on the timesheet.'
       );
+      expect(response).toMatch('Select the task to stop:');
       expectTaskIsNotStopped('first active task');
       expectTaskIsNotStopped('second active task');
     });
@@ -684,7 +699,11 @@ describe('Stopping the clock', () => {
       try {
         execSync(
           `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js stop "${TASK_SUBJECT}"`,
-          { encoding: 'utf8', stdio: 'pipe' }
+          {
+            encoding: 'utf8',
+            stdio: 'pipe',
+            env: { ...process.env, FORCE_COLOR: '0' },
+          }
         );
       } catch (err) {
         const e = err as Error;
@@ -716,7 +735,11 @@ describe('Stopping the clock', () => {
       try {
         execSync(
           `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js stop "${TASK_SUBJECT}"`,
-          { encoding: 'utf8', stdio: 'pipe' }
+          {
+            encoding: 'utf8',
+            stdio: 'pipe',
+            env: { ...process.env, FORCE_COLOR: '0' },
+          }
         );
       } catch (err) {
         const e = err as Error;

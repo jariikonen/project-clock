@@ -143,6 +143,7 @@ describe('Resume command', () => {
       try {
         execSync(`cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js resume`, {
           stdio: 'pipe',
+          env: { ...process.env, FORCE_COLOR: '0' },
         });
       } catch (err) {
         const e = err as Error;
@@ -168,6 +169,7 @@ describe('Resume command', () => {
       try {
         execSync(`cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js resume`, {
           stdio: 'pipe',
+          env: { ...process.env, FORCE_COLOR: '0' },
         });
       } catch (err) {
         const e = err as Error;
@@ -178,7 +180,7 @@ describe('Resume command', () => {
       expect(error).not.toMatch('ProjectClockError');
     });
 
-    test('confirms from the user whether the only resumable task found is the one to resume', () => {
+    test('confirms from the user whether the only resumable task found is the one to resume', async () => {
       // initialize test environment
       createTestFile(
         {
@@ -195,13 +197,14 @@ describe('Resume command', () => {
       );
 
       // test
-      const response = execSync(
+      const response = await execute(
         `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js resume`,
-        { encoding: 'utf8', stdio: 'pipe' }
+        ['n\n'],
+        { ...process.env, FORCE_COLOR: '0' },
+        true
       );
-      expect(response).toMatch(
-        `there is one resumable task on the timesheet (${TASK_SUBJECT}); resume`
-      );
+      expect(response).toMatch(`One resumable task found: ${TASK_SUBJECT}`);
+      expect(response).toMatch('Resume this task?');
     });
 
     test('resumes the only resumable task found if the user answers yes', async () => {
@@ -223,11 +226,12 @@ describe('Resume command', () => {
       // test
       const response = await execute(
         `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js resume`,
-        ['Y\n']
+        ['Y\n'],
+        { ...process.env, FORCE_COLOR: '0' },
+        true
       );
-      expect(response).toMatch(
-        `there is one resumable task on the timesheet (${TASK_SUBJECT}); resume this`
-      );
+      expect(response).toMatch(`One resumable task found: ${TASK_SUBJECT}`);
+      expect(response).toMatch('Resume this task?');
       expectTaskIsResumed();
     });
 
@@ -251,11 +255,12 @@ describe('Resume command', () => {
       // test
       const response = await execute(
         `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js resume`,
-        ['Y\n']
+        ['Y\n'],
+        { ...process.env, FORCE_COLOR: '0' },
+        true
       );
-      expect(response).toMatch(
-        `there is one resumable task on the timesheet (${TASK_SUBJECT}); resume this`
-      );
+      expect(response).toMatch(`One resumable task found: ${TASK_SUBJECT}`);
+      expect(response).toMatch('Resume this task?');
       expectTaskIsResumed();
     });
 
@@ -278,11 +283,12 @@ describe('Resume command', () => {
       // test
       const response = await execute(
         `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js resume`,
-        ['Y\n']
+        ['Y\n'],
+        { ...process.env, FORCE_COLOR: '0' },
+        true
       );
-      expect(response).toMatch(
-        `there is one resumable task on the timesheet (${TASK_SUBJECT}); resume this`
-      );
+      expect(response).toMatch(`One resumable task found: ${TASK_SUBJECT}`);
+      expect(response).toMatch('Resume this task?');
       expectTaskIsResumed();
       const task = getTestTask(testFilePath);
       expect(task?.suspend).toBeDefined();
@@ -313,11 +319,12 @@ describe('Resume command', () => {
       // test
       const response = await execute(
         `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js resume`,
-        ['Y\n']
+        ['Y\n'],
+        { ...process.env, FORCE_COLOR: '0' },
+        true
       );
-      expect(response).toMatch(
-        `there is one resumable task on the timesheet (${TASK_SUBJECT}); resume this`
-      );
+      expect(response).toMatch(`One resumable task found: ${TASK_SUBJECT}`);
+      expect(response).toMatch('Resume this task?');
       expectTaskIsResumed();
       expectTaskMemberHasValue(testFilePath, 'suspend', [
         '2024-01-01T01:00:00.000Z',
@@ -346,11 +353,12 @@ describe('Resume command', () => {
       // test
       const response = await execute(
         `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js resume`,
-        ['n\n']
+        ['n\n'],
+        { ...process.env, FORCE_COLOR: '0' },
+        true
       );
-      expect(response).toMatch(
-        `there is one resumable task on the timesheet (${TASK_SUBJECT}); resume this`
-      );
+      expect(response).toMatch(`One resumable task found: ${TASK_SUBJECT}`);
+      expect(response).toMatch('Resume this task?');
       expectTaskEqualsTo(testFilePath, {
         subject: TASK_SUBJECT,
         begin: '2024-01-01T00:00:00.000Z',
@@ -371,14 +379,13 @@ describe('Resume command', () => {
       // test
       const response = execSync(
         `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js resume`,
-        { encoding: 'utf8' }
+        { encoding: 'utf8', env: { ...process.env, FORCE_COLOR: '0' } }
       );
-      expect(response).toMatch(
-        'there are more than one resumable task on the timesheet; select the task to'
-      );
+      expect(response).toMatch('There are 3 resumable tasks on the timesheet');
+      expect(response).toMatch('Select the task to resume:');
     });
 
-    test('there is correct amount of options when the user is asked which of the many tasks found to resume', () => {
+    test('there is correct number of options when the user is asked which of the many tasks found to resume', () => {
       // initialize test environment
       createTestFile(
         {
@@ -391,11 +398,10 @@ describe('Resume command', () => {
       // test
       const response = execSync(
         `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js resume`,
-        { encoding: 'utf8' }
+        { encoding: 'utf8', env: { ...process.env, FORCE_COLOR: '0' } }
       );
-      expect(response).toMatch(
-        'there are more than one resumable task on the timesheet; select the task to'
-      );
+      expect(response).toMatch('There are 3 resumable tasks on the timesheet.');
+      expect(response).toMatch('Select the task to resume:');
       expect(response).toMatch('first resumable task');
       expect(response).toMatch('second resumable task');
       expect(response).toMatch('third resumable task');
@@ -418,11 +424,12 @@ describe('Resume command', () => {
       // test
       const response = await execute(
         `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js resume`,
-        [`${DOWN}\n`]
+        [`${DOWN}\n`],
+        { ...process.env, FORCE_COLOR: '0' },
+        true
       );
-      expect(response).toMatch(
-        'there are more than one resumable task on the timesheet; select the task to'
-      );
+      expect(response).toMatch('There are 3 resumable tasks on the timesheet.');
+      expect(response).toMatch('Select the task to resume:');
       expectTaskIsResumed('second resumable task');
     });
 
@@ -439,12 +446,13 @@ describe('Resume command', () => {
       // test
       const response = await execute(
         `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js resume`,
-        [`${DOWN}${DOWN}${DOWN}\n`]
+        [`${DOWN}${DOWN}${DOWN}\n`],
+        { ...process.env, FORCE_COLOR: '0' },
+        true
       );
-      expect(response).toMatch(
-        'there are more than one resumable task on the timesheet; select the task to'
-      );
-      expect(response).toMatch('nothing to resume');
+      expect(response).toMatch('There are 3 resumable tasks on the timesheet.');
+      expect(response).toMatch('Select the task to resume:');
+      expect(response).toMatch('Nothing to resume');
       expectTaskEqualsTo(
         testFilePath,
         resumableTasks[0],
@@ -500,6 +508,7 @@ describe('Resume command', () => {
           `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js resume "${TASK_SUBJECT}"`,
           {
             stdio: 'pipe',
+            env: { ...process.env, FORCE_COLOR: '0' },
           }
         );
       } catch (err) {
@@ -535,6 +544,7 @@ describe('Resume command', () => {
           `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js resume "${TASK_SUBJECT}"`,
           {
             stdio: 'pipe',
+            env: { ...process.env, FORCE_COLOR: '0' },
           }
         );
       } catch (err) {
@@ -572,6 +582,7 @@ describe('Resume command', () => {
           `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js resume "${TASK_SUBJECT}"`,
           {
             stdio: 'pipe',
+            env: { ...process.env, FORCE_COLOR: '0' },
           }
         );
       } catch (err) {
@@ -604,11 +615,12 @@ describe('Resume command', () => {
       // test
       const response = execSync(
         `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js resume "${TASK_SUBJECT}"`,
-        { encoding: 'utf8' }
+        { encoding: 'utf8', env: { ...process.env, FORCE_COLOR: '0' } }
       );
       expect(response).toMatch(
-        `there is one matching resumable task on the timesheet (${TASK_SUBJECT}); resume`
+        `One matching resumable task found: ${TASK_SUBJECT}`
       );
+      expect(response).toMatch('Resume this task?');
     });
 
     test('resumes the correct task when a single matching resumable task is found and the user answers yes', async () => {
@@ -636,11 +648,14 @@ describe('Resume command', () => {
       // test
       const response = await execute(
         `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js resume "${TASK_SUBJECT}"`,
-        ['y\n']
+        ['y\n'],
+        { ...process.env, FORCE_COLOR: '0' },
+        true
       );
       expect(response).toMatch(
-        `there is one matching resumable task on the timesheet (${TASK_SUBJECT}); resume`
+        `One matching resumable task found: ${TASK_SUBJECT}`
       );
+      expect(response).toMatch('Resume this task?');
       expectTaskIsResumed();
     });
 
@@ -670,11 +685,14 @@ describe('Resume command', () => {
       // test
       const response = await execute(
         `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js resume "${TASK_SUBJECT}"`,
-        ['y\n']
+        ['y\n'],
+        { ...process.env, FORCE_COLOR: '0' },
+        true
       );
       expect(response).toMatch(
-        `there is one matching resumable task on the timesheet (${TASK_SUBJECT}); resume`
+        `One matching resumable task found: ${TASK_SUBJECT}`
       );
+      expect(response).toMatch('Resume this task?');
       expectTaskIsResumed();
     });
 
@@ -703,11 +721,14 @@ describe('Resume command', () => {
       // test
       const response = await execute(
         `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js resume "${TASK_SUBJECT}"`,
-        ['y\n']
+        ['y\n'],
+        { ...process.env, FORCE_COLOR: '0' },
+        true
       );
       expect(response).toMatch(
-        `there is one matching resumable task on the timesheet (${TASK_SUBJECT}); resume`
+        `One matching resumable task found: ${TASK_SUBJECT}`
       );
+      expect(response).toMatch('Resume this task?');
       expectTaskIsResumed();
       expectTaskMemberHasValue(testFilePath, 'suspend', [
         '2024-01-01T01:00:00.000Z',
@@ -745,11 +766,14 @@ describe('Resume command', () => {
       // test
       const response = await execute(
         `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js resume "${TASK_SUBJECT}"`,
-        ['y\n']
+        ['y\n'],
+        { ...process.env, FORCE_COLOR: '0' },
+        true
       );
       expect(response).toMatch(
-        `there is one matching resumable task on the timesheet (${TASK_SUBJECT}); resume`
+        `One matching resumable task found: ${TASK_SUBJECT}`
       );
+      expect(response).toMatch('Resume this task?');
       expectTaskIsResumed();
       expectTaskMemberHasValue(testFilePath, 'suspend', [
         '2024-01-01T01:00:00.000Z',
@@ -787,11 +811,14 @@ describe('Resume command', () => {
       // test
       const response = await execute(
         `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js resume "${TASK_SUBJECT}"`,
-        ['n\n']
+        ['n\n'],
+        { ...process.env, FORCE_COLOR: '0' },
+        true
       );
       expect(response).toMatch(
-        `there is one matching resumable task on the timesheet (${TASK_SUBJECT}); resume`
+        `One matching resumable task found: ${TASK_SUBJECT}`
       );
+      expect(response).toMatch('Resume this task?');
       expectTaskIsNotResumed();
     });
 
@@ -809,14 +836,15 @@ describe('Resume command', () => {
       const matcher = 'resumable task';
       const response = execSync(
         `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js resume "${matcher}"`,
-        { encoding: 'utf8' }
+        { encoding: 'utf8', env: { ...process.env, FORCE_COLOR: '0' } }
       );
       expect(response).toMatch(
-        'there are more than one matching resumable task on the timesheet; select'
+        'There are 3 matching resumable tasks on the timesheet.'
       );
+      expect(response).toMatch('Select the task to resume:');
     });
 
-    test('there is correct amount of options when the user is asked which of the many tasks found to resume', () => {
+    test('there is correct number of options when the user is asked which of the many tasks found to resume', () => {
       // initialize test environment
       createTestFile(
         {
@@ -830,11 +858,12 @@ describe('Resume command', () => {
       const matcher = 'resumable task';
       const response = execSync(
         `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js resume "${matcher}"`,
-        { encoding: 'utf8' }
+        { encoding: 'utf8', env: { ...process.env, FORCE_COLOR: '0' } }
       );
       expect(response).toMatch(
-        'there are more than one matching resumable task on the timesheet; select'
+        'There are 3 matching resumable tasks on the timesheet.'
       );
+      expect(response).toMatch('Select the task to resume:');
       expect(response).toMatch('first resumable task');
       expect(response).toMatch('second resumable task');
       expect(response).toMatch('third resumable task');
@@ -858,11 +887,14 @@ describe('Resume command', () => {
       const matcher = 'resumable task';
       const response = await execute(
         `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js resume "${matcher}"`,
-        [`${DOWN}${DOWN}\n`]
+        [`${DOWN}${DOWN}\n`],
+        { ...process.env, FORCE_COLOR: '0' },
+        true
       );
       expect(response).toMatch(
-        'there are more than one matching resumable task on the timesheet; select'
+        'There are 3 matching resumable tasks on the timesheet.'
       );
+      expect(response).toMatch('Select the task to resume:');
       expectTaskIsResumed('third resumable task');
     });
 
@@ -880,12 +912,15 @@ describe('Resume command', () => {
       const matcher = 'resumable task';
       const response = await execute(
         `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js resume "${matcher}"`,
-        [`${DOWN}${DOWN}${DOWN}\n`]
+        [`${DOWN}${DOWN}${DOWN}\n`],
+        { ...process.env, FORCE_COLOR: '0' },
+        true
       );
       expect(response).toMatch(
-        'there are more than one matching resumable task on the timesheet; select'
+        'There are 3 matching resumable tasks on the timesheet.'
       );
-      expect(response).toMatch('nothing to resume');
+      expect(response).toMatch('Select the task to resume:');
+      expect(response).toMatch('Nothing to resume');
       expectTaskIsNotResumed('first resumable task');
       expectTaskIsNotResumed('second resumable task');
       expectTaskIsNotResumed('third resumable task');
@@ -928,7 +963,11 @@ describe('Resume command', () => {
       try {
         execSync(
           `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js resume "${TASK_SUBJECT}"`,
-          { encoding: 'utf8', stdio: 'pipe' }
+          {
+            encoding: 'utf8',
+            stdio: 'pipe',
+            env: { ...process.env, FORCE_COLOR: '0' },
+          }
         );
       } catch (err) {
         const e = err as Error;
@@ -968,7 +1007,11 @@ describe('Resume command', () => {
       try {
         execSync(
           `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js resume "${TASK_SUBJECT}"`,
-          { encoding: 'utf8', stdio: 'pipe' }
+          {
+            encoding: 'utf8',
+            stdio: 'pipe',
+            env: { ...process.env, FORCE_COLOR: '0' },
+          }
         );
       } catch (err) {
         const e = err as Error;
@@ -1016,7 +1059,11 @@ describe('Resume command', () => {
       try {
         execSync(
           `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js resume "${TASK_SUBJECT}"`,
-          { encoding: 'utf8', stdio: 'pipe' }
+          {
+            encoding: 'utf8',
+            stdio: 'pipe',
+            env: { ...process.env, FORCE_COLOR: '0' },
+          }
         );
       } catch (err) {
         const e = err as Error;

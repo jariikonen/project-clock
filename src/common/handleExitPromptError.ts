@@ -1,4 +1,5 @@
 import { ExitPromptError } from '@inquirer/core';
+import { outputSuccess } from './outputFormatting';
 
 /**
  * Handles the ExitPromptError from inquirer by displaying a message telling
@@ -11,6 +12,6 @@ export default function handleExitPrompError(error: unknown) {
   if (!(error instanceof ExitPromptError)) {
     throw error;
   }
-  console.log('exiting; user force closed the process');
+  outputSuccess('Exiting; user force closed the process.');
   process.exit(0);
 }

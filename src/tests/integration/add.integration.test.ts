@@ -90,9 +90,10 @@ describe('Correct functioning', () => {
       {
         encoding: 'utf8',
         stdio: 'pipe',
+        env: { ...process.env, FORCE_COLOR: '0' },
       }
     );
-    expect(response).toMatch(`created a new task '${TASK_SUBJECT}'`);
+    expect(response).toMatch(`Created a new task '${TASK_SUBJECT}'.`);
     expectTaskIsCreated();
   });
 
@@ -102,34 +103,38 @@ describe('Correct functioning', () => {
       {
         encoding: 'utf8',
         stdio: 'pipe',
+        env: { ...process.env, FORCE_COLOR: '0' },
       }
     );
     expect(response).toMatch(
-      'enter subject for the new task (empty to exit without creating a task):'
+      'Enter subject for the new task (empty to exit without creating a task):'
     );
   });
 
   test('"Add" command creates task correctly when the task subject is entered through the prompt', async () => {
     const response = await execute(
       `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js add`,
-      [`${TASK_SUBJECT}\n`]
+      [`${TASK_SUBJECT}\n`],
+      { ...process.env, FORCE_COLOR: '0' }
     );
     expect(response).toMatch(
-      'enter subject for the new task (empty to exit without creating a task):'
+      'Enter subject for the new task (empty to exit without creating a task):'
     );
-    expect(response).toMatch(`created a new task '${TASK_SUBJECT}'`);
+    expect(response).toMatch(`Created a new task '${TASK_SUBJECT}'`);
     expectTaskIsCreated();
   });
 
   test('"Add" command does not create any tasks if the user enters an empty subject when prompted', async () => {
     const response = await execute(
       `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js add`,
-      ['\n']
+      ['\n'],
+      { ...process.env, FORCE_COLOR: '0' },
+      true
     );
     expect(response).toMatch(
-      'enter subject for the new task (empty to exit without creating a task):'
+      'Enter subject for the new task (empty to exit without creating a task):'
     );
-    expect(response).toMatch('exiting; no task to create');
+    expect(response).toMatch('Exiting; no task to create.');
     expectTaskIsNotCreated();
   });
 });

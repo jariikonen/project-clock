@@ -9,6 +9,7 @@ import {
 import { createTestFile } from '../common/testFile';
 import { createTestDir, removeTestDir } from '../common/testDirectory';
 import { getTestPaths } from '../common/testPaths';
+import execute from '../common/childProcessExecutor';
 
 const testSuiteName = 'inquirerColor';
 const { testDirPath, subdirPath, testFilePath } = getTestPaths(testSuiteName);
@@ -52,7 +53,7 @@ describe('Functions using the inquirer library are not outputting colors when FO
     expect(response).not.toMatch('</intensity>');
   });
 
-  test('"Stop" command', () => {
+  test('"Stop" command', async () => {
     // initialize test environment
     createTestFile(
       {
@@ -74,19 +75,20 @@ describe('Functions using the inquirer library are not outputting colors when FO
 
     // test
     const response = prettyAnsi(
-      execSync(`cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js stop`, {
-        encoding: 'utf8',
-        env: { ...process.env, FORCE_COLOR: '0' },
-      })
+      await execute(
+        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js stop`,
+        ['n\n'],
+        { ...process.env, FORCE_COLOR: '0' },
+        true
+      )
     );
-    expect(response).toMatch(
-      `there is one active task on the timesheet (${TASK_SUBJECT}); stop this`
-    );
+    expect(response).toMatch(`One active task found: ${TASK_SUBJECT}`);
+    expect(response).toMatch('Stop this task?');
     expect(response).not.toMatch('</color>');
     expect(response).not.toMatch('</intensity>');
   });
 
-  test('"Suspend" command', () => {
+  test('"Suspend" command', async () => {
     // initialize test environment
     createTestFile(
       {
@@ -103,19 +105,20 @@ describe('Functions using the inquirer library are not outputting colors when FO
 
     // test
     const response = prettyAnsi(
-      execSync(`cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js suspend`, {
-        encoding: 'utf8',
-        env: { ...process.env, FORCE_COLOR: '0' },
-      })
+      await execute(
+        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js suspend`,
+        ['n\n'],
+        { ...process.env, FORCE_COLOR: '0' },
+        true
+      )
     );
-    expect(response).toMatch(
-      `there is one suspendable task on the timesheet (${TASK_SUBJECT}); suspend`
-    );
+    expect(response).toMatch(`One suspendable task found: ${TASK_SUBJECT}`);
+    expect(response).toMatch('Suspend this task?');
     expect(response).not.toMatch('</color>');
     expect(response).not.toMatch('</intensity>');
   });
 
-  test('"Resume" command', () => {
+  test('"Resume" command', async () => {
     // initialize test environment
     createTestFile(
       {
@@ -133,19 +136,20 @@ describe('Functions using the inquirer library are not outputting colors when FO
 
     // test
     const response = prettyAnsi(
-      execSync(`cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js resume`, {
-        encoding: 'utf8',
-        env: { ...process.env, FORCE_COLOR: '0' },
-      })
+      await execute(
+        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js resume`,
+        ['n\n'],
+        { ...process.env, FORCE_COLOR: '0' },
+        true
+      )
     );
-    expect(response).toMatch(
-      `there is one resumable task on the timesheet (${TASK_SUBJECT}); resume`
-    );
+    expect(response).toMatch(`One resumable task found: ${TASK_SUBJECT}`);
+    expect(response).toMatch('Resume this task?');
     expect(response).not.toMatch('</color>');
     expect(response).not.toMatch('</intensity>');
   });
 
-  test('"Add" command', () => {
+  test('"Add" command', async () => {
     // initialize test environment
     createTestFile(
       {
@@ -157,13 +161,15 @@ describe('Functions using the inquirer library are not outputting colors when FO
 
     // test
     const response = prettyAnsi(
-      execSync(`cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js add`, {
-        encoding: 'utf8',
-        env: { ...process.env, FORCE_COLOR: '0' },
-      })
+      await execute(
+        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js add`,
+        ['\n'],
+        { ...process.env, FORCE_COLOR: '0' },
+        true
+      )
     );
     expect(response).toMatch(
-      'enter subject for the new task (empty to exit without creating a task):'
+      'Enter subject for the new task (empty to exit without creating a task):'
     );
     expect(response).not.toMatch('</color>');
     expect(response).not.toMatch('</intensity>');
@@ -181,7 +187,7 @@ describe('Functions using the inquirer library are not outputting colors when FO
     expect(response).not.toMatch('</intensity>');
   });
 
-  test('"Show" command', () => {
+  test('"Show" command', async () => {
     // initialize test environment
     createTestFile(
       {
@@ -197,14 +203,15 @@ describe('Functions using the inquirer library are not outputting colors when FO
 
     // test
     const response = prettyAnsi(
-      execSync(`cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js show`, {
-        encoding: 'utf8',
-        env: { ...process.env, FORCE_COLOR: '0' },
-      })
+      await execute(
+        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js show`,
+        ['n\n'],
+        { ...process.env, FORCE_COLOR: '0' },
+        true
+      )
     );
-    expect(response).toMatch(
-      `there is one task on the timesheet (${TASK_SUBJECT}); show this task?`
-    );
+    expect(response).toMatch(`One task found: ${TASK_SUBJECT}`);
+    expect(response).toMatch('Show this task?');
     expect(response).not.toMatch('</color>');
     expect(response).not.toMatch('</intensity>');
   });

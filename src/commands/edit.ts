@@ -6,7 +6,13 @@ import { readTimesheet, writeTimesheet } from '../common/timesheetReadWrite';
 import { ProjectClockData, Task } from '../types/ProjectClockData';
 import { outputTaskData } from './show';
 import promptToConfirm from '../common/promptToConfirm';
-import { sideHeadingTextMultiple } from '../common/outputFormatting';
+import {
+  outputError,
+  outputMessage,
+  outputSuccess,
+  sideHeadingTextMultiple,
+} from '../common/outputFormatting';
+import exitWithNothingToDo from '../common/exitWithNothingToDo';
 
 /**
  * Reads timesheet data using readTimesheet() and exits with an error if the
@@ -16,7 +22,7 @@ function getTimesheetData() {
   const timesheetData = readTimesheet();
   const { tasks } = timesheetData;
   if (tasks.length < 1) {
-    console.error('timesheet is empty, nothing to edit');
+    outputError('Timesheet is empty, nothing to edit.');
     process.exit(1);
   }
   return timesheetData;
@@ -33,7 +39,7 @@ async function promptTask(
   } catch (error) {
     handleExitPromptError(error);
   }
-  throw new ProjectClockError('internal error: this should not have happened');
+  throw new ProjectClockError('Internal error: this should not have happened!');
 }
 
 /** Looks for a matching task and/or prompts the user to select a task. */
@@ -42,7 +48,7 @@ async function getTask(tasks: Task[], taskDescriptor?: string): Promise<Task> {
     ? tasks.filter((task) => task.subject.match(taskDescriptor))
     : tasks;
   if (tasksToConsider.length < 1) {
-    console.error(`no task(s) matching '${taskDescriptor}' found`);
+    outputError(`No task(s) matching '${taskDescriptor}' found.`);
     process.exit(1);
   }
   const taskToEdit = await promptTask(tasksToConsider, !!taskDescriptor);
@@ -62,7 +68,7 @@ async function getEdit(
   defaultValue?: string
 ) {
   const value = await editor({
-    message: `edit ${field} of task '${taskDescriptor}'`,
+    message: `Edit ${field} of task '${taskDescriptor}'?`,
     default: defaultValue,
     waitForUseInput: false,
   });
@@ -83,20 +89,14 @@ function writeChanges(
   const hasPreviousValue = !!task[field];
   task[field] = newValue; // eslint-disable-line no-param-reassign
   if (hasPreviousValue) {
-    console.log(`replacing the ${field} of task '${originalSubject}'`);
+    outputSuccess(`Replacing the ${field} of task '${originalSubject}'.`);
   } else {
-    console.log(`adding a ${field} field to task '${originalSubject}'`);
+    outputSuccess(`Adding a ${field} field to task '${originalSubject}'.`);
   }
   writeTimesheet(timesheetData);
 
   const { projectSettings } = timesheetData;
   outputTaskData([task], projectSettings);
-}
-
-/** Outputs message 'nothing to edit' to stdout and exits normally. */
-function exitWithNothingToEdit() {
-  console.log('nothing to edit');
-  process.exit(0);
 }
 
 /**
@@ -111,31 +111,32 @@ async function confirmReplaceWithArgumentAndExit(
   newValue: string
 ) {
   if (!task[field]) {
-    console.log(`creating a new ${field} field`);
+    outputSuccess(`Creating a new ${field} field.`);
     writeChanges(timesheetData, task, field, newValue);
     process.exit(0);
   }
 
   const messageParts = {
-    [`previous ${field}`]: `'${task[field]}'`,
-    [`new ${field}`]: `'${newValue}'`,
+    [`Current ${field}`]: `${task[field]}`,
+    [`New ${field}`]: `${newValue}`,
   };
   const message = sideHeadingTextMultiple(
     messageParts,
     process.stdout.columns,
     false,
     1,
+    true,
     false,
-    false
+    { [`New ${field}`]: { modifiers: ['bold'] } }
   );
 
-  console.log(message);
-  const prompt = `are you sure you want to replace the ${field}?`;
+  outputMessage(message);
+  const prompt = `Are you sure you want to replace the ${field}?`;
   if (await promptToConfirm(prompt)) {
     writeChanges(timesheetData, task, field, newValue);
     process.exit(0);
   } else {
-    exitWithNothingToEdit();
+    exitWithNothingToDo('edit');
   }
 }
 
@@ -263,7 +264,7 @@ export async function edit(taskDescriptor?: string) {
 
   try {
     const taskToEdit = await getTask(tasks, taskDescriptor);
-    if (await promptToConfirm('do you want to edit the subject?')) {
+    if (await promptToConfirm('Do you want to edit the subject?')) {
       await editValueAndWriteData(
         timesheetData,
         taskToEdit,
@@ -271,7 +272,7 @@ export async function edit(taskDescriptor?: string) {
         prepareSubjectValue
       );
     }
-    if (await promptToConfirm('do you want to edit the description?')) {
+    if (await promptToConfirm('Do you want to edit the description?')) {
       await editValueAndWriteData(
         timesheetData,
         taskToEdit,
@@ -279,7 +280,7 @@ export async function edit(taskDescriptor?: string) {
         prepareDescriptionValue
       );
     }
-    if (await promptToConfirm('do you want to edit the notes?')) {
+    if (await promptToConfirm('Do you want to edit the notes?')) {
       await editValueAndWriteData(
         timesheetData,
         taskToEdit,

@@ -184,6 +184,10 @@ export function splitIntoLinesAccordingToWidth(
  * and adds a heading in the beginning of the first line. If the paddingLeft
  * argument is not given, the content is padded from left according to the
  * length of the heading. If paddingLeft is given it is used instead.
+ *
+ * NOTICE! Use contentStyle, headingStyle and boldHeading parameters for
+ * styling. Do not add stylings straight into heading or content strings. ANSI
+ * characters in them are counted into width and this messes the indenting.
  * @param heading Heading added on the left, before the content.
  * @param content The text content added after the heading.
  * @param width Maximum text width.
@@ -193,6 +197,12 @@ export function splitIntoLinesAccordingToWidth(
  *    the actual width of the text.
  * @param paddingLeft Padding added to the left side of the text. This reduces
  *    the actual width of the text.
+ * @param boldHeading Boolean indicating whether the heading is bold or not.
+ *    Default is true.
+ * @param contentStylings A Style object used for styling the content (see
+ *    Style in stylings.ts).
+ * @param headingStylings A Style object used for styling the heading (see
+ *    Style in stylings.ts).
  * @param colorLevel The color output level can be customized with this
  *    argument for the sake of testability (see
  *    chalk.level {@link https://github.com/chalk/chalk?tab=readme-ov-file#chalklevel}).
@@ -207,6 +217,7 @@ export function sideHeadingText(
   paddingLeft = 0,
   boldHeading = true,
   contentStyle?: Style,
+  headingStyle?: Style,
   colorLevel: chalk.Level = 1
 ) {
   // chalk level can be overridden for the sake of testability
@@ -216,8 +227,8 @@ export function sideHeadingText(
 
   const headingContentStr = `${heading}:`;
   const styledHeadingStr = boldHeading
-    ? `${chalk.bold(headingContentStr)} `
-    : `${headingContentStr} `;
+    ? applyStyle(`${chalk.bold(headingContentStr)} `, headingStyle)
+    : applyStyle(`${headingContentStr} `, headingStyle);
   const headingWidth = headingContentStr.length + 1;
   const paddingLeftToUse = paddingLeft || headingWidth;
 
@@ -248,6 +259,33 @@ function findLongest(texts: string[]) {
   );
 }
 
+function pickStylings(
+  headingStylings: Record<string, Style>,
+  contentStylings: Record<string, Style>,
+  heading: string
+) {
+  let headingStyle: Style | undefined;
+  let contentStyle: Style | undefined;
+
+  if (headingStylings[heading]) {
+    headingStyle = headingStylings[heading];
+  } else if (headingStylings.all) {
+    headingStyle = headingStylings.all;
+  } else if (headingStylings.rest) {
+    headingStyle = headingStylings.rest;
+  }
+
+  if (contentStylings[heading]) {
+    contentStyle = contentStylings[heading];
+  } else if (contentStylings.all) {
+    contentStyle = contentStylings.all;
+  } else if (contentStylings.rest) {
+    contentStyle = contentStylings.rest;
+  }
+
+  return [headingStyle, contentStyle];
+}
+
 /**
  * Creates multiple text blocks splitted on lines with side headings. Different
  * parts having their own headings are entered as a record with heading as the
@@ -263,6 +301,19 @@ function findLongest(texts: string[]) {
  * @param indentAccordingToLongest Boolean indicating whether the contents are
  *    indented according to the width of the longest heading or individually
  *    according to the width of each heading.
+ * @param boldHeadings Boolean indicating whether the heading text is bold.
+ * @param contentStylings A record of stylings (see Style in stylings.ts) to
+ *    style each text block's content. Key is either the heading of the block
+ *    or 'all' or 'rest'. By using 'all' or 'rest' as the key, all content
+ *    blocks that are not a key in the record are styled with the style. By
+ *    choosing the 'all' key instead of the 'rest' key, the developer can
+ *    communicate that the style is meant to apply to all content blocks.
+ * @param headingStylings A record of stylings (see Style in stylings.ts) to
+ *    style each heading. Key is either the heading itself, or 'all' or 'rest'.
+ *    By using 'all' or 'rest' as the key, all headings that are not a key in
+ *    the record are styled with the style. By choosing the 'all' key instead
+ *    of the 'rest' key, the developer can communicate that the style is meant
+ *    to apply to all headers.
  * @returns The whole text as a string.
  */
 export function sideHeadingTextMultiple(
@@ -272,7 +323,8 @@ export function sideHeadingTextMultiple(
   paddingRight: number,
   indentAccordingToLongest: boolean,
   boldHeadings = true,
-  partStylings: Record<string, Style> = {}
+  contentStylings: Record<string, Style> = {},
+  headingStylings: Record<string, Style> = {}
 ) {
   const headings = Object.keys(parts);
   const contents = Object.values(parts);
@@ -281,9 +333,11 @@ export function sideHeadingTextMultiple(
     : undefined;
   const sections: string[] = [];
   headings.forEach((heading, i) => {
-    const contentStyle = partStylings[heading]
-      ? partStylings[heading]
-      : undefined;
+    const [headingStyle, contentStyle] = pickStylings(
+      headingStylings,
+      contentStylings,
+      heading
+    );
     if (contents[i]) {
       sections.push(
         sideHeadingText(
@@ -294,7 +348,8 @@ export function sideHeadingTextMultiple(
           paddingRight,
           paddingLeft,
           boldHeadings,
-          contentStyle
+          contentStyle,
+          headingStyle
         )
       );
     }
@@ -407,4 +462,19 @@ export function createRows(
     resultRows.push(`${paddingLeft}${rowStr}${paddingRight}`);
   });
   return resultRows;
+}
+
+/** Outputs message to stdout using common successful result formatting. */
+export function outputSuccess(message: string): void {
+  console.log(chalk.cyan(message));
+}
+
+/** Outputs message to stderr using common error formatting. */
+export function outputError(message: string): void {
+  console.error(chalk.red(message));
+}
+
+/** Outputs message to stdout using common message formatting. */
+export function outputMessage(message: string): void {
+  console.log(chalk.yellow(message));
 }
