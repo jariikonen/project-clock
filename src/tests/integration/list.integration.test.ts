@@ -116,7 +116,7 @@ describe('Correct output; many tasks, total time less than a day', () => {
         env: { ...process.env, FORCE_COLOR: '0' },
       }
     );
-    expect(response).toMatch(`Project: '${PROJECT_NAME}'`);
+    expect(response).toMatch(`Project: ${PROJECT_NAME}`);
     expect(response).toMatch('First completed task1hcompleted');
     expect(response).toMatch('Second completed task2hcompleted');
     expect(response).toMatch('First active task1hsuspended');
@@ -146,7 +146,7 @@ describe('Correct output; many tasks, total time less than a day', () => {
         env: { ...process.env, FORCE_COLOR: '0' },
       }
     );
-    expect(response).toMatch(`Project: '${PROJECT_NAME}'`);
+    expect(response).toMatch(`Project: ${PROJECT_NAME}`);
     expect(response).toMatch('First active task1hsuspended');
     expect(response).toMatch('Second active task1h 30minsuspended');
     expect(response).toMatch('Third active task2hstarted');
@@ -162,7 +162,7 @@ describe('Correct output; many tasks, total time less than a day', () => {
         env: { ...process.env, FORCE_COLOR: '0' },
       }
     );
-    expect(response).toMatch(`Project: '${PROJECT_NAME}'`);
+    expect(response).toMatch(`Project: ${PROJECT_NAME}`);
     expect(response).toMatch('First completed task1hcompleted');
     expect(response).toMatch('Second completed task2hcompleted');
     expect(response).toMatch('2 tasks, total time spent: 3h');
@@ -177,7 +177,7 @@ describe('Correct output; many tasks, total time less than a day', () => {
         env: { ...process.env, FORCE_COLOR: '0' },
       }
     );
-    expect(response).toMatch(`Project: '${PROJECT_NAME}'`);
+    expect(response).toMatch(`Project: ${PROJECT_NAME}`);
     expect(response).toMatch('First active task1hsuspended');
     expect(response).toMatch('Second active task1h 30minsuspended');
     expect(response).toMatch('Third active task2hstarted');
@@ -186,15 +186,15 @@ describe('Correct output; many tasks, total time less than a day', () => {
     expect(response).not.toMatch('4 tasks, total time spent: 4h 30min (');
   });
 
-  test('"List" command with -n flag prints just the task that has not been started', () => {
+  test('"List" command with -u flag prints just the unstarted tasks', () => {
     const response = execSync(
-      `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js list -n`,
+      `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js list -u`,
       {
         encoding: 'utf8',
         env: { ...process.env, FORCE_COLOR: '0' },
       }
     );
-    expect(response).toMatch(`Project: '${PROJECT_NAME}'`);
+    expect(response).toMatch(`Project: ${PROJECT_NAME}`);
     expect(response).toMatch('First incomplete but not active task-unstarted');
     expect(response).toMatch('1 task, total time spent: -');
     expect(response).not.toMatch('1 task, total time spent: - (');
@@ -263,7 +263,7 @@ describe('Correct output; many tasks, total time more than a day', () => {
         env: { ...process.env, FORCE_COLOR: '0' },
       }
     );
-    expect(response).toMatch(`Project: '${PROJECT_NAME}'`);
+    expect(response).toMatch(`Project: ${PROJECT_NAME}`);
     expect(response).toMatch('First completed task1hcompleted');
     expect(response).toMatch('Second completed task2hcompleted');
     expect(response).toMatch('First active task1hsuspended');
@@ -301,7 +301,7 @@ describe('Correct output; no tasks to list', () => {
         env: { ...process.env, FORCE_COLOR: '0' },
       }
     );
-    expect(response).toMatch(`Project: '${PROJECT_NAME}'`);
+    expect(response).toMatch(`Project: ${PROJECT_NAME}`);
     expect(response).toMatch('no tasks to list');
   });
 });
@@ -360,7 +360,7 @@ describe('Colors and stylings', () => {
         env: { ...process.env, FORCE_COLOR: '1' },
       })
     );
-    expect(response).toMatch(`<bold>Project:</intensity> '${PROJECT_NAME}'`);
+    expect(response).toMatch(`<bold>Project:</intensity> ${PROJECT_NAME}`);
     expect(response).toMatch(
       '<inverse><bold><green>Task</color></intensity></inverse><inverse><bold><green>Time</color></intensity></inverse><inverse><bold><green>Status</color></intensity></inverse>'
     );
@@ -400,7 +400,7 @@ describe('Colors and stylings', () => {
     expect(response).not.toMatch('<yellow>');
     expect(response).not.toMatch('<blue>');
     expect(response).not.toMatch('</color>');
-    expect(response).toMatch(`Project: '${PROJECT_NAME}'`);
+    expect(response).toMatch(`Project: ${PROJECT_NAME}`);
     expect(response).toMatch('TaskTimeStatus');
   });
 });

@@ -65,13 +65,10 @@ program
   .description('Output status information.\n\n')
   .action(() => status(program.opts()));
 
-program.option('-a --active', 'list just the active tasks');
-program.option('-c --complete', 'list just the completed tasks');
-program.option('-i --incomplete', 'list just the incomplete tasks');
-program.option(
-  '-n --not-started',
-  'list just the tasks that have not been started'
-);
+program.option('-a --active', 'list active tasks');
+program.option('-c --complete', 'list completed tasks');
+program.option('-i --incomplete', 'list incomplete tasks');
+program.option('-u --unstarted', 'list unstarted tasks');
 program
   .command('list [-acinv]')
   .alias('ls')

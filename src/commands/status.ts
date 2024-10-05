@@ -7,16 +7,10 @@ import TimePeriod, { TimeParams } from '../common/TimePeriod';
 import ProjectClockError from '../common/ProjectClockError';
 import calculateTotalTime from '../common/calculateTotalTime';
 import getTaskListString from '../common/getTaskListString';
+import multiple from '../common/multiple';
 
 interface StatusOptions {
   verbose?: true | undefined;
-}
-
-function multiple(term: string, number: number) {
-  if (number === 0) {
-    return [`${term}s`, 'no'];
-  }
-  return number === 1 ? [`${term}`, '1'] : [`${term}s`, `${number}`];
 }
 
 function getActiveTaskListStr(

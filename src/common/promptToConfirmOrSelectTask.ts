@@ -49,7 +49,7 @@ export default async function promptToConfirmOrSelectTask(
       tasks[0].subject,
       process.stdout.columns,
       false,
-      1,
+      0,
       0,
       false,
       { modifiers: ['bold'] }

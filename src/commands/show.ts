@@ -38,10 +38,10 @@ function createTaskDataStr(task: Task, timeParams: TimeParams | undefined) {
       status: taskStatus.status,
       'time spent': `${timeSpent.hoursAndMinutesStr()}${daysHoursAndMinutesStr}`,
     },
+    true,
     consoleWidth,
-    true,
+    false,
     paddingRight,
-    true,
     true,
     { status: styleTaskStatus(taskStatus.status) }
   );

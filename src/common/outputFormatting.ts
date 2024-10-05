@@ -1,6 +1,8 @@
 import chalk from 'chalk';
 import { applyStyle, Style } from './styling';
 
+export const DEFAULT_CONSOLE_WIDTH = 80;
+
 export interface Padding {
   /** Padding on the left side of the string. */
   left: number;
@@ -190,13 +192,13 @@ export function splitIntoLinesAccordingToWidth(
  * characters in them are counted into width and this messes the indenting.
  * @param heading Heading added on the left, before the content.
  * @param content The text content added after the heading.
- * @param width Maximum text width.
+ * @param width Maximum text width. Default is process.stdout.columns.
  * @param padEnd Boolean indicating whether the right side of the content
- *    should be padded with whitespace to the given width.
+ *    should be padded with whitespace to the given width. Default is false.
  * @param paddingRight Padding added to the rigth side of text. This reduces
- *    the actual width of the text.
+ *    the actual width of the text. Default is 0.
  * @param paddingLeft Padding added to the left side of the text. This reduces
- *    the actual width of the text.
+ *    the actual width of the text. Default is 0.
  * @param boldHeading Boolean indicating whether the heading is bold or not.
  *    Default is true.
  * @param contentStylings A Style object used for styling the content (see
@@ -211,9 +213,9 @@ export function splitIntoLinesAccordingToWidth(
 export function sideHeadingText(
   heading: string,
   content: string,
-  width: number,
-  padEnd: boolean,
-  paddingRight: number,
+  width: number = process.stdout.columns ?? DEFAULT_CONSOLE_WIDTH,
+  padEnd = false,
+  paddingRight = 0,
   paddingLeft = 0,
   boldHeading = true,
   contentStyle?: Style,
@@ -318,10 +320,10 @@ function pickStylings(
  */
 export function sideHeadingTextMultiple(
   parts: Record<string, string | undefined>,
-  width: number,
-  padEnd: boolean,
-  paddingRight: number,
-  indentAccordingToLongest: boolean,
+  indentAccordingToLongest = false,
+  width = process.stdout.columns ?? DEFAULT_CONSOLE_WIDTH,
+  padEnd = false,
+  paddingRight = 0,
   boldHeadings = true,
   contentStylings: Record<string, Style> = {},
   headingStylings: Record<string, Style> = {}
@@ -477,4 +479,9 @@ export function outputError(message: string): void {
 /** Outputs message to stdout using common message formatting. */
 export function outputMessage(message: string): void {
   console.log(chalk.yellow(message));
+}
+
+/** Outputs message to stdout without additional formatting. */
+export function outputPlain(message: string): void {
+  console.log(message);
 }

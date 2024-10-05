@@ -8,13 +8,16 @@ import ProjectClockError from '../common/ProjectClockError';
 import TimePeriod, { TimeParams } from '../common/TimePeriod';
 import { readTimesheet } from '../common/timesheetReadWrite';
 import { Task } from '../types/ProjectClockData';
+import { outputPlain, sideHeadingText } from '../common/outputFormatting';
+import multiple from '../common/multiple';
+import capitalize from '../common/capitalize';
 
 interface ListOptions {
   verbose?: true;
   active?: true;
   complete?: true;
   incomplete?: true;
-  notStarted?: true;
+  unstarted?: true;
 }
 
 function filterTasks(options: ListOptions, tasks: Task[]) {
@@ -22,9 +25,9 @@ function filterTasks(options: ListOptions, tasks: Task[]) {
     options.active ??
     options.complete ??
     options.incomplete ??
-    options.notStarted
+    options.unstarted
       ? options
-      : { active: true, complete: true, incomplete: true, notStarted: true };
+      : { active: true, complete: true, incomplete: true, unstarted: true };
   return tasks.filter((task) => {
     if (optionsToUse.active && task.begin && !task.end) {
       return true;
@@ -35,7 +38,7 @@ function filterTasks(options: ListOptions, tasks: Task[]) {
     if (optionsToUse.incomplete && !task.end) {
       return true;
     }
-    if (optionsToUse.notStarted && !task.begin) {
+    if (optionsToUse.unstarted && !task.begin) {
       return true;
     }
     return false;
@@ -52,12 +55,13 @@ function getRequestedTaskListStr(
     times,
     timeParams,
     consoleWidth,
-    includeSeconds
+    includeSeconds,
+    [2, 0]
   );
   if (times.length > 0) {
     return taskTable.toString();
   }
-  return 'no tasks to list';
+  return '  no tasks to list';
 }
 
 function getTotalTimePeriodStr(
@@ -67,7 +71,7 @@ function getTotalTimePeriodStr(
   numberOfTasks: number
 ) {
   if (numberOfTasks < 1) {
-    return 'no tasks to list';
+    return '';
   }
   const taskMultiple = numberOfTasks === 1 ? 'task' : 'tasks';
   const timePeriod = new TimePeriod(totalTime, timeParams);
@@ -80,6 +84,37 @@ function getTotalTimePeriodStr(
     return `${chalk.bold(`${numberOfTasks} ${taskMultiple}, total time spent:`)} ${hoursAndMinutes}${daysHoursAndMinutes}`;
   }
   return `${chalk.bold(`${numberOfTasks} ${taskMultiple}, total time spent:`)} -`;
+}
+
+function removeNonFilterOptionKeys(optionKeys: string[]) {
+  const filterKeys: (keyof ListOptions)[] = [
+    'active',
+    'complete',
+    'incomplete',
+    'unstarted',
+  ];
+  const result = optionKeys.filter((key: keyof ListOptions) =>
+    filterKeys.includes(key)
+  );
+  return result;
+}
+
+function getListFilterString(options: ListOptions) {
+  const optionKeys = removeNonFilterOptionKeys(Object.keys(options));
+
+  if (optionKeys.length === 0) {
+    return 'active, complete, incomplete and unstarted';
+  }
+  if (optionKeys.length > 1) {
+    const last = optionKeys.pop();
+    return `${optionKeys.join(', ')} and ${last}`;
+  }
+  return optionKeys[0];
+}
+
+function getListDescription(options: ListOptions, tasks: Task[]) {
+  const [term] = multiple('task', tasks.length);
+  return chalk.bold(`${capitalize(getListFilterString(options))} ${term}:`);
 }
 
 /**
@@ -118,11 +153,12 @@ export default function list(options: ListOptions) {
     requestedTimes.length
   );
 
-  console.log(`${chalk.bold('Project:')} '${projectName}'\n`);
+  outputPlain(sideHeadingText('Project', `${projectName}\n`));
+  outputPlain(getListDescription(options, requestedTasks));
   if (requestedTaskListStr) {
-    console.log(requestedTaskListStr);
+    outputPlain(requestedTaskListStr);
   }
   if (totalTimePeriodStr) {
-    console.log(`\n${totalTimePeriodStr}`);
+    outputPlain(`\n${totalTimePeriodStr}`);
   }
 }

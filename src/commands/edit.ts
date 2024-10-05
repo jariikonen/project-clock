@@ -122,10 +122,10 @@ async function confirmReplaceWithArgumentAndExit(
   };
   const message = sideHeadingTextMultiple(
     messageParts,
+    true,
     process.stdout.columns,
     false,
-    1,
-    true,
+    0,
     false,
     { [`New ${field}`]: { modifiers: ['bold'] } }
   );

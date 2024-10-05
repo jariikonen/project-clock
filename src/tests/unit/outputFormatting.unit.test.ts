@@ -654,10 +654,10 @@ describe('sideHeadingTextMultiple(), color and stylings OFF', () => {
         heading2long: testText,
         heading3: testText,
       },
+      indentAccordingToLongest,
       width,
       padEnd,
-      paddingRight,
-      indentAccordingToLongest
+      paddingRight
     );
     expect(response).toEqual(expectedLines.join('\n'));
   });
@@ -683,10 +683,10 @@ describe('sideHeadingTextMultiple(), color and stylings OFF', () => {
         heading2long: testText,
         heading3: testText,
       },
+      indentAccordingToLongest,
       width,
       padEnd,
-      paddingRight,
-      indentAccordingToLongest
+      paddingRight
     );
     expect(response).toEqual(expectedLines.join('\n'));
   });
@@ -712,10 +712,10 @@ describe('sideHeadingTextMultiple(), color and stylings OFF', () => {
         heading2long: testText,
         heading3: testText,
       },
+      indentAccordingToLongest,
       width,
       padEnd,
-      paddingRight,
-      indentAccordingToLongest
+      paddingRight
     );
     expect(response).toEqual(expectedLines.join('\n'));
   });
@@ -741,10 +741,10 @@ describe('sideHeadingTextMultiple(), color and stylings OFF', () => {
         heading2long: testText,
         heading3: testText,
       },
+      indentAccordingToLongest,
       width,
       padEnd,
-      paddingRight,
-      indentAccordingToLongest
+      paddingRight
     );
     expect(response).toEqual(expectedLines.join('\n'));
   });
@@ -770,10 +770,10 @@ describe('sideHeadingTextMultiple(), color and stylings OFF', () => {
         heading2long: testText,
         heading3: testText,
       },
+      indentAccordingToLongest,
       width,
       padEnd,
-      paddingRight,
-      indentAccordingToLongest
+      paddingRight
     );
     expect(response).toEqual(expectedLines.join('\n'));
   });
