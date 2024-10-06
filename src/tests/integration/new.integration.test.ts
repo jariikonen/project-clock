@@ -37,7 +37,7 @@ describe('Timesheet creation', () => {
       `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js new "${PROJECT_NAME}"`,
       { encoding: 'utf8' }
     );
-    expect(response).toMatch(`created a new timesheet '${testFilePath}'`);
+    expect(response).toMatch(`Created a new timesheet '${testFilePath}'.`);
     expect(fs.existsSync(testFilePath)).toEqual(true);
 
     const projectClockDataObj = getTestFileDataObj(testFilePath);
@@ -70,7 +70,7 @@ describe('Timesheet creation', () => {
       error = e.message;
     }
     expect(error).toMatch(
-      `cannot create timesheet file '${testFilePath}'; file already exists`
+      `Cannot create timesheet file '${testFilePath}'; file already exists.`
     );
     expect(error).not.toMatch('throw');
     expect(error).not.toMatch('ProjectClockError');
@@ -89,7 +89,7 @@ describe('Timesheet creation', () => {
       `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js new`,
       { encoding: 'utf8' }
     );
-    expect(response).toMatch('enter name for the project:');
+    expect(response).toMatch('Enter name for the project:');
     expect(response).toMatch(`(${SUBDIR_NAME})`);
   });
 
@@ -102,8 +102,8 @@ describe('Timesheet creation', () => {
       subdirPath,
       `${SUBDIR_NAME}.pclock.json`
     );
-    expect(response).toMatch('enter name for the project:');
-    expect(response).toMatch(`created a new timesheet '${expectedFilePath}'`);
+    expect(response).toMatch('Enter name for the project:');
+    expect(response).toMatch(`Created a new timesheet '${expectedFilePath}'.`);
   });
 
   test('Command "new" does not offer a default value in the prompt if the default timesheet file already exists', () => {
@@ -122,7 +122,7 @@ describe('Timesheet creation', () => {
       `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js new`,
       { encoding: 'utf8' }
     );
-    expect(response).toMatch('enter name for the project:');
+    expect(response).toMatch('Enter name for the project:');
     expect(response).not.toMatch(SUBDIR_NAME);
   });
 
@@ -148,7 +148,7 @@ describe('Timesheet creation', () => {
       const e = err as Error;
       error = e.message;
     }
-    expect(error).toMatch('exiting; no project name');
+    expect(error).toMatch('Exiting; no project name.');
 
     const testDirContents = fs.readdirSync(subdirPath, { encoding: 'utf8' });
     expect(testDirContents.length).toEqual(1);
@@ -159,7 +159,7 @@ describe('Timesheet creation', () => {
       `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js new`,
       [`${PROJECT_NAME}\n`]
     );
-    expect(response).toMatch('enter name for the project:');
-    expect(response).toMatch(`created a new timesheet '${testFilePath}'`);
+    expect(response).toMatch('Enter name for the project:');
+    expect(response).toMatch(`Created a new timesheet '${testFilePath}'.`);
   });
 });

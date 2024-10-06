@@ -5,6 +5,7 @@ import {
   parseProjectClockData,
   ProjectClockData,
 } from '../types/ProjectClockData';
+import { outputError } from './outputFormatting';
 
 /**
  * Returns timesheet file path based on the 'file' parameter.
@@ -106,8 +107,8 @@ export function readTimesheet(file = '') {
     timesheetData = getTimesheetData(file);
   } catch (error) {
     if (error instanceof ProjectClockError) {
-      console.error(
-        `An error occurred while reading the timesheet file (${error.message})`
+      outputError(
+        `An error occurred while reading the timesheet file (${error.message}).`
       );
       process.exit(1);
     }

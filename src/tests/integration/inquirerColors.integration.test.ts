@@ -182,7 +182,7 @@ describe('Functions using the inquirer library are not outputting colors when FO
         env: { ...process.env, FORCE_COLOR: '0' },
       })
     );
-    expect(response).toMatch(`enter name for the project: (${SUBDIR_NAME})`);
+    expect(response).toMatch(`Enter name for the project: (${SUBDIR_NAME})`);
     expect(response).not.toMatch('</color>');
     expect(response).not.toMatch('</intensity>');
   });

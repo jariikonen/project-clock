@@ -821,7 +821,8 @@
         "2024-10-04T13:01:14.084Z",
         "2024-10-05T06:40:47.980Z",
         "2024-10-05T07:46:03.771Z",
-        "2024-10-05T14:38:35.726Z"
+        "2024-10-05T14:38:35.726Z",
+        "2024-10-06T05:23:18.712Z"
       ],
       "resume": [
         "2024-09-25T12:24:51.656Z",
@@ -843,7 +844,8 @@
         "2024-10-04T12:03:22.446Z",
         "2024-10-05T05:00:54.964Z",
         "2024-10-05T07:06:41.194Z",
-        "2024-10-05T14:30:46.403Z"
+        "2024-10-05T14:30:46.403Z",
+        "2024-10-06T05:11:48.255Z"
       ],
       "notes": "I also added filter description line to list command's output and changed how it reports that there is nothing to list."
     },
@@ -947,6 +949,10 @@
     },
     {
       "subject": "Add codes for errors (?)"
+    },
+    {
+      "subject": "Inverse colored table row background is truncated on Windows",
+      "description": "Table header rows (e.g., in status and list displays) are inverse colored and padded to the end with whitespace characters. For some reason on Windows the last whitespace characters after last text do not have the inverse background color. On Ubuntu in WSL this does not happen (last spaces have the inverse colored background). It would be nice to have consistent behaviour on this on all operating systems."
     },
     {
       "subject": "Make sure that all commands are tested for friendly output when the command is force stopped on every possible prompt level",

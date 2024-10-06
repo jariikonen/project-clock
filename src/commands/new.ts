@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import input from '@inquirer/input';
 import handleExitPrompError from '../common/handleExitPromptError';
+import { outputError, outputSuccess } from '../common/outputFormatting';
 
 function getPClockFileName(projectName: string) {
   return `${projectName.replace(/\s/g, '_')}.pclock.json`;
@@ -17,7 +18,7 @@ async function getProjectName() {
   let result = '';
   try {
     result = await input({
-      message: 'enter name for the project:',
+      message: 'Enter name for the project:',
       default: defaultNameToUse,
     });
   } catch (error) {
@@ -38,7 +39,7 @@ export default async function newTimeSheet(projectName: string | undefined) {
   // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
   const projectNameToUse = projectName || (await getProjectName());
   if (!projectNameToUse) {
-    console.error('exiting; no project name');
+    outputError('Exiting; no project name.');
     process.exit(1);
   }
 
@@ -60,13 +61,13 @@ export default async function newTimeSheet(projectName: string | undefined) {
     );
   } catch (err) {
     if (err instanceof Error && err.message.startsWith('EEXIST')) {
-      console.error(
-        `cannot create timesheet file '${projectFilePath}'; file already exists`
+      outputError(
+        `Cannot create timesheet file '${projectFilePath}'; file already exists.`
       );
       process.exit(1);
     } else {
       reportError(err);
     }
   }
-  console.log(`created a new timesheet '${projectFilePath}'`);
+  outputSuccess(`Created a new timesheet '${projectFilePath}'.`);
 }

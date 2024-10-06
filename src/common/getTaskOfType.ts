@@ -1,6 +1,7 @@
 import { Task } from '../types/ProjectClockData';
 import { filterTasks, TaskStateType } from './filterTasks';
 import handleExitPromptError from './handleExitPromptError';
+import { outputError } from './outputFormatting';
 import promptToConfirmOrSelectTask from './promptToConfirmOrSelectTask';
 
 /**
@@ -47,7 +48,7 @@ export default async function getTaskOfType(
       if (taskExists) {
         return null;
       }
-      console.error(`no ${adjective} tasks found; nothing to ${verb}`);
+      outputError(`No ${adjective} tasks found; nothing to ${verb}.`);
       process.exit(1);
     }
   } catch (error) {
