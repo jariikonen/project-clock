@@ -131,7 +131,7 @@ describe('Stopping the clock', () => {
         const e = err as Error;
         error = e.message;
       }
-      expect(error).toMatch('no active tasks found; nothing to stop');
+      expect(error).toMatch('No active tasks found; nothing to stop.');
       expect(error).not.toMatch('throw');
       expect(error).not.toMatch('ProjectClockError');
     });
@@ -459,7 +459,7 @@ describe('Stopping the clock', () => {
         const e = err as Error;
         error = e.message;
       }
-      expect(error).toMatch('no matching active tasks found');
+      expect(error).toMatch('No matching active tasks found; nothing to stop.');
       expect(error).not.toMatch('throw');
       expect(error).not.toMatch('ProjectClockError');
     });

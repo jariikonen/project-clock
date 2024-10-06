@@ -1,5 +1,6 @@
 import { TaskStateType } from '../common/filterTasks';
 import getTaskOfType from '../common/getTaskOfType';
+import { outputError, outputSuccess } from '../common/outputFormatting';
 import {
   isResumed,
   isStarted,
@@ -65,7 +66,7 @@ export default async function resume(taskDescriptor: string | undefined) {
   const { tasks } = timesheetData;
 
   if (tasks.length < 1) {
-    console.error('timesheet is empty, nothing to resume');
+    outputError('Timesheet is empty, nothing to resume.');
     process.exit(1);
   }
 
@@ -80,22 +81,22 @@ export default async function resume(taskDescriptor: string | undefined) {
   if (taskToResume) {
     resumeTask(taskToResume);
     writeTimesheet(timesheetData);
-    console.log(`resumed task '${taskToResume.subject}'`);
+    outputSuccess(`Resumed task '${taskToResume.subject}'.`);
     process.exit(0);
   }
   if (isUnstarted(existingTask)) {
-    console.error(
-      `cannot resume task '${taskDescriptor}'; the task hasn't even been started yet`
+    outputError(
+      `Cannot resume task '${taskDescriptor}'; the task hasn't even been started yet.`
     );
   }
   if (isStarted(existingTask)) {
-    console.error(
-      `cannot resume task '${taskDescriptor}'; the task has been started but not suspended`
+    outputError(
+      `Cannot resume task '${taskDescriptor}'; the task has been started but not suspended.`
     );
   }
   if (isResumed(existingTask)) {
-    console.error(
-      `cannot resume task '${taskDescriptor}'; the task has already been resumed`
+    outputError(
+      `Cannot resume task '${taskDescriptor}'; the task has already been resumed.`
     );
   }
   process.exit(1);

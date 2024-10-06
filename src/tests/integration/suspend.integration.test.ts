@@ -121,7 +121,7 @@ describe('Suspend command', () => {
         const e = err as Error;
         error = e.message;
       }
-      expect(error).toMatch('no suspendable tasks found; nothing to suspend');
+      expect(error).toMatch('No suspendable tasks found; nothing to suspend.');
       expect(error).not.toMatch('throw');
       expect(error).not.toMatch('ProjectClockError');
     });
@@ -147,7 +147,7 @@ describe('Suspend command', () => {
         const e = err as Error;
         error = e.message;
       }
-      expect(error).toMatch('timesheet is empty, nothing to suspend');
+      expect(error).toMatch('Timesheet is empty, nothing to suspend.');
       expect(error).not.toMatch('throw');
       expect(error).not.toMatch('ProjectClockError');
     });
@@ -447,7 +447,7 @@ describe('Suspend command', () => {
         error = e.message;
       }
       expect(error).toMatch(
-        `cannot suspend task '${TASK_SUBJECT}'; the task hasn't been started yet`
+        `Cannot suspend task '${TASK_SUBJECT}'; the task hasn't been started yet.`
       );
       expect(error).not.toMatch('throw');
       expect(error).not.toMatch('ProjectClockError');
@@ -942,7 +942,7 @@ describe('Suspend command', () => {
       }
 
       expect(error).toMatch(
-        `cannot suspend task '${TASK_SUBJECT}'; the task has already been suspended`
+        `Cannot suspend task '${TASK_SUBJECT}'; the task has already been suspended.`
       );
       expectTaskMemberHasValue(testFilePath, 'suspend', [
         '2024-01-01T01:00:00.000Z',
@@ -983,7 +983,7 @@ describe('Suspend command', () => {
       }
 
       expect(error).toMatch(
-        `cannot suspend task '${TASK_SUBJECT}'; the task has already been suspended`
+        `Cannot suspend task '${TASK_SUBJECT}'; the task has already been suspended.`
       );
       expectTaskMemberHasValue(testFilePath, 'suspend', [
         '2024-01-01T01:00:00.000Z',
@@ -1029,7 +1029,7 @@ describe('Suspend command', () => {
       }
 
       expect(error).toMatch(
-        `cannot suspend task '${TASK_SUBJECT}'; the task has already been suspended`
+        `Cannot suspend task '${TASK_SUBJECT}'; the task has already been suspended.`
       );
       expectTaskMemberHasValue(testFilePath, 'suspend', [
         '2024-01-01T01:00:00.000Z',

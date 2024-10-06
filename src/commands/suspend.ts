@@ -1,5 +1,6 @@
 import { TaskStateType } from '../common/filterTasks';
 import getTaskOfType from '../common/getTaskOfType';
+import { outputError, outputSuccess } from '../common/outputFormatting';
 import { isSuspended, isUnstarted } from '../common/taskState';
 import { readTimesheet, writeTimesheet } from '../common/timesheetReadWrite';
 import { Task } from '../types/ProjectClockData';
@@ -63,7 +64,7 @@ export default async function suspend(taskDescriptor: string | undefined) {
   const { tasks } = timesheetData;
 
   if (tasks.length < 1) {
-    console.error('timesheet is empty, nothing to suspend');
+    outputError('Timesheet is empty, nothing to suspend.');
     process.exit(1);
   }
 
@@ -78,17 +79,17 @@ export default async function suspend(taskDescriptor: string | undefined) {
   if (taskToSuspend) {
     suspendTask(taskToSuspend);
     writeTimesheet(timesheetData);
-    console.log(`suspended task '${taskToSuspend.subject}'`);
+    outputSuccess(`Suspended task '${taskToSuspend.subject}'.`);
     process.exit(0);
   }
   if (isUnstarted(existingTask)) {
-    console.error(
-      `cannot suspend task '${taskDescriptor}'; the task hasn't been started yet`
+    outputError(
+      `Cannot suspend task '${taskDescriptor}'; the task hasn't been started yet.`
     );
   }
   if (isSuspended(existingTask)) {
-    console.error(
-      `cannot suspend task '${taskDescriptor}'; the task has already been suspended`
+    outputError(
+      `Cannot suspend task '${taskDescriptor}'; the task has already been suspended.`
     );
   }
   process.exit(1);

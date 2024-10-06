@@ -149,7 +149,7 @@ describe('Resume command', () => {
         const e = err as Error;
         error = e.message;
       }
-      expect(error).toMatch('no resumable tasks found; nothing to resume');
+      expect(error).toMatch('No resumable tasks found; nothing to resume.');
       expect(error).not.toMatch('throw');
       expect(error).not.toMatch('ProjectClockError');
     });
@@ -175,7 +175,7 @@ describe('Resume command', () => {
         const e = err as Error;
         error = e.message;
       }
-      expect(error).toMatch('timesheet is empty, nothing to resume');
+      expect(error).toMatch('Timesheet is empty, nothing to resume.');
       expect(error).not.toMatch('throw');
       expect(error).not.toMatch('ProjectClockError');
     });
@@ -516,7 +516,7 @@ describe('Resume command', () => {
         error = e.message;
       }
       expect(error).toMatch(
-        `cannot resume task '${TASK_SUBJECT}'; the task hasn't even been started yet`
+        `Cannot resume task '${TASK_SUBJECT}'; the task hasn't even been started yet.`
       );
       expect(error).not.toMatch('throw');
       expect(error).not.toMatch('ProjectClockError');
@@ -552,7 +552,7 @@ describe('Resume command', () => {
         error = e.message;
       }
       expect(error).toMatch(
-        `cannot resume task '${TASK_SUBJECT}'; the task has been started but not suspended`
+        `Cannot resume task '${TASK_SUBJECT}'; the task has been started but not suspended.`
       );
       expect(error).not.toMatch('throw');
       expect(error).not.toMatch('ProjectClockError');
@@ -590,7 +590,7 @@ describe('Resume command', () => {
         error = e.message;
       }
       expect(error).toMatch(
-        `cannot resume task '${TASK_SUBJECT}'; the task has already been resumed`
+        `Cannot resume task '${TASK_SUBJECT}'; the task has already been resumed.`
       );
       expect(error).not.toMatch('throw');
       expect(error).not.toMatch('ProjectClockError');
@@ -975,7 +975,7 @@ describe('Resume command', () => {
       }
 
       expect(error).toMatch(
-        `cannot resume task '${TASK_SUBJECT}'; the task has already been resumed`
+        `Cannot resume task '${TASK_SUBJECT}'; the task has already been resumed.`
       );
       expectTaskEqualsTo(testFilePath, {
         subject: TASK_SUBJECT,
@@ -1019,7 +1019,7 @@ describe('Resume command', () => {
       }
 
       expect(error).toMatch(
-        `cannot resume task '${TASK_SUBJECT}'; the task has already been resumed`
+        `Cannot resume task '${TASK_SUBJECT}'; the task has already been resumed.`
       );
       expectTaskEqualsTo(testFilePath, {
         subject: TASK_SUBJECT,
@@ -1071,7 +1071,7 @@ describe('Resume command', () => {
       }
 
       expect(error).toMatch(
-        `cannot resume task '${TASK_SUBJECT}'; the task has already been resumed`
+        `Cannot resume task '${TASK_SUBJECT}'; the task has already been resumed.`
       );
       expectTaskEqualsTo(testFilePath, {
         subject: TASK_SUBJECT,
