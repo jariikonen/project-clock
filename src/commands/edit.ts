@@ -7,6 +7,7 @@ import { ProjectClockData, Task } from '../types/ProjectClockData';
 import { outputTaskData } from './show';
 import promptToConfirm from '../common/promptToConfirm';
 import {
+  messageWithTruncatedPart,
   outputError,
   outputMessage,
   outputSuccess,
@@ -48,7 +49,12 @@ async function getTask(tasks: Task[], taskDescriptor?: string): Promise<Task> {
     ? tasks.filter((task) => task.subject.match(taskDescriptor))
     : tasks;
   if (tasksToConsider.length < 1) {
-    outputError(`No task(s) matching '${taskDescriptor}' found.`);
+    outputError(
+      messageWithTruncatedPart(
+        ["No task(s) matching '", taskDescriptor, "' found."],
+        1
+      )
+    );
     process.exit(1);
   }
   const taskToEdit = await promptTask(tasksToConsider, !!taskDescriptor);
@@ -89,9 +95,19 @@ function writeChanges(
   const hasPreviousValue = !!task[field];
   task[field] = newValue; // eslint-disable-line no-param-reassign
   if (hasPreviousValue) {
-    outputSuccess(`Replacing the ${field} of task '${originalSubject}'.`);
+    outputSuccess(
+      messageWithTruncatedPart(
+        [`Replacing the ${field} of task '`, originalSubject, "'."],
+        1
+      )
+    );
   } else {
-    outputSuccess(`Adding a ${field} field to task '${originalSubject}'.`);
+    outputSuccess(
+      messageWithTruncatedPart(
+        [`Adding a ${field} field to task '`, originalSubject, "'."],
+        1
+      )
+    );
   }
   writeTimesheet(timesheetData);
 

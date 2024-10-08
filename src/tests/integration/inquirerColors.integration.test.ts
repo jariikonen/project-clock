@@ -48,7 +48,8 @@ describe('Functions using the inquirer library are not outputting colors when FO
         env: { ...process.env, FORCE_COLOR: '0' },
       })
     );
-    expect(response).toMatch('do you want to create a new task?');
+    expect(response).toMatch('Timesheet is empty.');
+    expect(response).toMatch('Do you want to create a new task?');
     expect(response).not.toMatch('</color>');
     expect(response).not.toMatch('</intensity>');
   });

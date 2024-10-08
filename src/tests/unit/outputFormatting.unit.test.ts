@@ -1,9 +1,11 @@
 import prettyAnsi from 'pretty-ansi';
 import {
   createSeparatedSectionsStr,
+  messageWithTruncatedPart,
   sideHeadingText,
   sideHeadingTextMultiple,
   splitIntoLinesAccordingToWidth,
+  truncateToWidthWithEllipsis,
 } from '../../common/outputFormatting';
 
 const eigthyTwoChars = '-'.repeat(82);
@@ -796,5 +798,186 @@ describe('createSeparatedSectionsStr', () => {
 
     const response = createSeparatedSectionsStr(sections, separatorStr);
     expect(response).toEqual(expectedLines.join('\n'));
+  });
+});
+
+describe('truncateToWidthWithEllipsis()', () => {
+  test('content is shorter than width', () => {
+    const content = tenChars;
+    const width = 15;
+
+    const response = truncateToWidthWithEllipsis(content, width);
+
+    expect(response).toEqual(content);
+    expect(response.length).toBeLessThanOrEqual(width);
+    expect(response.length).toEqual(content.length);
+  });
+
+  test('content is as long as the width', () => {
+    const width = 15;
+    const content = '#'.repeat(width);
+
+    const response = truncateToWidthWithEllipsis(content, width);
+
+    expect(response).toEqual(content);
+    expect(response.length).toBeLessThanOrEqual(width);
+    expect(response.length).toEqual(content.length);
+  });
+
+  test('content is one char longer than width', () => {
+    const width = 15;
+    const content = '#'.repeat(width + 1);
+
+    const response = truncateToWidthWithEllipsis(content, width);
+
+    expect(response.length).toEqual(width);
+    expect(response).toEqual(`${'#'.repeat(width - 3)}...`);
+  });
+
+  test('content is much longer than width', () => {
+    const width = 15;
+    const content = '#'.repeat(width * 2);
+
+    const response = truncateToWidthWithEllipsis(content, width);
+
+    expect(response.length).toEqual(width);
+    expect(response).toEqual(`${'#'.repeat(width - 3)}...`);
+  });
+
+  test('content is longer than width and there is a whitespace that is trimmed from the end of the content when it is truncated', () => {
+    const width = 10;
+    const content = '### ## ####';
+
+    const response = truncateToWidthWithEllipsis(content, width);
+
+    expect(response.length).toEqual(width);
+    expect(response).toEqual('### ##... ');
+  });
+});
+
+describe('messageWithTruncatedPart', () => {
+  const otherParts = [
+    '#'.repeat(10),
+    '¤'.repeat(10),
+    '%'.repeat(10),
+    '&'.repeat(10),
+  ];
+
+  test('the part to be truncated is shorter than the remaining width (part is not truncated)', () => {
+    const partToTruncate = 'T'.repeat(8);
+    const parts = [otherParts[0], partToTruncate, otherParts[1]];
+    const response = messageWithTruncatedPart(parts, 1, 30);
+    expect(response.length).toEqual(28);
+    expect(response.slice(0, 10)).toEqual(otherParts[0]);
+    expect(response.slice(10, 18)).toEqual(partToTruncate);
+    expect(response.slice(18, 28)).toEqual(otherParts[1]);
+  });
+
+  test('the part to be truncated is longer than the remaining width (part is truncated)', () => {
+    const partToTruncate = 'T'.repeat(11);
+    const parts = [otherParts[0], partToTruncate, otherParts[1]];
+    const width = 30;
+    const truncatedPartMinWidth = 5;
+    const response = messageWithTruncatedPart(
+      parts,
+      1,
+      width,
+      truncatedPartMinWidth
+    );
+    expect(response.slice(0, 10)).toEqual(otherParts[0]);
+    expect(response.slice(10, 20)).toEqual(`${'T'.repeat(7)}...`);
+    expect(response.slice(20, 30)).toEqual(otherParts[1]);
+    expect(response.length).toEqual(30);
+  });
+
+  test('the length of the part to be truncated is equal to the remaining width (part is not truncated)', () => {
+    const partToTruncate = 'T'.repeat(10);
+    const parts = [otherParts[0], partToTruncate, otherParts[1]];
+    const width = 30;
+    const truncatedPartMinWidth = 5;
+    const response = messageWithTruncatedPart(
+      parts,
+      1,
+      width,
+      truncatedPartMinWidth
+    );
+    expect(response.slice(0, 10)).toEqual(otherParts[0]);
+    expect(response.slice(10, 20)).toEqual('T'.repeat(10));
+    expect(response.slice(20, 30)).toEqual(otherParts[1]);
+    expect(response.length).toEqual(30);
+  });
+
+  test('the length of the part to be truncated is shorter than truncatedPartMinWidth', () => {
+    const partToTruncate = 'T'.repeat(11);
+    const parts = [otherParts[0], partToTruncate, otherParts[1]];
+    const width = 30;
+    const truncatedPartMinWidth = 15;
+    const response = messageWithTruncatedPart(
+      parts,
+      1,
+      width,
+      truncatedPartMinWidth
+    );
+    expect(response.slice(0, 10)).toEqual(otherParts[0]);
+    expect(response.slice(10, 21)).toEqual(partToTruncate);
+    expect(response.slice(21, 31)).toEqual(otherParts[1]);
+    expect(response.length).toEqual(31);
+  });
+
+  test('only one part in addition to the part to be truncated, before the part to be truncated', () => {
+    const partToTruncate = 'T'.repeat(11);
+    const parts = [otherParts[0], partToTruncate];
+    const width = 20;
+    const truncatedPartMinWidth = 5;
+    const response = messageWithTruncatedPart(
+      parts,
+      1,
+      width,
+      truncatedPartMinWidth
+    );
+    expect(response.slice(0, 10)).toEqual(otherParts[0]);
+    expect(response.slice(10, 20)).toEqual(`${'T'.repeat(7)}...`);
+    expect(response.length).toEqual(20);
+  });
+
+  test('only one part in addition to the part to be truncated, after the part to be truncated', () => {
+    const partToTruncate = 'T'.repeat(11);
+    const parts = [partToTruncate, otherParts[1]];
+    const width = 20;
+    const truncatedPartMinWidth = 5;
+    const response = messageWithTruncatedPart(
+      parts,
+      0,
+      width,
+      truncatedPartMinWidth
+    );
+    expect(response.slice(0, 10)).toEqual(`${'T'.repeat(7)}...`);
+    expect(response.slice(10, 20)).toEqual(otherParts[1]);
+    expect(response.length).toEqual(20);
+  });
+
+  test('more than two parts in addition to the part to be truncated', () => {
+    const partToTruncate = 'T'.repeat(14);
+    const parts = [
+      otherParts[0],
+      partToTruncate,
+      otherParts[1],
+      otherParts[2],
+      otherParts[3],
+    ];
+    const width = 50;
+    const truncatedPartMinWidth = 5;
+    const response = messageWithTruncatedPart(
+      parts,
+      1,
+      width,
+      truncatedPartMinWidth
+    );
+    expect(response.slice(0, 10)).toEqual(otherParts[0]);
+    expect(response.slice(10, 20)).toEqual(`${'T'.repeat(7)}...`);
+    expect(response.slice(20, 30)).toEqual(otherParts[1]);
+    expect(response.slice(30, 40)).toEqual(otherParts[2]);
+    expect(response.slice(40, 50)).toEqual(otherParts[3]);
+    expect(response.length).toEqual(50);
   });
 });

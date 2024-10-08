@@ -117,12 +117,24 @@ describe('Correct output; many tasks, total time less than a day', () => {
       }
     );
     expect(response).toMatch(`Project: ${PROJECT_NAME}`);
-    expect(response).toMatch('First completed task1hcompleted');
-    expect(response).toMatch('Second completed task2hcompleted');
-    expect(response).toMatch('First active task1hsuspended');
-    expect(response).toMatch('Second active task1h 30minsuspended');
-    expect(response).toMatch('Third active task2hstarted');
-    expect(response).toMatch('First incomplete but not active task-unstarted');
+    expect(response).toMatch(
+      '  First completed task                                 1h         completed'
+    );
+    expect(response).toMatch(
+      '  Second completed task                                2h         completed'
+    );
+    expect(response).toMatch(
+      '  First active task                                    1h         suspended'
+    );
+    expect(response).toMatch(
+      '  Second active task                                   1h 30min   suspended'
+    );
+    expect(response).toMatch(
+      '  Third active task                                    2h         started'
+    );
+    expect(response).toMatch(
+      '  First incomplete but not active task                 -          unstarted'
+    );
     expect(response).toMatch('6 tasks, total time spent: 7h 30min');
     expect(response).not.toMatch('6 tasks, total time spent: 7h 30min (');
   });
@@ -147,9 +159,15 @@ describe('Correct output; many tasks, total time less than a day', () => {
       }
     );
     expect(response).toMatch(`Project: ${PROJECT_NAME}`);
-    expect(response).toMatch('First active task1hsuspended');
-    expect(response).toMatch('Second active task1h 30minsuspended');
-    expect(response).toMatch('Third active task2hstarted');
+    expect(response).toMatch(
+      '  First active task                                    1h         suspended'
+    );
+    expect(response).toMatch(
+      '  Second active task                                   1h 30min   suspended'
+    );
+    expect(response).toMatch(
+      '  Third active task                                    2h         started'
+    );
     expect(response).toMatch('3 tasks, total time spent: 4h 30min');
     expect(response).not.toMatch('3 tasks, total time spent: 4h 30min (');
   });
@@ -163,8 +181,12 @@ describe('Correct output; many tasks, total time less than a day', () => {
       }
     );
     expect(response).toMatch(`Project: ${PROJECT_NAME}`);
-    expect(response).toMatch('First completed task1hcompleted');
-    expect(response).toMatch('Second completed task2hcompleted');
+    expect(response).toMatch(
+      '  First completed task                                 1h         completed'
+    );
+    expect(response).toMatch(
+      '  Second completed task                                2h         completed'
+    );
     expect(response).toMatch('2 tasks, total time spent: 3h');
     expect(response).not.toMatch('2 tasks, total time spent: 3h (');
   });
@@ -178,10 +200,18 @@ describe('Correct output; many tasks, total time less than a day', () => {
       }
     );
     expect(response).toMatch(`Project: ${PROJECT_NAME}`);
-    expect(response).toMatch('First active task1hsuspended');
-    expect(response).toMatch('Second active task1h 30minsuspended');
-    expect(response).toMatch('Third active task2hstarted');
-    expect(response).toMatch('First incomplete but not active task-unstarted');
+    expect(response).toMatch(
+      '  First active task                                    1h         suspended'
+    );
+    expect(response).toMatch(
+      '  Second active task                                   1h 30min   suspended'
+    );
+    expect(response).toMatch(
+      '  Third active task                                    2h         started'
+    );
+    expect(response).toMatch(
+      '  First incomplete but not active task                 -          unstarted'
+    );
     expect(response).toMatch('4 tasks, total time spent: 4h 30min');
     expect(response).not.toMatch('4 tasks, total time spent: 4h 30min (');
   });
@@ -195,7 +225,9 @@ describe('Correct output; many tasks, total time less than a day', () => {
       }
     );
     expect(response).toMatch(`Project: ${PROJECT_NAME}`);
-    expect(response).toMatch('First incomplete but not active task-unstarted');
+    expect(response).toMatch(
+      '  First incomplete but not active task                 -          unstarted'
+    );
     expect(response).toMatch('1 task, total time spent: -');
     expect(response).not.toMatch('1 task, total time spent: - (');
   });
@@ -264,12 +296,24 @@ describe('Correct output; many tasks, total time more than a day', () => {
       }
     );
     expect(response).toMatch(`Project: ${PROJECT_NAME}`);
-    expect(response).toMatch('First completed task1hcompleted');
-    expect(response).toMatch('Second completed task2hcompleted');
-    expect(response).toMatch('First active task1hsuspended');
-    expect(response).toMatch('Second active task2hsuspended');
-    expect(response).toMatch('Third active task2hstarted');
-    expect(response).toMatch('First incomplete but not active task-unstarted');
+    expect(response).toMatch(
+      '  First completed task                                 1h         completed'
+    );
+    expect(response).toMatch(
+      '  Second completed task                                2h         completed'
+    );
+    expect(response).toMatch(
+      '  First active task                                    1h         suspended'
+    );
+    expect(response).toMatch(
+      '  Second active task                                   2h         suspended'
+    );
+    expect(response).toMatch(
+      '  Third active task                                    2h         started'
+    );
+    expect(response).toMatch(
+      '  First incomplete but not active task                 -          unstarted'
+    );
     expect(response).toMatch('6 tasks, total time spent: 8h (1d, d=8h)');
   });
 });
@@ -362,7 +406,7 @@ describe('Colors and stylings', () => {
     );
     expect(response).toMatch(`<bold>Project:</intensity> ${PROJECT_NAME}`);
     expect(response).toMatch(
-      '<inverse><bold><green>Task</color></intensity></inverse><inverse><bold><green>Time</color></intensity></inverse><inverse><bold><green>Status</color></intensity></inverse>'
+      '  <inverse><bold><green>Task                                                 </color></intensity></inverse><inverse><bold><green>Time       </color></intensity></inverse><inverse><bold><green>Status     </color></intensity></inverse>'
     );
   });
 
@@ -374,16 +418,20 @@ describe('Colors and stylings', () => {
       })
     );
     expect(response).toMatch(
-      'Unstarted task<blue>-</color><blue>unstarted</color>'
-    );
-    expect(response).toMatch('Started task<red>2h</color><red>started</color>');
-    expect(response).toMatch(
-      'Completed task<green>1h</color><green>completed</color>'
+      '  Unstarted task                                       <blue>-</color>          <blue>unstarted</color>'
     );
     expect(response).toMatch(
-      'Suspended task<yellow>1h</color><yellow>suspended</color>'
+      '  Started task                                         <red>2h</color>         <red>started</color>'
     );
-    expect(response).toMatch('Resumed task<red>3h</color><red>resumed</color>');
+    expect(response).toMatch(
+      '  Completed task                                       <green>1h</color>         <green>completed</color>'
+    );
+    expect(response).toMatch(
+      '  Suspended task                                       <yellow>1h</color>         <yellow>suspended</color>'
+    );
+    expect(response).toMatch(
+      '  Resumed task                                         <red>3h</color>         <red>resumed</color>'
+    );
   });
 
   test('colors are not displayed when FORCE_COLOR=0', () => {
@@ -401,6 +449,8 @@ describe('Colors and stylings', () => {
     expect(response).not.toMatch('<blue>');
     expect(response).not.toMatch('</color>');
     expect(response).toMatch(`Project: ${PROJECT_NAME}`);
-    expect(response).toMatch('TaskTimeStatus');
+    expect(response).toMatch(
+      '  Task                                                 Time       Status'
+    );
   });
 });

@@ -3,7 +3,11 @@ import { ERROR_MESSAGE_TIMESHEET_INSPECTION } from '../common/constants';
 import handleExitPromptError from '../common/handleExitPromptError';
 import handleProjectClockError from '../common/handleProjectClockError';
 import {
+  consoleWidth,
   createSeparatedSectionsStr,
+  messageWithTruncatedPart,
+  outputError,
+  outputPlain,
   sideHeadingTextMultiple,
 } from '../common/outputFormatting';
 import ProjectClockError from '../common/ProjectClockError';
@@ -19,11 +23,10 @@ async function promptTask(tasks: Task[]): Promise<Task> {
   } catch (error) {
     handleExitPromptError(error);
   }
-  throw new ProjectClockError('internal error: this should not have happened');
+  throw new ProjectClockError('Internal error: this should not have happened.');
 }
 
 function createTaskDataStr(task: Task, timeParams: TimeParams | undefined) {
-  const consoleWidth = process.stdout.columns;
   const paddingRight = 1;
   const taskStatus = calculateTimes([task])[0];
   const timeSpent = new TimePeriod(taskStatus.timeSpent, timeParams);
@@ -62,9 +65,8 @@ export function outputTaskData(
   });
   // If Node.js property process.stdout.columns is not set, the consoleWidth
   // is given a default value of 80.
-  const consoleWidth = process.stdout.columns ? process.stdout.columns : 80;
   const separatorStr = `${'-'.repeat(consoleWidth)}`;
-  console.log(createSeparatedSectionsStr(taskStrings, separatorStr));
+  outputPlain(createSeparatedSectionsStr(taskStrings, separatorStr));
 }
 
 /**
@@ -77,7 +79,7 @@ export default async function show(taskDescriptor: string | undefined) {
   const { projectSettings, tasks } = timesheetData;
 
   if (tasks.length < 1) {
-    console.error('timesheet is empty, no task to show');
+    outputError('Timesheet is empty, no task to show.');
     process.exit(1);
   }
 
@@ -85,7 +87,12 @@ export default async function show(taskDescriptor: string | undefined) {
     ? tasks.filter((task) => task.subject.match(taskDescriptor))
     : [await promptTask(tasks)];
   if (tasksToShow.length === 0) {
-    console.error(`no task(s) matching '${taskDescriptor}' found`);
+    outputError(
+      messageWithTruncatedPart(
+        ["No task(s) matching '", taskDescriptor, "' found."],
+        1
+      )
+    );
     process.exit(1);
   }
 

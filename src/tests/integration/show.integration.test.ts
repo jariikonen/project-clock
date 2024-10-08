@@ -90,7 +90,7 @@ describe('Correct functioning, no task descriptor argument given', () => {
         const e = err as Error;
         error = e.message;
       }
-      expect(error).toMatch('timesheet is empty, no task to show');
+      expect(error).toMatch('Timesheet is empty, no task to show.');
       expect(error).not.toMatch('throw');
       expect(error).not.toMatch('ProjectClockError');
     });
@@ -336,7 +336,7 @@ describe('Correct functioning, task descriptor argument given, color and styling
       const e = err as Error;
       error = e.message;
     }
-    expect(error).toMatch(`no task(s) matching '${taskSubject}' found`);
+    expect(error).toMatch(`No task(s) matching '${taskSubject}' found.`);
     expect(error).not.toMatch('throw');
     expect(error).not.toMatch('ProjectClockError');
   });

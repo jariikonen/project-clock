@@ -134,7 +134,7 @@ describe('Correct functioning', () => {
     expect(response).toMatch(
       'Enter subject for the new task (empty to exit without creating a task):'
     );
-    expect(response).toMatch('Exiting; no task to create.');
+    expect(response).toMatch('Nothing to create.');
     expectTaskIsNotCreated();
   });
 });

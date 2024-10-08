@@ -2,6 +2,9 @@ import chalk from 'chalk';
 import { applyStyle, Style } from './styling';
 
 export const DEFAULT_CONSOLE_WIDTH = 80;
+export const consoleWidth = process.stdout.columns
+  ? process.stdout.columns
+  : DEFAULT_CONSOLE_WIDTH;
 
 export interface Padding {
   /** Padding on the left side of the string. */
@@ -138,7 +141,7 @@ export function splitIntoLinesAccordingToWidth(
   // be true to stop, and the lastLine is never true if the width is 0 or less,
   // the width must be given a positive value. 80-column rule is a classic line
   // width convention, so that is used as the default value.
-  const widthToUse = width > 0 ? width : 80;
+  const widthToUse = width > 0 ? width : DEFAULT_CONSOLE_WIDTH;
   const textWidth = widthToUse - padding.left - padding.right;
   const lines: string[] = [];
   let start = 0;
@@ -213,7 +216,7 @@ export function splitIntoLinesAccordingToWidth(
 export function sideHeadingText(
   heading: string,
   content: string,
-  width: number = process.stdout.columns ?? DEFAULT_CONSOLE_WIDTH,
+  width: number = process.stdout.columns,
   padEnd = false,
   paddingRight = 0,
   paddingLeft = 0,
@@ -222,6 +225,8 @@ export function sideHeadingText(
   headingStyle?: Style,
   colorLevel: chalk.Level = 1
 ) {
+  const widthToUse = width > 0 ? width : DEFAULT_CONSOLE_WIDTH;
+
   // chalk level can be overridden for the sake of testability
   chalk.level = process.env.FORCE_COLOR
     ? (parseInt(process.env.FORCE_COLOR, 10) as chalk.Level)
@@ -238,11 +243,11 @@ export function sideHeadingText(
     paddingLeft && paddingLeft > headingWidth
       ? paddingLeftToUse - headingWidth
       : 0;
-  const firstLineWidth = width - headingWidth;
+  const firstLineWidth = widthToUse - headingWidth;
 
   const lines = splitIntoLinesAccordingToWidth(
     content,
-    width,
+    widthToUse,
     {
       left: paddingLeftToUse,
       right: paddingRight,
@@ -321,13 +326,14 @@ function pickStylings(
 export function sideHeadingTextMultiple(
   parts: Record<string, string | undefined>,
   indentAccordingToLongest = false,
-  width = process.stdout.columns ?? DEFAULT_CONSOLE_WIDTH,
+  width = process.stdout.columns,
   padEnd = false,
   paddingRight = 0,
   boldHeadings = true,
   contentStylings: Record<string, Style> = {},
   headingStylings: Record<string, Style> = {}
 ) {
+  const widthToUse = width > 0 ? width : DEFAULT_CONSOLE_WIDTH;
   const headings = Object.keys(parts);
   const contents = Object.values(parts);
   const paddingLeft = indentAccordingToLongest
@@ -345,7 +351,7 @@ export function sideHeadingTextMultiple(
         sideHeadingText(
           heading,
           contents[i],
-          width,
+          widthToUse,
           padEnd,
           paddingRight,
           paddingLeft,
@@ -464,6 +470,67 @@ export function createRows(
     resultRows.push(`${paddingLeft}${rowStr}${paddingRight}`);
   });
   return resultRows;
+}
+
+/**
+ * Truncates string to the given width and adds an ellipsis to the end. If the
+ * last character before ellipsis would be a whitespace, it is trimmed and the
+ * string is padded with whitespace to the width.
+ * @param content The string to truncate.
+ * @param width Width to truncate to.
+ * @returns Truncated string with an ellipsis at the end.
+ */
+export function truncateToWidthWithEllipsis(content: string, width: number) {
+  if (content.length > width) {
+    return `${content.slice(0, width - 3).trimEnd()}...`.padEnd(width, ' ');
+  }
+  return content;
+}
+
+/**
+ * Creates a new string with message parts joined together and the part pointed
+ * by truncatedPartIndex argument truncated to width remaining after the length
+ * of the other parts have been deduced from the width. Truncated part is not
+ * truncated shorter than the truncatedPartMinWidth.
+ * @param messageParts
+ * @param truncatedPartIndex
+ * @param width
+ * @param truncatedPartMinWidth
+ * @returns
+ */
+export function messageWithTruncatedPart(
+  messageParts: (string | undefined | null)[],
+  truncatedPartIndex: number,
+  width = consoleWidth,
+  truncatedPartMinWidth = 15
+) {
+  const fullParts = messageParts.toSpliced(truncatedPartIndex, 1);
+  const fullPartWidths = fullParts.reduce(
+    (accumulator, currentPart) =>
+      currentPart ? accumulator + currentPart.length : accumulator,
+    0
+  );
+  const truncatedPartMaxWidth = width - fullPartWidths;
+  const truncateToWidth =
+    truncatedPartMaxWidth > truncatedPartMinWidth
+      ? truncatedPartMaxWidth
+      : truncatedPartMinWidth;
+  if (
+    messageParts[truncatedPartIndex] &&
+    messageParts[truncatedPartIndex].length > truncatedPartMaxWidth
+  ) {
+    const truncatedPart = truncateToWidthWithEllipsis(
+      messageParts[truncatedPartIndex],
+      truncateToWidth
+    );
+    const modifiedParts = messageParts.toSpliced(
+      truncatedPartIndex,
+      1,
+      truncatedPart
+    );
+    return modifiedParts.join('');
+  }
+  return messageParts.join('');
 }
 
 /** Outputs message to stdout using common successful result formatting. */

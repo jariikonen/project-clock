@@ -1,6 +1,10 @@
 import { TaskStateType } from '../common/filterTasks';
 import getTaskOfType from '../common/getTaskOfType';
-import { outputError, outputSuccess } from '../common/outputFormatting';
+import {
+  messageWithTruncatedPart,
+  outputError,
+  outputSuccess,
+} from '../common/outputFormatting';
 import {
   isResumed,
   isStarted,
@@ -86,17 +90,38 @@ export default async function resume(taskDescriptor: string | undefined) {
   }
   if (isUnstarted(existingTask)) {
     outputError(
-      `Cannot resume task '${taskDescriptor}'; the task hasn't even been started yet.`
+      messageWithTruncatedPart(
+        [
+          "Cannot resume task '",
+          taskDescriptor,
+          "'; the task hasn't even been started yet.",
+        ],
+        1
+      )
     );
   }
   if (isStarted(existingTask)) {
     outputError(
-      `Cannot resume task '${taskDescriptor}'; the task has been started but not suspended.`
+      messageWithTruncatedPart(
+        [
+          "Cannot resume task '",
+          taskDescriptor,
+          "'; the task has been started but not suspended.",
+        ],
+        1
+      )
     );
   }
   if (isResumed(existingTask)) {
     outputError(
-      `Cannot resume task '${taskDescriptor}'; the task has already been resumed.`
+      messageWithTruncatedPart(
+        [
+          "Cannot resume task '",
+          taskDescriptor,
+          "'; the task has already been resumed.",
+        ],
+        1
+      )
     );
   }
   process.exit(1);

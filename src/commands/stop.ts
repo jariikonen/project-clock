@@ -2,6 +2,11 @@ import { readTimesheet, writeTimesheet } from '../common/timesheetReadWrite';
 import getTaskOfType from '../common/getTaskOfType';
 import { TaskStateType } from '../common/filterTasks';
 import { Task } from '../types/ProjectClockData';
+import {
+  messageWithTruncatedPart,
+  outputError,
+  outputSuccess,
+} from '../common/outputFormatting';
 
 function stopTask(task: Task): void {
   const newTimestamp = new Date().toISOString();
@@ -49,7 +54,7 @@ export default async function stop(taskDescriptor: string | undefined) {
   const { tasks } = timesheetData;
 
   if (tasks.length < 1) {
-    console.error('timesheet is empty, nothing to stop');
+    outputError('Timesheet is empty, nothing to stop.');
     process.exit(1);
   }
 
@@ -64,17 +69,33 @@ export default async function stop(taskDescriptor: string | undefined) {
   if (taskToStop) {
     stopTask(taskToStop);
     writeTimesheet(timesheetData);
-    console.log(`stopped task '${taskToStop.subject}'`);
+    outputSuccess(
+      messageWithTruncatedPart(["Stopped task '", taskToStop.subject, "'."], 1)
+    );
     process.exit(0);
   }
   if (!existingTask?.begin) {
-    console.error(
-      `cannot stop task '${taskDescriptor}'; the task hasn't been started yet`
+    outputError(
+      messageWithTruncatedPart(
+        [
+          "Cannot stop task '",
+          taskDescriptor,
+          "'; the task hasn't been started yet.",
+        ],
+        1
+      )
     );
   }
   if (existingTask?.end) {
     console.error(
-      `cannot stop task '${taskDescriptor}'; the task has already been stopped`
+      messageWithTruncatedPart(
+        [
+          "Cannot stop task '",
+          taskDescriptor,
+          "'; the task has already been stopped.",
+        ],
+        1
+      )
     );
   }
   process.exit(1);

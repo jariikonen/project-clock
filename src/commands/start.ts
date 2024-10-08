@@ -5,21 +5,39 @@ import { ProjectClockData, Task } from '../types/ProjectClockData';
 import handleExitPromptError from '../common/handleExitPromptError';
 import promptToConfirmOrSelectTask from '../common/promptToConfirmOrSelectTask';
 import ProjectClockError from '../common/ProjectClockError';
+import {
+  messageWithTruncatedPart,
+  outputError,
+  outputMessage,
+  outputSuccess,
+  sideHeadingText,
+} from '../common/outputFormatting';
+import exitWithNothingToDo from '../common/exitWithNothingToDo';
 
 type TaskToUse = Task | null;
 type TaskDescriptorToUse = string | null;
 
 async function promptToCreateNewTask(
-  reason: string
+  reasonMessage: string
 ): Promise<TaskDescriptorToUse> {
-  if (await promptToConfirm(`${reason}; do you want to create a new task?`)) {
+  outputMessage(reasonMessage);
+  if (await promptToConfirm('Do you want to create a new task?')) {
     const descriptorFromUser = await input({
-      message: 'enter subject for the task:',
+      message: 'Enter subject for the task:',
       default: new Date().toISOString(),
     });
     return descriptorFromUser;
   }
   return null;
+}
+
+async function confirmTaskDescriptor(taskDescriptor: string) {
+  outputMessage(
+    sideHeadingText('Task descriptor argument received', taskDescriptor)
+  );
+  return promptToConfirm(
+    'Do you want to create a new task with this task descriptor as its subject?'
+  );
 }
 
 async function timesheetIsEmpty(
@@ -28,18 +46,15 @@ async function timesheetIsEmpty(
   let taskDescriptorToUse: TaskDescriptorToUse = null;
   try {
     if (taskDescriptor) {
-      if (
-        await promptToConfirm(
-          `timesheet is empty; do you want to create a new task, '${taskDescriptor}'?`
-        )
-      ) {
+      outputMessage('Timesheet is empty.');
+      if (await confirmTaskDescriptor(taskDescriptor)) {
         return taskDescriptor;
       }
+      exitWithNothingToDo('start');
     } else {
-      taskDescriptorToUse = await promptToCreateNewTask('timesheet is empty');
+      taskDescriptorToUse = await promptToCreateNewTask('Timesheet is empty.');
       if (!taskDescriptorToUse) {
-        console.log('exiting; no task to start');
-        process.exit(0);
+        exitWithNothingToDo('start');
       }
     }
   } catch (error) {
@@ -64,11 +79,10 @@ async function getUnstartedTask(
     }
     if (!unstartedTask) {
       taskDescriptorToUse = await promptToCreateNewTask(
-        'no unstarted tasks found'
+        'No unstarted tasks found.'
       );
       if (!taskDescriptorToUse) {
-        console.log('exiting; no task to start');
-        process.exit(0);
+        exitWithNothingToDo('start');
       }
     }
   } catch (error) {
@@ -99,20 +113,22 @@ async function getMathchingUnstartedTask(
         (task) => task.subject === taskDescriptor
       );
       if (alreadyStarted) {
-        console.error(
-          `cannot start task '${taskDescriptor}'; the task has already been started`
+        outputError(
+          messageWithTruncatedPart(
+            [
+              "Cannot start task '",
+              taskDescriptor,
+              "'; the task has already been started.",
+            ],
+            1
+          )
         );
         process.exit(1);
       }
-      if (
-        await promptToConfirm(
-          `no matching unstarted task found; create a new task, '${taskDescriptor}'?`
-        )
-      ) {
+      if (await confirmTaskDescriptor(taskDescriptor)) {
         taskDescriptorToUse = taskDescriptor;
       } else {
-        console.log('exiting; no task to start');
-        process.exit(0);
+        exitWithNothingToDo('start');
       }
     }
   } catch (error) {
@@ -132,8 +148,15 @@ function writeNewTimesheet(
     const { tasks } = timesheetData;
     const alreadyExists = tasks.find((task) => task.subject === taskDescriptor);
     if (alreadyExists) {
-      console.error(
-        `cannot create new task '${taskDescriptor}'; the task already exists`
+      outputError(
+        messageWithTruncatedPart(
+          [
+            "Cannot create a new task '",
+            taskDescriptor,
+            "'; the task already exists.",
+          ],
+          1
+        )
       );
       process.exit(1);
     }
@@ -146,8 +169,15 @@ function writeNewTimesheet(
     newTaskCreated = true;
   } else if (taskToStart) {
     if (taskToStart.begin) {
-      console.error(
-        `cannot start task '${taskToStart.subject}'; the task has already been started`
+      outputError(
+        messageWithTruncatedPart(
+          [
+            "Cannot start task '",
+            taskToStart.subject,
+            '; the task has already been started.',
+          ],
+          1
+        )
       );
       process.exit(1);
     }
@@ -157,9 +187,19 @@ function writeNewTimesheet(
 
   writeTimesheet(timesheetData);
   if (newTaskCreated) {
-    console.log(`created and started a new task '${taskDescriptor}'`);
+    outputSuccess(
+      messageWithTruncatedPart(
+        ["Created and started a new task '", taskDescriptor, "'."],
+        1
+      )
+    );
   } else {
-    console.log(`started task '${taskToStart?.subject}'`);
+    outputSuccess(
+      messageWithTruncatedPart(
+        ["Started task '", taskToStart?.subject, "'."],
+        1
+      )
+    );
   }
 }
 
@@ -203,7 +243,7 @@ export default async function start(taskDescriptor: string | undefined) {
     writeNewTimesheet(timesheetData, taskToStart, taskDescriptorToUse);
   } else {
     throw new ProjectClockError(
-      `internal error: this should not have happened (${taskToStart}, ${taskDescriptorToUse})`
+      `Internal error: this should not have happened (${taskToStart}, ${taskDescriptorToUse}).`
     );
   }
 }

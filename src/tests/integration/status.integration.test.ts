@@ -106,9 +106,13 @@ describe('Status command', () => {
       expect(response).toMatch(`Project: '${PROJECT_NAME}'`);
       expect(response).toMatch('Tasks (complete/incomplete/total): 1/3/4');
       expect(response).toMatch('2 active tasks:');
-      expect(response).toMatch('First active task2h');
-      expect(response).toMatch('Second active task2h');
-      expect(response).toMatch('total time spent: 8h (1d, d=8h)');
+      expect(response).toMatch(
+        '  First active task                                    2h         started'
+      );
+      expect(response).toMatch(
+        '  Second active task                                   2h         started'
+      );
+      expect(response).toMatch('Total time spent: 8h (1d, d=8h)');
     });
 
     test('"Status" command does not report active tasks or total time spent when there is neither', () => {
@@ -135,7 +139,7 @@ describe('Status command', () => {
       );
       expect(response).toMatch(`Project: '${PROJECT_NAME}'`);
       expect(response).toMatch('Tasks (complete/incomplete/total): 0/1/1');
-      expect(response).toMatch('no active tasks');
+      expect(response).toMatch('No active tasks.');
       expect(response).not.toMatch(TASK_SUBJECT);
       expect(response).not.toMatch('total time spent:');
     });
@@ -182,10 +186,14 @@ describe('Status command', () => {
       expect(response).toMatch(`Project: '${PROJECT_NAME}'`);
       expect(response).toMatch('Tasks (complete/incomplete/total): 1/3/4');
       expect(response).toMatch('2 active tasks:');
-      expect(response).toMatch('First active task2h');
-      expect(response).toMatch('Second active task2h');
-      expect(response).toMatch('total time spent: 7h 30min');
-      expect(response).not.toMatch('total time spent: 7h 30min (');
+      expect(response).toMatch(
+        '  First active task                                    2h         started'
+      );
+      expect(response).toMatch(
+        '  Second active task                                   2h         started'
+      );
+      expect(response).toMatch('Total time spent: 7h 30min');
+      expect(response).not.toMatch('Total time spent: 7h 30min (');
     });
   });
 
@@ -241,7 +249,7 @@ describe('Status command', () => {
       );
       expect(response).toMatch('<bold>3 active tasks:</intensity>');
       expect(response).toMatch(
-        '<inverse><bold><green>Task</color></intensity></inverse><inverse><bold><green>Time</color></intensity></inverse><inverse><bold><green>Status</color></intensity></inverse>'
+        '<inverse><bold><green>Task                                                 </color></intensity></inverse><inverse><bold><green>Time       </color></intensity></inverse><inverse><bold><green>Status     </color></intensity></inverse>'
       );
     });
 
@@ -253,13 +261,13 @@ describe('Status command', () => {
         })
       );
       expect(response).toMatch(
-        'Started task<red>2h</color><red>started</color>'
+        '  Started task                                         <red>2h</color>         <red>started</color>'
       );
       expect(response).toMatch(
-        'Suspended task<yellow>1h</color><yellow>suspended</color>'
+        '  Suspended task                                       <yellow>1h</color>         <yellow>suspended</color>'
       );
       expect(response).toMatch(
-        'Resumed task<red>3h</color><red>resumed</color>'
+        '  Resumed task                                         <red>3h</color>         <red>resumed</color>'
       );
     });
 
@@ -276,7 +284,9 @@ describe('Status command', () => {
       expect(response).not.toMatch('<yellow>');
       expect(response).not.toMatch('</color>');
       expect(response).toMatch(`Project: '${PROJECT_NAME}'`);
-      expect(response).toMatch('TaskTimeStatus');
+      expect(response).toMatch(
+        '  Task                                                 Time       Status'
+      );
     });
   });
 });

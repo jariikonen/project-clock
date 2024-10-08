@@ -27,6 +27,25 @@ afterAll(() => {
 });
 
 describe('Starting the clock', () => {
+  const emptyTestFile = {
+    projectName: PROJECT_NAME,
+    tasks: [],
+  };
+
+  const singleTaskTestFile = {
+    projectName: PROJECT_NAME,
+    tasks: [
+      {
+        subject: 'completed task',
+        begin: '2024-07-15T06:33:15.743Z',
+        end: '2024-07-15T06:41:18.415Z',
+      },
+      {
+        subject: TASK_SUBJECT,
+      },
+    ],
+  };
+
   beforeEach(() => {
     createTestDir(subdirPath);
   });
@@ -93,16 +112,10 @@ describe('Starting the clock', () => {
 
   describe('"Start" command without any arguments', () => {
     beforeEach(() => {
-      createTestFile(
-        {
-          projectName: PROJECT_NAME,
-          tasks: [],
-        },
-        testFilePath
-      );
+      createTestFile(emptyTestFile, testFilePath);
     });
 
-    test('asks if user wants to create a new task (no tasks on the timesheet)', () => {
+    test('asks if user wants to create a new task (timesheet is empty)', () => {
       const response = execSync(
         `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js start`,
         {
@@ -111,48 +124,53 @@ describe('Starting the clock', () => {
           env: { ...process.env, FORCE_COLOR: '0' },
         }
       );
-      expect(response).toMatch('do you want to create a new task?');
+      expect(response).toMatch('Timesheet is empty.');
+      expect(response).toMatch('Do you want to create a new task?');
     });
 
     test('starts correct task when default value (current timestamp as subject) is accepted', async () => {
       const response = await execute(
         `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js start`,
-        ['y\n', '\n']
+        ['y\n', '\n'],
+        { ...process.env },
+        true
       );
-      expect(response).toMatch('do you want to create a new task?');
-      expect(response).toMatch('enter subject for the task:');
-
+      expect(response).toMatch('Timesheet is empty.');
+      expect(response).toMatch('Do you want to create a new task?');
+      expect(response).toMatch('Enter subject for the task:');
       expectTaskIsStarted(0, true);
     });
 
     test('starts correct task when subject for the task is entered', async () => {
       const response = await execute(
         `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js start`,
-        ['y\n', `${TASK_SUBJECT}\n`]
+        ['y\n', `${TASK_SUBJECT}\n`],
+        { ...process.env },
+        true
       );
-      expect(response).toMatch('do you want to create a new task?');
-      expect(response).toMatch('enter subject for the task');
+      expect(response).toMatch('Timesheet is empty.');
+      expect(response).toMatch('Do you want to create a new task?');
+      expect(response).toMatch('Enter subject for the task:');
       expectTaskIsStarted(0);
+    });
+
+    test('does not create any tasks if user answers no (when timesheet is empty)', async () => {
+      const response = await execute(
+        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js start`,
+        ['n\n'],
+        { ...process.env },
+        true
+      );
+      expect(response).toMatch('Timesheet is empty.');
+      expect(response).toMatch('Do you want to create a new task?');
+      expect(response).toMatch('Nothing to start.');
+      const testFileData = getTestFileDataObj(testFilePath);
+      expect(testFileData).toEqual(emptyTestFile);
     });
 
     test('asks confirmation from user when there is a single unstarted task on the timesheet', async () => {
       // initialize test environment
-      createTestFile(
-        {
-          projectName: PROJECT_NAME,
-          tasks: [
-            {
-              subject: 'completed task',
-              begin: '2024-07-15T06:33:15.743Z',
-              end: '2024-07-15T06:41:18.415Z',
-            },
-            {
-              subject: TASK_SUBJECT,
-            },
-          ],
-        },
-        testFilePath
-      );
+      createTestFile(singleTaskTestFile, testFilePath);
 
       // test
       const response = await execute(
@@ -165,24 +183,9 @@ describe('Starting the clock', () => {
       expect(response).toMatch('Start this task?');
     });
 
-    test('starts correct task when the single unstarted task is confirmed as desired', async () => {
+    test('starts correct task when the single unstarted task is confirmed to be correct', async () => {
       // initialize test environment
-      createTestFile(
-        {
-          projectName: PROJECT_NAME,
-          tasks: [
-            {
-              subject: 'completed task',
-              begin: '2024-07-15T06:33:15.743Z',
-              end: '2024-07-15T06:41:18.415Z',
-            },
-            {
-              subject: TASK_SUBJECT,
-            },
-          ],
-        },
-        testFilePath
-      );
+      createTestFile(singleTaskTestFile, testFilePath);
 
       // test
       const response = await execute(
@@ -194,6 +197,40 @@ describe('Starting the clock', () => {
       expect(response).toMatch(`One unstarted task found: ${TASK_SUBJECT}`);
       expect(response).toMatch('Start this task?');
       expectTaskIsStarted(1);
+    });
+
+    test('starts correct task when the single unstarted task is confirmed to be correct', async () => {
+      // initialize test environment
+      createTestFile(singleTaskTestFile, testFilePath);
+
+      // test
+      const response = await execute(
+        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js start`,
+        ['y\n'],
+        { ...process.env, FORCE_COLOR: '0' },
+        true
+      );
+      expect(response).toMatch(`One unstarted task found: ${TASK_SUBJECT}`);
+      expect(response).toMatch('Start this task?');
+      expectTaskIsStarted(1);
+    });
+
+    test('does not create any tasks when the user answers no (single task on timesheet)', async () => {
+      // initialize test environment
+      createTestFile(singleTaskTestFile, testFilePath);
+
+      // test
+      const response = await execute(
+        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js start`,
+        ['n\n'],
+        { ...process.env, FORCE_COLOR: '0' },
+        true
+      );
+      expect(response).toMatch(`One unstarted task found: ${TASK_SUBJECT}`);
+      expect(response).toMatch('Start this task?');
+      expect(response).toMatch('Nothing to start.');
+      const testFileData = getTestFileDataObj(testFilePath);
+      expect(testFileData).toEqual(singleTaskTestFile);
     });
 
     test('asks which of the many unstarted tasks to start', () => {
@@ -337,7 +374,7 @@ describe('Starting the clock', () => {
       );
       expect(response).toMatch('There are 2 unstarted tasks on the timesheet.');
       expect(response).toMatch('Select the task to start:');
-      expect(response).toMatch(`started task '${TASK_SUBJECT}'`);
+      expect(response).toMatch(`Started task '${TASK_SUBJECT}'.`);
       expectTaskIsStarted(1);
     });
 
@@ -372,7 +409,7 @@ describe('Starting the clock', () => {
       );
       expect(response).toMatch('There are 2 unstarted tasks on the timesheet.');
       expect(response).toMatch('Select the task to start:');
-      expect(response).toMatch('Nothing to start');
+      expect(response).toMatch('Nothing to start.');
       expectTaskIsNotStarted(TASK_SUBJECT);
     });
 
@@ -410,20 +447,64 @@ describe('Starting the clock', () => {
         error = e.message;
       }
       expect(error).toMatch(
-        `cannot create new task '${TASK_SUBJECT}'; the task already exists`
+        `Cannot create a new task '${TASK_SUBJECT}'; the task already exists.`
       );
     });
   });
 
   describe('"Start" command with a task descriptor argument', () => {
     beforeEach(() => {
-      createTestFile(
-        {
-          projectName: PROJECT_NAME,
-          tasks: [],
-        },
-        testFilePath
+      createTestFile(emptyTestFile, testFilePath);
+    });
+
+    test('confirms whether a new task is created when timesheet is empty', () => {
+      const response = execSync(
+        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js start "${TASK_SUBJECT}"`,
+        { encoding: 'utf8', env: { ...process.env, FORCE_COLOR: '0' } }
       );
+      expect(response).toMatch('Timesheet is empty.');
+      expect(response).toMatch('Task descriptor argument received: Test task');
+      expect(response).toMatch(
+        'Do you want to create a new task with this task descriptor as its subject?'
+      );
+    });
+
+    test('creates correct task when user answers yes and the timesheet is empty', async () => {
+      const response = await execute(
+        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js start "${TASK_SUBJECT}"`,
+        ['y\n'],
+        { ...process.env, FORCE_COLOR: '0' },
+        true
+      );
+      expect(response).toMatch('Timesheet is empty.');
+      expect(response).toMatch('Task descriptor argument received: Test task');
+      expect(response).toMatch(
+        'Do you want to create a new task with this task descriptor as its subject?'
+      );
+      expect(response).toMatch(
+        `Created and started a new task '${TASK_SUBJECT}'.`
+      );
+      const testFileData = getTestFileDataObj(testFilePath);
+      expect(testFileData.tasks.length).toEqual(1);
+      expect(testFileData.tasks[0].subject).toEqual(TASK_SUBJECT);
+      expectTaskIsStarted(0);
+    });
+
+    test('does not create any tasks when user answers no and the timesheet is empty', async () => {
+      const response = await execute(
+        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js start "${TASK_SUBJECT}"`,
+        ['n\n'],
+        { ...process.env, FORCE_COLOR: '0' },
+        true
+      );
+      expect(response).toMatch('Timesheet is empty.');
+      expect(response).toMatch('Task descriptor argument received: Test task');
+      expect(response).toMatch(
+        'Do you want to create a new task with this task descriptor as its subject?'
+      );
+      expect(response).toMatch('Nothing to start.');
+      const testFileData = getTestFileDataObj(testFilePath);
+      expect(testFileData).toEqual(emptyTestFile);
     });
 
     test('confirms whether a new task is created when matching task is not found', () => {
@@ -451,8 +532,9 @@ describe('Starting the clock', () => {
         `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js start "${TASK_SUBJECT}"`,
         { encoding: 'utf8', env: { ...process.env, FORCE_COLOR: '0' } }
       );
+      expect(response).toMatch('Task descriptor argument received: Test task');
       expect(response).toMatch(
-        `no matching unstarted task found; create a new task, '${TASK_SUBJECT}'?`
+        'Do you want to create a new task with this task descriptor as its subject?'
       );
     });
 
@@ -483,8 +565,9 @@ describe('Starting the clock', () => {
         { ...process.env, FORCE_COLOR: '0' },
         true
       );
+      expect(response).toMatch('Task descriptor argument received: Test task');
       expect(response).toMatch(
-        `no matching unstarted task found; create a new task, '${TASK_SUBJECT}'?`
+        'Do you want to create a new task with this task descriptor as its subject?'
       );
       expectTaskIsStarted(2);
     });
@@ -516,8 +599,9 @@ describe('Starting the clock', () => {
         { ...process.env, FORCE_COLOR: '0' },
         true
       );
+      expect(response).toMatch('Task descriptor argument received: Test task');
       expect(response).toMatch(
-        `no matching unstarted task found; create a new task, '${TASK_SUBJECT}'?`
+        'Do you want to create a new task with this task descriptor as its subject?'
       );
       const taskIsCreated = getTestTask(testFilePath);
       expect(taskIsCreated).toBeFalsy();
@@ -703,7 +787,7 @@ describe('Starting the clock', () => {
         error = e.message;
       }
       expect(error).toMatch(
-        `cannot start task '${TASK_SUBJECT}'; the task has already been started`
+        `Cannot start task '${TASK_SUBJECT}'; the task has already been started.`
       );
       expectTaskMemberHasValue(
         testFilePath,

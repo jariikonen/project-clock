@@ -1,7 +1,12 @@
 import input from '@inquirer/input';
 import { readTimesheet, writeTimesheet } from '../common/timesheetReadWrite';
 import handleExitPrompError from '../common/handleExitPromptError';
-import { outputError, outputSuccess } from '../common/outputFormatting';
+import {
+  messageWithTruncatedPart,
+  outputError,
+  outputSuccess,
+} from '../common/outputFormatting';
+import exitWithNothingToDo from '../common/exitWithNothingToDo';
 
 async function getTaskSubject(): Promise<string> {
   let result = '';
@@ -32,16 +37,25 @@ export default async function add(taskSubject: string | undefined) {
 
   const alreadyExists = tasks.find((task) => task.subject === taskSubjectToUse);
   if (alreadyExists) {
-    outputError(`Cannot create task '${taskSubject}'; task already exists.`);
+    outputError(
+      messageWithTruncatedPart(
+        ["Cannot create task '", taskSubject, "'; task already exists."],
+        1
+      )
+    );
     process.exit(1);
   }
 
   if (!taskSubjectToUse) {
-    outputSuccess('Exiting; no task to create.');
-    process.exit(0);
+    exitWithNothingToDo('create');
   }
 
   tasks.push({ subject: taskSubjectToUse });
   writeTimesheet(timesheetData);
-  outputSuccess(`Created a new task '${taskSubjectToUse}'.`);
+  outputSuccess(
+    messageWithTruncatedPart(
+      ["Created a new task '", taskSubjectToUse, "'."],
+      1
+    )
+  );
 }

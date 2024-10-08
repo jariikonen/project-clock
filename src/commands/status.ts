@@ -8,6 +8,11 @@ import ProjectClockError from '../common/ProjectClockError';
 import calculateTotalTime from '../common/calculateTotalTime';
 import getTaskListString from '../common/getTaskListString';
 import multiple from '../common/multiple';
+import {
+  consoleWidth,
+  outputError,
+  outputPlain,
+} from '../common/outputFormatting';
 
 interface StatusOptions {
   verbose?: true | undefined;
@@ -18,7 +23,6 @@ function getActiveTaskListStr(
   timeParams: TimeParams | undefined,
   includeSeconds: boolean
 ) {
-  const consoleWidth = process.stdout.columns;
   const taskTable = getTaskListString(
     activeTimes,
     timeParams,
@@ -27,11 +31,11 @@ function getActiveTaskListStr(
     [2, 0]
   );
 
-  const [term, counter] = multiple('task', activeTimes.length);
+  const [term, counter] = multiple('task', activeTimes.length, true);
   if (activeTimes.length > 0) {
     return `${chalk.bold(`${counter} active ${term}:`)}\n${taskTable.toString()}`;
   }
-  return `${chalk.bold(`${counter} active ${term}`)}`;
+  return `${chalk.bold(`${counter} active ${term}.`)}`;
 }
 
 function getTotalTimePeriodStr(
@@ -46,7 +50,7 @@ function getTotalTimePeriodStr(
       ? ` (${timePeriod.daysHoursAndMinutesStr(includeSeconds)}, ${timePeriod.conversionRateDayStr()})`
       : '';
   if (hoursAndMinutes) {
-    return `${chalk.bold('total time spent:')} ${hoursAndMinutes}${daysHoursAndMinutes}`;
+    return `${chalk.bold('Total time spent:')} ${hoursAndMinutes}${daysHoursAndMinutes}`;
   }
   return '';
 }
@@ -71,7 +75,7 @@ export default function status(options: StatusOptions) {
     allTimes = calculateTimes(tasks);
   } catch (error) {
     if (error instanceof ProjectClockError) {
-      console.error(
+      outputError(
         `An error occurred while inspecting the timesheet file (${error.message})`
       );
       process.exit(1);
@@ -91,14 +95,14 @@ export default function status(options: StatusOptions) {
     includeSeconds
   );
 
-  console.log(`${chalk.bold('Project:')} '${projectName}'`);
-  console.log(
+  outputPlain(`${chalk.bold('Project:')} '${projectName}'`);
+  outputPlain(
     `${chalk.bold('Tasks (complete/incomplete/total):')} ${completeTasks.length}/${incompleteTasks.length}/${tasks.length}`
   );
   if (activeTaskListStr) {
-    console.log(`\n${activeTaskListStr}`);
+    outputPlain(`\n${activeTaskListStr}`);
   }
   if (totalTimePeriodStr) {
-    console.log(`\n${totalTimePeriodStr}`);
+    outputPlain(`\n${totalTimePeriodStr}`);
   }
 }

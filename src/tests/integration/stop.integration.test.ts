@@ -157,7 +157,7 @@ describe('Stopping the clock', () => {
         const e = err as Error;
         error = e.message;
       }
-      expect(error).toMatch('timesheet is empty, nothing to stop');
+      expect(error).toMatch('Timesheet is empty, nothing to stop.');
       expect(error).not.toMatch('throw');
       expect(error).not.toMatch('ProjectClockError');
     });
@@ -711,7 +711,7 @@ describe('Stopping the clock', () => {
       }
 
       expect(error).toMatch(
-        `cannot stop task '${TASK_SUBJECT}'; the task has already been stopped`
+        `Cannot stop task '${TASK_SUBJECT}'; the task has already been stopped.`
       );
       expectTaskMemberHasValue(testFilePath, 'end', '2024-01-01T01:00:00.000Z');
     });
@@ -747,7 +747,7 @@ describe('Stopping the clock', () => {
       }
 
       expect(error).toMatch(
-        `cannot stop task '${TASK_SUBJECT}'; the task hasn't been started yet`
+        `Cannot stop task '${TASK_SUBJECT}'; the task hasn't been started yet.`
       );
       expectTaskMemberHasValue(testFilePath, 'end', undefined);
     });

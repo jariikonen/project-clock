@@ -8,7 +8,12 @@ import ProjectClockError from '../common/ProjectClockError';
 import TimePeriod, { TimeParams } from '../common/TimePeriod';
 import { readTimesheet } from '../common/timesheetReadWrite';
 import { Task } from '../types/ProjectClockData';
-import { outputPlain, sideHeadingText } from '../common/outputFormatting';
+import {
+  consoleWidth,
+  outputError,
+  outputPlain,
+  sideHeadingText,
+} from '../common/outputFormatting';
 import multiple from '../common/multiple';
 import capitalize from '../common/capitalize';
 
@@ -50,7 +55,6 @@ function getRequestedTaskListStr(
   timeParams: TimeParams | undefined,
   includeSeconds: boolean
 ) {
-  const consoleWidth = process.stdout.columns;
   const taskTable = getTaskListString(
     times,
     timeParams,
@@ -131,7 +135,7 @@ export default function list(options: ListOptions) {
     requestedTimes = calculateTimes(requestedTasks);
   } catch (error) {
     if (error instanceof ProjectClockError) {
-      console.error(
+      outputError(
         `An error occurred while inspecting the timesheet file (${error.message})`
       );
       process.exit(1);
