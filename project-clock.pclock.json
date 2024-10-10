@@ -877,8 +877,11 @@
       "end": "2024-10-10T09:16:06.196Z"
     },
     {
-      "subject": "By default suspend and resume commands without arguments offer only active tasks (not stopped) to be suspend and resumed",
-      "description": "By default suspend and resume commands without arguments offer only active tasks (not stopped) to be suspended or resumed. When used with flag -s | --includeStopped also the stopped tasks are offered."
+      "subject": "By default the \"suspend\" and \"resume\" commands without arguments offer only active tasks (not stopped) to be suspended and resumed",
+      "description": "It is difficult to find the correct task from a long list of tasks. The number of shown tasks can be reduced by removing the stopped tasks from the list, when \"suspend\" and \"resume\" commands are called without arguments, since usually the task one whishes to suspend or resume is not stopped. So, by default \"suspend\" and \"resume\" commands without arguments should offer only active tasks (not stopped). If one also whishes to see the stopped tasks, one can use the -c | --includeCompleted flag (or -s | --includeStopped).",
+      "begin": "2024-10-10T09:33:27.097Z",
+      "notes": "I implemented this by adding two new TaskStateTypes to filterTasks.ts: ActiveSuspendable and ActiveResumable. While adding options to pclock.ts, I noticed that the global and command specific options were not used properly. Thus, I modified how the options are used in all commands and created an appropriately named variable for each command. This makes the pclock.ts clearer as it is easier to see which command is being edited.",
+      "end": "2024-10-10T12:10:29.215Z"
     },
     {
       "subject": "Tasks can be removed from the timesheet"

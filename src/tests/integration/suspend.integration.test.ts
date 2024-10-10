@@ -91,7 +91,49 @@ describe('Suspend command', () => {
   });
 
   describe('"Suspend" command without any arguments', () => {
-    test('exits with an error when no suspendable tasks are found', () => {
+    test('exits with an error when no active suspendable tasks are found', () => {
+      // initialize test environment
+      createTestFile(
+        {
+          projectName: PROJECT_NAME,
+          tasks: [
+            {
+              subject: 'first unsuspendable task',
+            },
+            {
+              subject: 'second unsuspendable task',
+              begin: '2024-01-01T00:00:00.000Z',
+              suspend: ['2024-01-01T01:00:00.000Z'],
+            },
+            {
+              subject: 'suspendable but not active task',
+              begin: '2024-01-01T00:00:00.000Z',
+              end: '2024-01-01T01:00:00.000Z',
+            },
+          ],
+        },
+        testFilePath
+      );
+
+      // test
+      let error = '';
+      try {
+        execSync(`cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js suspend`, {
+          stdio: 'pipe',
+          env: { ...process.env, FORCE_COLOR: '0' },
+        });
+      } catch (err) {
+        const e = err as Error;
+        error = e.message;
+      }
+      expect(error).toMatch(
+        'No active suspendable tasks found; nothing to suspend.'
+      );
+      expect(error).not.toMatch('throw');
+      expect(error).not.toMatch('ProjectClockError');
+    });
+
+    test('exits with an error when -c flag is used and no suspendable tasks are found', () => {
       // initialize test environment
       createTestFile(
         {
@@ -113,10 +155,13 @@ describe('Suspend command', () => {
       // test
       let error = '';
       try {
-        execSync(`cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js suspend`, {
-          stdio: 'pipe',
-          env: { ...process.env, FORCE_COLOR: '0' },
-        });
+        execSync(
+          `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js suspend -c`,
+          {
+            stdio: 'pipe',
+            env: { ...process.env, FORCE_COLOR: '0' },
+          }
+        );
       } catch (err) {
         const e = err as Error;
         error = e.message;
@@ -176,7 +221,9 @@ describe('Suspend command', () => {
           env: { ...process.env, FORCE_COLOR: '0' },
         }
       );
-      expect(response).toMatch(`One suspendable task found: ${TASK_SUBJECT}`);
+      expect(response).toMatch(
+        `One active suspendable task found: ${TASK_SUBJECT}`
+      );
       expect(response).toMatch('Suspend this task?');
     });
 
@@ -202,7 +249,9 @@ describe('Suspend command', () => {
         { ...process.env, FORCE_COLOR: '0' },
         true
       );
-      expect(response).toMatch(`One suspendable task found: ${TASK_SUBJECT}`);
+      expect(response).toMatch(
+        `One active suspendable task found: ${TASK_SUBJECT}`
+      );
       expect(response).toMatch('Suspend this task?');
       expect(response).toMatch(`Project: ${PROJECT_NAME}`);
       expectTaskIsSuspended();
@@ -230,7 +279,9 @@ describe('Suspend command', () => {
         { ...process.env, FORCE_COLOR: '0' },
         true
       );
-      expect(response).toMatch(`One suspendable task found: ${TASK_SUBJECT}`);
+      expect(response).toMatch(
+        `One active suspendable task found: ${TASK_SUBJECT}`
+      );
       expect(response).toMatch('Suspend this task?');
       expectTaskIsNotSuspended();
     });
@@ -267,7 +318,7 @@ describe('Suspend command', () => {
         { encoding: 'utf8', env: { ...process.env, FORCE_COLOR: '0' } }
       );
       expect(response).toMatch(
-        'There are 3 suspendable tasks on the timesheet.'
+        'There are 2 active suspendable tasks on the timesheet.'
       );
       expect(response).toMatch('Select the task to suspend:');
     });
@@ -325,6 +376,70 @@ describe('Suspend command', () => {
         { encoding: 'utf8', env: { ...process.env, FORCE_COLOR: '0' } }
       );
       expect(response).toMatch(
+        'There are 2 active suspendable tasks on the timesheet.'
+      );
+      expect(response).toMatch('Select the task to suspend:');
+      expect(response).toMatch('first suspendable task');
+      expect(response).toMatch('second suspendable task');
+      expect(response).toMatch('none');
+      expect(response).not.toMatch('first unsuspendable task');
+      expect(response).not.toMatch('second unsuspendable task');
+      expect(response).not.toMatch('third unsuspendable task');
+    });
+
+    test('there is correct amount of options when the -c flag is used and the user is asked which of the many tasks found to suspend', () => {
+      // initialize test environment
+      createTestFile(
+        {
+          projectName: PROJECT_NAME,
+          tasks: [
+            {
+              subject: 'first unsuspendable task',
+              begin: '2024-01-01T00:00:00.000Z',
+              suspend: ['2024-01-01T01:00:00.000Z'],
+            },
+            {
+              subject: 'first suspendable task',
+              begin: '2024-01-01T00:00:00.000Z',
+            },
+            {
+              subject: 'second suspendable task',
+              begin: '2024-01-01T00:00:00.000Z',
+              suspend: ['2024-01-01T01:00:00.000Z'],
+              resume: ['2024-01-01T02:00:00.000Z'],
+            },
+            {
+              subject: 'second unsuspendable task',
+              begin: '2024-01-01T00:00:00.000Z',
+              suspend: ['2024-01-01T01:00:00.000Z', '2024-01-01T03:00:00.000Z'],
+              resume: ['2024-01-01T02:00:00.000Z'],
+            },
+            {
+              subject: 'third suspendable task',
+              begin: '2024-01-01T00:00:00.000Z',
+              end: '2024-01-01T00:00:00.000Z',
+            },
+            {
+              subject: 'third unsuspendable task',
+              begin: '2024-01-01T00:00:00.000Z',
+              suspend: [
+                '2024-01-01T01:00:00.000Z',
+                '2024-01-01T03:00:00.000Z',
+                '2024-01-01T05:00:00.000Z',
+              ],
+              resume: ['2024-01-01T02:00:00.000Z', '2024-01-01T04:00:00.000Z'],
+            },
+          ],
+        },
+        testFilePath
+      );
+
+      // test
+      const response = execSync(
+        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js suspend -c`,
+        { encoding: 'utf8', env: { ...process.env, FORCE_COLOR: '0' } }
+      );
+      expect(response).toMatch(
         'There are 3 suspendable tasks on the timesheet.'
       );
       expect(response).toMatch('Select the task to suspend:');
@@ -371,7 +486,7 @@ describe('Suspend command', () => {
         true
       );
       expect(response).toMatch(
-        'There are 3 suspendable tasks on the timesheet.'
+        'There are 2 active suspendable tasks on the timesheet.'
       );
       expect(response).toMatch('Select the task to suspend:');
       expect(response).toMatch(`Project: ${PROJECT_NAME}`);
@@ -407,12 +522,12 @@ describe('Suspend command', () => {
       // test
       const response = await execute(
         `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js suspend`,
-        [`${DOWN}${DOWN}${DOWN}\n`],
+        [`${DOWN}${DOWN}\n`],
         { ...process.env, FORCE_COLOR: '0' },
         true
       );
       expect(response).toMatch(
-        'There are 3 suspendable tasks on the timesheet.'
+        'There are 2 active suspendable tasks on the timesheet.'
       );
       expect(response).toMatch('Select the task to suspend:');
       expect(response).toMatch('Nothing to suspend');

@@ -15,6 +15,11 @@ import { readTimesheet, writeTimesheet } from '../common/timesheetReadWrite';
 import { Task } from '../types/ProjectClockData';
 import status from './status';
 
+interface ResumeOptions {
+  includeCompleted?: false;
+  includeStopped?: false;
+}
+
 function resumeTask(task: Task): void {
   // after filtering the task is known to be resumable (suspended or stopped)
   // suspended
@@ -66,7 +71,10 @@ function resumeTask(task: Task): void {
  * @param taskDescriptor A regex search string that is expected to match a task
  *    subject.
  */
-export default async function resume(taskDescriptor: string | undefined) {
+export default async function resume(
+  taskDescriptor: string | undefined,
+  options: ResumeOptions
+) {
   const timesheetData = readTimesheet();
   const { tasks } = timesheetData;
 
@@ -76,9 +84,13 @@ export default async function resume(taskDescriptor: string | undefined) {
   }
 
   const existingTask = tasks.find((task) => task.subject === taskDescriptor);
+  const taskStateType =
+    taskDescriptor || options.includeCompleted || options.includeStopped // eslint-disable-line @typescript-eslint/prefer-nullish-coalescing
+      ? TaskStateType.Resumable
+      : TaskStateType.ActiveResumable;
   const taskToResume = await getTaskOfType(
     tasks,
-    TaskStateType.Resumable,
+    taskStateType,
     taskDescriptor,
     'resume',
     !!existingTask

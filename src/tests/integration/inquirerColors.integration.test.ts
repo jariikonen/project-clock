@@ -113,7 +113,9 @@ describe('Functions using the inquirer library are not outputting colors when FO
         true
       )
     );
-    expect(response).toMatch(`One suspendable task found: ${TASK_SUBJECT}`);
+    expect(response).toMatch(
+      `One active suspendable task found: ${TASK_SUBJECT}`
+    );
     expect(response).toMatch('Suspend this task?');
     expect(response).not.toMatch('</color>');
     expect(response).not.toMatch('</intensity>');
@@ -144,7 +146,9 @@ describe('Functions using the inquirer library are not outputting colors when FO
         true
       )
     );
-    expect(response).toMatch(`One resumable task found: ${TASK_SUBJECT}`);
+    expect(response).toMatch(
+      `One active resumable task found: ${TASK_SUBJECT}`
+    );
     expect(response).toMatch('Resume this task?');
     expect(response).not.toMatch('</color>');
     expect(response).not.toMatch('</intensity>');

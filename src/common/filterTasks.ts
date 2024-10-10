@@ -63,6 +63,8 @@ import ProjectClockError from './ProjectClockError';
 /** Represents the type of a task state. */
 export enum TaskStateType {
   Active = 'active',
+  ActiveSuspendable = 'activeSuspendable',
+  ActiveResumable = 'activeResumable',
   Suspendable = 'suspendable',
   Resumable = 'resumable',
   Stoppable = 'stoppable',
@@ -90,6 +92,66 @@ export function getMatchingActiveTasks(tasks: Task[], taskDescriptor: string) {
   return tasks.filter(
     (task) => task.begin && !task.end && task.subject.match(taskDescriptor)
   );
+}
+
+/**
+ * Returns the active suspendable tasks found from the given task array.
+ * @param tasks Array of tasks.
+ * @param taskDescriptor A string that is expected to match the task subject.
+ */
+export function getActiveSuspendableTasks(tasks: Task[]) {
+  return tasks.filter((task) => {
+    // started
+    if (task.begin && !task.suspend && !task.end) {
+      return true;
+    }
+    // resumed
+    if (
+      task.resume &&
+      task.resume.length > 0 &&
+      !task.end &&
+      task.suspend &&
+      task.suspend.length === task.resume.length
+    ) {
+      return true;
+    }
+    return false;
+  });
+}
+
+/**
+ * Returns the active suspendable tasks found in the given task array, which
+ * match the given task descriptor.
+ * @param tasks Array of tasks.
+ * @param taskDescriptor A string that is expected to match the task subject.
+ */
+export function getMatchingActiveSuspendableTasks(
+  tasks: Task[],
+  taskDescriptor: string
+) {
+  return tasks.filter((task) => {
+    // started
+    if (
+      task.begin &&
+      !task.suspend &&
+      !task.end &&
+      task.subject.match(taskDescriptor)
+    ) {
+      return true;
+    }
+    // resumed
+    if (
+      task.resume &&
+      task.resume.length > 0 &&
+      !task.end &&
+      task.suspend &&
+      task.suspend.length === task.resume.length &&
+      task.subject.match(taskDescriptor)
+    ) {
+      return true;
+    }
+    return false;
+  });
 }
 
 /**
@@ -153,6 +215,56 @@ export function getMatchingSuspendableTasks(
       task.suspend &&
       task.suspend.length === task.resume.length &&
       task.subject.match(taskDescriptor)
+    ) {
+      return true;
+    }
+    return false;
+  });
+}
+
+/**
+ * Returns the active resumbable tasks found in the given task array.
+ * @param tasks Array of tasks.
+ * @param taskDescriptor A string that is expected to match the task subject.
+ */
+export function getActiveResumableTasks(tasks: Task[]) {
+  return tasks.filter((task) => {
+    // suspended
+    if (
+      (!!task.suspend && !task.resume && !task.end) ||
+      (!!task.suspend &&
+        !!task.resume &&
+        task.suspend.length > task.resume?.length &&
+        !task.end)
+    ) {
+      return true;
+    }
+    return false;
+  });
+}
+
+/**
+ * Returns the active resumable tasks found in the given task array, which
+ * match the given task descriptor.
+ * @param tasks Array of tasks.
+ * @param taskDescriptor A string that is expected to match the task subject.
+ */
+export function getMatchingActiveResumableTasks(
+  tasks: Task[],
+  taskDescriptor: string
+) {
+  return tasks.filter((task) => {
+    // suspended
+    if (
+      (!!task.suspend &&
+        !task.resume &&
+        !task.end &&
+        !!task.subject.match(taskDescriptor)) ||
+      (!!task.suspend &&
+        !!task.resume &&
+        task.suspend.length > task.resume?.length &&
+        !task.end &&
+        !!task.subject.match(taskDescriptor))
     ) {
       return true;
     }
@@ -259,6 +371,13 @@ export function filterTasks(
       return taskDescriptor
         ? [getMatchingActiveTasks(tasks, taskDescriptor), 'matching active']
         : [getActiveTasks(tasks), 'active'];
+    case TaskStateType.ActiveSuspendable:
+      return taskDescriptor
+        ? [
+            getMatchingActiveSuspendableTasks(tasks, taskDescriptor),
+            'matching active suspendable',
+          ]
+        : [getActiveSuspendableTasks(tasks), 'active suspendable'];
     case TaskStateType.Suspendable:
       return taskDescriptor
         ? [
@@ -266,6 +385,13 @@ export function filterTasks(
             'matching suspendable',
           ]
         : [getSuspendableTasks(tasks), 'suspendable'];
+    case TaskStateType.ActiveResumable:
+      return taskDescriptor
+        ? [
+            getMatchingActiveResumableTasks(tasks, taskDescriptor),
+            'matching active resumable',
+          ]
+        : [getActiveResumableTasks(tasks), 'active resumable'];
     case TaskStateType.Resumable:
       return taskDescriptor
         ? [

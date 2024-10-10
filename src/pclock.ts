@@ -20,25 +20,37 @@ import {
 
 const program = new Command();
 
-program.option('--no-color', 'turns off the color output');
-
 program
   .name('pclock')
   .description('CLI app to clock time spent on a project')
-  .version(version, '-V, --version', 'output the version number');
+  .version(version, '-V, --version', 'output the version number')
+  .option('--no-color', 'turns off the color output');
 
 program.addHelpText('beforeAll', `pclock (Project Clock) v${version}\n`);
 
-program
-  .command('new')
+const commandNew = program.command('new');
+const commandStart = program.command('start');
+const commandStop = program.command('stop');
+const commandStatus = program.command('status');
+const commandList = program.command('list');
+const commandSuspend = program.command('suspend');
+const commandResume = program.command('resume');
+const commandAdd = program.command('add');
+const commandShow = program.command('show');
+const commandEdit = program.command('edit');
+
+const subCommandEditSubject = commandEdit.command('subject');
+const subCommandEditDescription = commandEdit.command('description');
+const subCommandEditNotes = commandEdit.command('notes');
+
+commandNew
   .description(
     'Create a new project timesheet. Prompts the user for a project name, if the project_name argument is not given.\n\n'
   )
   .argument('[project_name]', 'name of the project')
   .action((projectName) => newTimeSheet(projectName));
 
-program
-  .command('start')
+commandStart
   .description(
     'Start a task. If the command is called without the task descriptor argument, it will first look for any unstarted tasks. If a single such task is found, the user is asked if this is the one to be started. If more than one such task are found, user is asked which of the tasks to start. If no unstarted tasks are found, user is asked if a new task should be created. If user wants to create a new task, user is prompted for a subject for the new task and the current timestamp is provided as the default subject.\n\nIf task descriptor is provided, a task whose subject matches the descriptor is looked for. If such a task is found, the user is confirmed if it is the right task. If the task is correct, it is started. If such a task is not found, the user is confirmed whether to create a new task with the task descriptor as its subject. If many tasks match with the descriptor, user is prompted which of the tasks to start.\n\n'
   )
@@ -48,8 +60,7 @@ program
   )
   .action((taskName) => start(taskName));
 
-program
-  .command('stop')
+commandStop
   .description(
     'Stop the clock. If the command is called without the task descriptor argument, it will look for active tasks (i.e., a task that is started but not stopped). If one such task is found, the user is confirmed whether this is the correct task. If it is, the task is stopped by setting the "end" value of the task to current timestamp. If more than one such task are found, the user is prompted which one of the tasks to stop. If no such task is found, the command exits with an error.\n\nIf task descriptor is provided, a tasks whose subject matches the descriptor is looked for. If such a task is found the user is confirmed whether it is the correct task to stop. if it is, the task is stopped. If more than one such task is found, the user is prompted which one of the tasks to stop. If no such task is found, the command exits with an error.\n\n'
   )
@@ -59,44 +70,55 @@ program
   )
   .action((taskName) => stop(taskName));
 
-program.option('-v, --verbose', 'print more verbose output');
-program
-  .command('status [-v]')
+commandStatus
+  .option('-v, --verbose', 'more verbose output')
   .description('Output status information.\n\n')
-  .action(() => status(program.opts()));
+  .action(() => status(commandStatus.opts()));
 
-program.option('-a --active', 'list active tasks');
-program.option('-c --complete', 'list completed tasks');
-program.option('-i --incomplete', 'list incomplete tasks');
-program.option('-u --unstarted', 'list unstarted tasks');
-program
-  .command('list [-acinv]')
+commandList
   .alias('ls')
   .description('List tasks on the timesheet.\n\n')
-  .action(() => list(program.opts()));
+  .option('-a --active', 'list active tasks')
+  .option('-c --complete', 'list completed tasks')
+  .option('-i --incomplete', 'list incomplete tasks')
+  .option('-u --unstarted', 'list unstarted tasks')
+  .action(() => list(commandList.opts()));
 
-program
-  .command('suspend')
+commandSuspend
   .alias('pause')
   .description('Suspend a task.\n\n')
+  .option(
+    '-c --includeCompleted',
+    'include completed tasks in search when called without arguments'
+  )
+  .option(
+    '-s --includeStopped',
+    'include stopped tasks in search when called without arguments (alias to -c)'
+  )
   .argument(
     '[task_descriptor]',
     'task descriptor; a string that is expected to match a task subject'
   )
-  .action((taskDescriptor) => suspend(taskDescriptor));
+  .action((taskDescriptor) => suspend(taskDescriptor, commandSuspend.opts()));
 
-program
-  .command('resume')
+commandResume
   .alias('unpause')
   .description('Resume a task.\n\n')
+  .option(
+    '-c --includeCompleted',
+    'include completed tasks in search when called without arguments'
+  )
+  .option(
+    '-s --includeStopped',
+    'include stopped tasks in search when called without arguments (alias to -c)'
+  )
   .argument(
     '[task_descriptor]',
     'task descriptor; a string that is expected to match a task subject'
   )
-  .action((taskDescriptor) => resume(taskDescriptor));
+  .action((taskDescriptor) => resume(taskDescriptor, commandResume.opts()));
 
-program
-  .command('add')
+commandAdd
   .description(
     'Add a new task. Prompts the user for a task subject if the task_subject argument is not given.\n\n'
   )
@@ -106,8 +128,7 @@ program
   )
   .action((taskSubject) => add(taskSubject));
 
-program
-  .command('show')
+commandShow
   .description(
     'Display the full task data (subject, description, notes and time data). Prompts the user to select a task if the task_descriptor argument is not given.\n\n'
   )
@@ -117,8 +138,7 @@ program
   )
   .action((taskDescriptor) => show(taskDescriptor));
 
-const edit = program
-  .command('edit')
+commandEdit
   .description(
     'Edit task. Has three sub commands: "subject", "description" and "notes". "Subject" allows you to edit the subject, "description" to edit the description, and "notes" to edit the notes on the task indicated by the task_descriptor argument. Type "help edit" for more information.\n\n'
   )
@@ -128,8 +148,7 @@ const edit = program
   )
   .action((taskDescriptor) => editCommand(taskDescriptor));
 
-edit
-  .command('subject')
+subCommandEditSubject
   .description('Edit task subject.')
   .argument(
     '[task_descriptor]',
@@ -140,8 +159,7 @@ edit
     editSubject(taskDescriptor, newSubject)
   );
 
-edit
-  .command('description')
+subCommandEditDescription
   .description('Edit task description.')
   .argument(
     '[task_descriptor]',
@@ -152,8 +170,7 @@ edit
     editDescription(taskDescriptor, newDescription)
   );
 
-edit
-  .command('notes')
+subCommandEditNotes
   .description('Edit task notes.')
   .argument(
     '[task_descriptor]',

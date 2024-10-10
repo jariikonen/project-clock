@@ -10,6 +10,11 @@ import { readTimesheet, writeTimesheet } from '../common/timesheetReadWrite';
 import { Task } from '../types/ProjectClockData';
 import status from './status';
 
+interface SuspendOptions {
+  includeCompleted?: false;
+  includeStopped?: false;
+}
+
 function suspendTask(task: Task): void {
   // after filtering the task is known to be suspendable
   // started (known not to be suspended; not resumed  or stopped)
@@ -64,7 +69,10 @@ function suspendTask(task: Task): void {
  * @param taskDescriptor A regex search string that is expected to match a task
  *    subject.
  */
-export default async function suspend(taskDescriptor: string | undefined) {
+export default async function suspend(
+  taskDescriptor: string | undefined,
+  options: SuspendOptions
+) {
   const timesheetData = readTimesheet();
   const { tasks } = timesheetData;
 
@@ -74,9 +82,13 @@ export default async function suspend(taskDescriptor: string | undefined) {
   }
 
   const existingTask = tasks.find((task) => task.subject === taskDescriptor);
+  const taskStateType =
+    taskDescriptor || options.includeCompleted || options.includeStopped // eslint-disable-line @typescript-eslint/prefer-nullish-coalescing
+      ? TaskStateType.Suspendable
+      : TaskStateType.ActiveSuspendable;
   const taskToSuspend = await getTaskOfType(
     tasks,
-    TaskStateType.Suspendable,
+    taskStateType,
     taskDescriptor,
     'suspend',
     !!existingTask
