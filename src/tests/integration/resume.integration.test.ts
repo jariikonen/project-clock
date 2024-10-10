@@ -207,7 +207,7 @@ describe('Resume command', () => {
       expect(response).toMatch('Resume this task?');
     });
 
-    test('resumes the only resumable task found if the user answers yes', async () => {
+    test('resumes the only resumable task found correctly if the user answers yes', async () => {
       // initialize test environment
       createTestFile(
         {
@@ -232,10 +232,11 @@ describe('Resume command', () => {
       );
       expect(response).toMatch(`One resumable task found: ${TASK_SUBJECT}`);
       expect(response).toMatch('Resume this task?');
+      expect(response).toMatch(`Project: ${PROJECT_NAME}`);
       expectTaskIsResumed();
     });
 
-    test('resumes the only resumable task found even if it is a bit more complicated suspended task', async () => {
+    test('resumes the only resumable task found correctly even if it is a bit more complicated suspended task', async () => {
       // initialize test environment
       createTestFile(
         {
@@ -261,6 +262,7 @@ describe('Resume command', () => {
       );
       expect(response).toMatch(`One resumable task found: ${TASK_SUBJECT}`);
       expect(response).toMatch('Resume this task?');
+      expect(response).toMatch(`Project: ${PROJECT_NAME}`);
       expectTaskIsResumed();
     });
 
@@ -289,6 +291,7 @@ describe('Resume command', () => {
       );
       expect(response).toMatch(`One resumable task found: ${TASK_SUBJECT}`);
       expect(response).toMatch('Resume this task?');
+      expect(response).toMatch(`Project: ${PROJECT_NAME}`);
       expectTaskIsResumed();
       const task = getTestTask(testFilePath);
       expect(task?.suspend).toBeDefined();
@@ -325,6 +328,7 @@ describe('Resume command', () => {
       );
       expect(response).toMatch(`One resumable task found: ${TASK_SUBJECT}`);
       expect(response).toMatch('Resume this task?');
+      expect(response).toMatch(`Project: ${PROJECT_NAME}`);
       expectTaskIsResumed();
       expectTaskMemberHasValue(testFilePath, 'suspend', [
         '2024-01-01T01:00:00.000Z',
@@ -411,7 +415,7 @@ describe('Resume command', () => {
       expect(response).not.toMatch('third unresumable task');
     });
 
-    test('resumes correct task when the second of many resumable tasks found is selected', async () => {
+    test('resumes the task correctly when the second of many resumable tasks found is selected', async () => {
       // initialize test environment
       createTestFile(
         {
@@ -430,6 +434,7 @@ describe('Resume command', () => {
       );
       expect(response).toMatch('There are 3 resumable tasks on the timesheet.');
       expect(response).toMatch('Select the task to resume:');
+      expect(response).toMatch(`Project: ${PROJECT_NAME}`);
       expectTaskIsResumed('second resumable task');
     });
 
@@ -623,7 +628,7 @@ describe('Resume command', () => {
       expect(response).toMatch('Resume this task?');
     });
 
-    test('resumes the correct task when a single matching resumable task is found and the user answers yes', async () => {
+    test('resumes the task correctly when a single matching resumable task is found and the user answers yes', async () => {
       // initialize test environment
       createTestFile(
         {
@@ -656,10 +661,11 @@ describe('Resume command', () => {
         `One matching resumable task found: ${TASK_SUBJECT}`
       );
       expect(response).toMatch('Resume this task?');
+      expect(response).toMatch(`Project: ${PROJECT_NAME}`);
       expectTaskIsResumed();
     });
 
-    test('resumes the task even when the single matching resumable task is a bit more complicated suspended task', async () => {
+    test('resumes the task correctly even when the single matching resumable task is a bit more complicated suspended task', async () => {
       // initialize test environment
       createTestFile(
         {
@@ -693,6 +699,7 @@ describe('Resume command', () => {
         `One matching resumable task found: ${TASK_SUBJECT}`
       );
       expect(response).toMatch('Resume this task?');
+      expect(response).toMatch(`Project: ${PROJECT_NAME}`);
       expectTaskIsResumed();
     });
 
@@ -729,6 +736,7 @@ describe('Resume command', () => {
         `One matching resumable task found: ${TASK_SUBJECT}`
       );
       expect(response).toMatch('Resume this task?');
+      expect(response).toMatch(`Project: ${PROJECT_NAME}`);
       expectTaskIsResumed();
       expectTaskMemberHasValue(testFilePath, 'suspend', [
         '2024-01-01T01:00:00.000Z',
@@ -739,7 +747,7 @@ describe('Resume command', () => {
       expect(task?.end).not.toBeDefined();
     });
 
-    test('resumes the task even when the single matching resumable task is a bit more complex stopped task', async () => {
+    test('resumes the task correctly even when the single matching resumable task is a bit more complex stopped task', async () => {
       // initialize test environment
       createTestFile(
         {
@@ -774,6 +782,7 @@ describe('Resume command', () => {
         `One matching resumable task found: ${TASK_SUBJECT}`
       );
       expect(response).toMatch('Resume this task?');
+      expect(response).toMatch(`Project: ${PROJECT_NAME}`);
       expectTaskIsResumed();
       expectTaskMemberHasValue(testFilePath, 'suspend', [
         '2024-01-01T01:00:00.000Z',
@@ -873,7 +882,7 @@ describe('Resume command', () => {
       expect(response).not.toMatch('third unresumable task');
     });
 
-    test('resumes the correct task when there are many matching resumable tasks and user selects the third one', async () => {
+    test('resumes the task correctly when there are many matching resumable tasks and user selects the third one', async () => {
       // initialize test environment
       createTestFile(
         {
@@ -895,6 +904,7 @@ describe('Resume command', () => {
         'There are 3 matching resumable tasks on the timesheet.'
       );
       expect(response).toMatch('Select the task to resume:');
+      expect(response).toMatch(`Project: ${PROJECT_NAME}`);
       expectTaskIsResumed('third resumable task');
     });
 

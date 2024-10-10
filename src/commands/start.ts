@@ -13,6 +13,7 @@ import {
   sideHeadingText,
 } from '../common/outputFormatting';
 import exitWithNothingToDo from '../common/exitWithNothingToDo';
+import status from './status';
 
 type TaskToUse = Task | null;
 type TaskDescriptorToUse = string | null;
@@ -174,7 +175,7 @@ function writeNewTimesheet(
           [
             "Cannot start task '",
             taskToStart.subject,
-            '; the task has already been started.',
+            "'; the task has already been started.",
           ],
           1
         )
@@ -201,6 +202,7 @@ function writeNewTimesheet(
       )
     );
   }
+  status({});
 }
 
 /**

@@ -193,7 +193,7 @@ describe('Stopping the clock', () => {
       expect(response).toMatch('Stop this task?');
     });
 
-    test('stops the only active task if user answers yes', async () => {
+    test('stops the only active task correctly if user answers yes', async () => {
       // initialize test environment
       createTestFile(
         {
@@ -222,6 +222,7 @@ describe('Stopping the clock', () => {
       );
       expect(response).toMatch(`One active task found: ${TASK_SUBJECT}`);
       expect(response).toMatch('Stop this task?');
+      expect(response).toMatch(`Project: ${PROJECT_NAME}`);
       expectTaskIsStopped();
     });
 
@@ -363,7 +364,7 @@ describe('Stopping the clock', () => {
       expect(response).not.toMatch('third unstoppable task');
     });
 
-    test('stops correct task when first of many active tasks is selected', async () => {
+    test('stops the task correctly when first of many active tasks is selected', async () => {
       // initialize test environment
       createTestFile(
         {
@@ -391,6 +392,7 @@ describe('Stopping the clock', () => {
       );
       expect(response).toMatch('There are 2 active tasks on the timesheet.');
       expect(response).toMatch('Select the task to stop:');
+      expect(response).toMatch(`Project: ${PROJECT_NAME}`);
       expectTaskIsStopped('first active task');
     });
 
@@ -495,7 +497,7 @@ describe('Stopping the clock', () => {
       expect(response).toMatch('Stop this task?');
     });
 
-    test('stops the correct task when the user answers yes', async () => {
+    test('stops the task correctly when the user answers yes', async () => {
       // initialize test environment
       createTestFile(
         {
@@ -526,6 +528,7 @@ describe('Stopping the clock', () => {
         `One matching active task found: ${TASK_SUBJECT}`
       );
       expect(response).toMatch('Stop this task?');
+      expect(response).toMatch(`Project: ${PROJECT_NAME}`);
       expectTaskIsStopped();
     });
 
@@ -599,7 +602,7 @@ describe('Stopping the clock', () => {
       expect(response).toMatch('Select the task to stop:');
     });
 
-    test('stops correct task when first of many matching active tasks is selected', async () => {
+    test('stops the task correctly when first of many matching active tasks is selected', async () => {
       // initialize test environment
       createTestFile(
         {
@@ -635,6 +638,7 @@ describe('Stopping the clock', () => {
         'There are 2 matching active tasks on the timesheet.'
       );
       expect(response).toMatch('Select the task to stop:');
+      expect(response).toMatch(`Project: ${PROJECT_NAME}`);
       expectTaskIsStopped('first active task');
     });
 

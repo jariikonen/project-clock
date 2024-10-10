@@ -180,7 +180,7 @@ describe('Suspend command', () => {
       expect(response).toMatch('Suspend this task?');
     });
 
-    test('suspends the only suspendable task found if the user answers yes', async () => {
+    test('suspends the only suspendable task found correctly if the user answers yes', async () => {
       // initialize test environment
       createTestFile(
         {
@@ -204,6 +204,7 @@ describe('Suspend command', () => {
       );
       expect(response).toMatch(`One suspendable task found: ${TASK_SUBJECT}`);
       expect(response).toMatch('Suspend this task?');
+      expect(response).toMatch(`Project: ${PROJECT_NAME}`);
       expectTaskIsSuspended();
     });
 
@@ -336,7 +337,7 @@ describe('Suspend command', () => {
       expect(response).not.toMatch('third unsuspendable task');
     });
 
-    test('suspends correct task when the second of many suspendable tasks found is selected', async () => {
+    test('suspends the task correctly when the second of many suspendable tasks found is selected', async () => {
       // initialize test environment
       createTestFile(
         {
@@ -373,6 +374,7 @@ describe('Suspend command', () => {
         'There are 3 suspendable tasks on the timesheet.'
       );
       expect(response).toMatch('Select the task to suspend:');
+      expect(response).toMatch(`Project: ${PROJECT_NAME}`);
       expectTaskIsSuspended('second suspendable task');
     });
 
@@ -479,7 +481,7 @@ describe('Suspend command', () => {
       expect(response).toMatch('Suspend this task?');
     });
 
-    test('suspends the correct task when a single matching suspendable task is found and the user answers yes', async () => {
+    test('suspends the task correctly when a single matching suspendable task is found and the user answers yes', async () => {
       // initialize test environment
       createTestFile(
         {
@@ -511,10 +513,11 @@ describe('Suspend command', () => {
         `One matching suspendable task found: ${TASK_SUBJECT}`
       );
       expect(response).toMatch('Suspend this task?');
+      expect(response).toMatch(`Project: ${PROJECT_NAME}`);
       expectTaskIsSuspended();
     });
 
-    test('suspends the task even when the single matching suspendable task is a bit more complicated resumed task', async () => {
+    test('suspends the task correctly even when the single matching suspendable task is a bit more complicated resumed task', async () => {
       // initialize test environment
       createTestFile(
         {
@@ -548,10 +551,11 @@ describe('Suspend command', () => {
         `One matching suspendable task found: ${TASK_SUBJECT}`
       );
       expect(response).toMatch('Suspend this task?');
+      expect(response).toMatch(`Project: ${PROJECT_NAME}`);
       expectTaskIsSuspended();
     });
 
-    test('suspends the task even when the single matching suspendable task is a simple stopped task', async () => {
+    test('suspends the task correctly even when the single matching suspendable task is a simple stopped task', async () => {
       // initialize test environment
       createTestFile(
         {
@@ -584,10 +588,11 @@ describe('Suspend command', () => {
         `One matching suspendable task found: ${TASK_SUBJECT}`
       );
       expect(response).toMatch('Suspend this task?');
+      expect(response).toMatch(`Project: ${PROJECT_NAME}`);
       expectTaskIsSuspended();
     });
 
-    test('suspends the task even when the single matching suspendable task is a bit more complex stopped task', async () => {
+    test('suspends the task correctly even when the single matching suspendable task is a bit more complex stopped task', async () => {
       // initialize test environment
       createTestFile(
         {
@@ -622,6 +627,7 @@ describe('Suspend command', () => {
         `One matching suspendable task found: ${TASK_SUBJECT}`
       );
       expect(response).toMatch('Suspend this task?');
+      expect(response).toMatch(`Project: ${PROJECT_NAME}`);
       expectTaskIsSuspended();
     });
 
@@ -760,7 +766,7 @@ describe('Suspend command', () => {
       expect(response).not.toMatch('third unsuspendable task');
     });
 
-    test('suspends the correct task when there are many matching suspendable tasks and user selects the third one', async () => {
+    test('suspends the task correctly when there are many matching suspendable tasks and user selects the third one', async () => {
       // initialize test environment
       createTestFile(
         {
@@ -819,6 +825,7 @@ describe('Suspend command', () => {
         'There are 3 matching suspendable tasks on the timesheet.'
       );
       expect(response).toMatch('Select the task to suspend:');
+      expect(response).toMatch(`Project: ${PROJECT_NAME}`);
       expectTaskIsSuspended('third suspendable task');
     });
 

@@ -8,6 +8,7 @@ import {
 import { isSuspended, isUnstarted } from '../common/taskState';
 import { readTimesheet, writeTimesheet } from '../common/timesheetReadWrite';
 import { Task } from '../types/ProjectClockData';
+import status from './status';
 
 function suspendTask(task: Task): void {
   // after filtering the task is known to be suspendable
@@ -89,6 +90,7 @@ export default async function suspend(taskDescriptor: string | undefined) {
         1
       )
     );
+    status({});
     process.exit(0);
   }
   if (isUnstarted(existingTask)) {

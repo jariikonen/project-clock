@@ -13,6 +13,7 @@ import {
 } from '../common/taskState';
 import { readTimesheet, writeTimesheet } from '../common/timesheetReadWrite';
 import { Task } from '../types/ProjectClockData';
+import status from './status';
 
 function resumeTask(task: Task): void {
   // after filtering the task is known to be resumable (suspended or stopped)
@@ -86,6 +87,7 @@ export default async function resume(taskDescriptor: string | undefined) {
     resumeTask(taskToResume);
     writeTimesheet(timesheetData);
     outputSuccess(`Resumed task '${taskToResume.subject}'.`);
+    status({});
     process.exit(0);
   }
   if (isUnstarted(existingTask)) {

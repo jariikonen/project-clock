@@ -128,29 +128,31 @@ describe('Starting the clock', () => {
       expect(response).toMatch('Do you want to create a new task?');
     });
 
-    test('starts correct task when default value (current timestamp as subject) is accepted', async () => {
+    test('starts task correctly when default value (current timestamp as subject) is accepted', async () => {
       const response = await execute(
         `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js start`,
         ['y\n', '\n'],
-        { ...process.env },
+        { ...process.env, FORCE_COLOR: '0' },
         true
       );
       expect(response).toMatch('Timesheet is empty.');
       expect(response).toMatch('Do you want to create a new task?');
       expect(response).toMatch('Enter subject for the task:');
+      expect(response).toMatch(`Project: ${PROJECT_NAME}`);
       expectTaskIsStarted(0, true);
     });
 
-    test('starts correct task when subject for the task is entered', async () => {
+    test('starts task correctly when subject for the task is entered', async () => {
       const response = await execute(
         `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js start`,
         ['y\n', `${TASK_SUBJECT}\n`],
-        { ...process.env },
+        { ...process.env, FORCE_COLOR: '0' },
         true
       );
       expect(response).toMatch('Timesheet is empty.');
       expect(response).toMatch('Do you want to create a new task?');
       expect(response).toMatch('Enter subject for the task:');
+      expect(response).toMatch(`Project: ${PROJECT_NAME}`);
       expectTaskIsStarted(0);
     });
 
@@ -158,7 +160,7 @@ describe('Starting the clock', () => {
       const response = await execute(
         `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js start`,
         ['n\n'],
-        { ...process.env },
+        { ...process.env, FORCE_COLOR: '0' },
         true
       );
       expect(response).toMatch('Timesheet is empty.');
@@ -183,7 +185,7 @@ describe('Starting the clock', () => {
       expect(response).toMatch('Start this task?');
     });
 
-    test('starts correct task when the single unstarted task is confirmed to be correct', async () => {
+    test('starts task correctly when the single unstarted task is confirmed to be correct', async () => {
       // initialize test environment
       createTestFile(singleTaskTestFile, testFilePath);
 
@@ -196,22 +198,7 @@ describe('Starting the clock', () => {
       );
       expect(response).toMatch(`One unstarted task found: ${TASK_SUBJECT}`);
       expect(response).toMatch('Start this task?');
-      expectTaskIsStarted(1);
-    });
-
-    test('starts correct task when the single unstarted task is confirmed to be correct', async () => {
-      // initialize test environment
-      createTestFile(singleTaskTestFile, testFilePath);
-
-      // test
-      const response = await execute(
-        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js start`,
-        ['y\n'],
-        { ...process.env, FORCE_COLOR: '0' },
-        true
-      );
-      expect(response).toMatch(`One unstarted task found: ${TASK_SUBJECT}`);
-      expect(response).toMatch('Start this task?');
+      expect(response).toMatch(`Project: ${PROJECT_NAME}`);
       expectTaskIsStarted(1);
     });
 
@@ -343,7 +330,7 @@ describe('Starting the clock', () => {
       expect(response).not.toMatch('seventh unstartable task');
     });
 
-    test('starts correct task when the first of many unstarted tasks is selected', async () => {
+    test('starts task correctly when the first of many unstarted tasks is selected', async () => {
       // initialize test environment
       createTestFile(
         {
@@ -375,6 +362,7 @@ describe('Starting the clock', () => {
       expect(response).toMatch('There are 2 unstarted tasks on the timesheet.');
       expect(response).toMatch('Select the task to start:');
       expect(response).toMatch(`Started task '${TASK_SUBJECT}'.`);
+      expect(response).toMatch(`Project: ${PROJECT_NAME}`);
       expectTaskIsStarted(1);
     });
 
@@ -469,7 +457,7 @@ describe('Starting the clock', () => {
       );
     });
 
-    test('creates correct task when user answers yes and the timesheet is empty', async () => {
+    test('creates task correctly when user answers yes and the timesheet is empty', async () => {
       const response = await execute(
         `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js start "${TASK_SUBJECT}"`,
         ['y\n'],
@@ -487,6 +475,7 @@ describe('Starting the clock', () => {
       const testFileData = getTestFileDataObj(testFilePath);
       expect(testFileData.tasks.length).toEqual(1);
       expect(testFileData.tasks[0].subject).toEqual(TASK_SUBJECT);
+      expect(response).toMatch(`Project: ${PROJECT_NAME}`);
       expectTaskIsStarted(0);
     });
 
@@ -538,7 +527,7 @@ describe('Starting the clock', () => {
       );
     });
 
-    test('creates correct task when matching task is not found and user answers yes', async () => {
+    test('creates task correctly when matching task is not found and user answers yes', async () => {
       // initialize test environment
       createTestFile(
         {
@@ -569,6 +558,7 @@ describe('Starting the clock', () => {
       expect(response).toMatch(
         'Do you want to create a new task with this task descriptor as its subject?'
       );
+      expect(response).toMatch(`Project: ${PROJECT_NAME}`);
       expectTaskIsStarted(2);
     });
 
@@ -641,7 +631,7 @@ describe('Starting the clock', () => {
       expect(response).toMatch('Start this task?');
     });
 
-    test('starts correct task when single unstarted task is found and user answers yes', async () => {
+    test('starts task correctly when single unstarted task is found and user answers yes', async () => {
       // initialize test environment
       createTestFile(
         {
@@ -675,6 +665,7 @@ describe('Starting the clock', () => {
         `One matching unstarted task found: ${TASK_SUBJECT}`
       );
       expect(response).toMatch('Start this task?');
+      expect(response).toMatch(`Project: ${PROJECT_NAME}`);
       expectTaskIsStarted(1);
     });
 

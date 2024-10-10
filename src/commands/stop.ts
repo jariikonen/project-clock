@@ -7,6 +7,7 @@ import {
   outputError,
   outputSuccess,
 } from '../common/outputFormatting';
+import status from './status';
 
 function stopTask(task: Task): void {
   const newTimestamp = new Date().toISOString();
@@ -72,6 +73,7 @@ export default async function stop(taskDescriptor: string | undefined) {
     outputSuccess(
       messageWithTruncatedPart(["Stopped task '", taskToStop.subject, "'."], 1)
     );
+    status({});
     process.exit(0);
   }
   if (!existingTask?.begin) {
