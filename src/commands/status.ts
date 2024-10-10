@@ -12,6 +12,7 @@ import {
   consoleWidth,
   outputError,
   outputPlain,
+  sideHeadingText,
 } from '../common/outputFormatting';
 
 interface StatusOptions {
@@ -52,7 +53,7 @@ function getTotalTimePeriodStr(
   if (hoursAndMinutes) {
     return `${chalk.bold('Total time spent:')} ${hoursAndMinutes}${daysHoursAndMinutes}`;
   }
-  return '';
+  return `${chalk.bold('Total time spent:')} -`;
 }
 
 /**
@@ -95,7 +96,7 @@ export default function status(options: StatusOptions) {
     includeSeconds
   );
 
-  outputPlain(`${chalk.bold('Project:')} '${projectName}'`);
+  outputPlain(sideHeadingText('Project', projectName));
   outputPlain(
     `${chalk.bold('Tasks (complete/incomplete/total):')} ${completeTasks.length}/${incompleteTasks.length}/${tasks.length}`
   );

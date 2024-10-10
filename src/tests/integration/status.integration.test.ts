@@ -103,7 +103,7 @@ describe('Status command', () => {
           env: { ...process.env, FORCE_COLOR: '0' },
         }
       );
-      expect(response).toMatch(`Project: '${PROJECT_NAME}'`);
+      expect(response).toMatch(`Project: ${PROJECT_NAME}`);
       expect(response).toMatch('Tasks (complete/incomplete/total): 1/3/4');
       expect(response).toMatch('2 active tasks:');
       expect(response).toMatch(
@@ -137,11 +137,11 @@ describe('Status command', () => {
           env: { ...process.env, FORCE_COLOR: '0' },
         }
       );
-      expect(response).toMatch(`Project: '${PROJECT_NAME}'`);
+      expect(response).toMatch(`Project: ${PROJECT_NAME}`);
       expect(response).toMatch('Tasks (complete/incomplete/total): 0/1/1');
       expect(response).toMatch('No active tasks.');
+      expect(response).toMatch('Total time spent: -');
       expect(response).not.toMatch(TASK_SUBJECT);
-      expect(response).not.toMatch('total time spent:');
     });
 
     test('"Status" command does not print additional days-hours-and-minutes string when the total time spent is less than a day', () => {
@@ -183,7 +183,7 @@ describe('Status command', () => {
           env: { ...process.env, FORCE_COLOR: '0' },
         }
       );
-      expect(response).toMatch(`Project: '${PROJECT_NAME}'`);
+      expect(response).toMatch(`Project: ${PROJECT_NAME}`);
       expect(response).toMatch('Tasks (complete/incomplete/total): 1/3/4');
       expect(response).toMatch('2 active tasks:');
       expect(response).toMatch(
@@ -194,6 +194,31 @@ describe('Status command', () => {
       );
       expect(response).toMatch('Total time spent: 7h 30min');
       expect(response).not.toMatch('Total time spent: 7h 30min (');
+    });
+
+    test('"Status" command outputs dash as the time when no time has been spent', () => {
+      // initialize test environment
+      createTestFile(
+        {
+          projectName: PROJECT_NAME,
+          tasks: [],
+        },
+        testFilePath
+      );
+
+      // test
+      const response = execSync(
+        `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js status`,
+        {
+          encoding: 'utf8',
+          env: { ...process.env, FORCE_COLOR: '0' },
+        }
+      );
+      expect(response).toMatch(`Project: ${PROJECT_NAME}`);
+      expect(response).toMatch('Tasks (complete/incomplete/total): 0/0/0');
+      expect(response).toMatch('No active tasks.');
+      expect(response).toMatch('Total time spent: -');
+      expect(response).not.toMatch(TASK_SUBJECT);
     });
   });
 
@@ -243,7 +268,7 @@ describe('Status command', () => {
           env: { ...process.env, FORCE_COLOR: '1' },
         })
       );
-      expect(response).toMatch(`<bold>Project:</intensity> '${PROJECT_NAME}'`);
+      expect(response).toMatch(`<bold>Project:</intensity> ${PROJECT_NAME}`);
       expect(response).toMatch(
         '<bold>Tasks (complete/incomplete/total):</intensity> 0/3/3'
       );
@@ -283,7 +308,7 @@ describe('Status command', () => {
       expect(response).not.toMatch('<red>');
       expect(response).not.toMatch('<yellow>');
       expect(response).not.toMatch('</color>');
-      expect(response).toMatch(`Project: '${PROJECT_NAME}'`);
+      expect(response).toMatch(`Project: ${PROJECT_NAME}`);
       expect(response).toMatch(
         '  Task                                                 Time       Status'
       );
