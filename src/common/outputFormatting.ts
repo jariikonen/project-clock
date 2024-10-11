@@ -533,19 +533,34 @@ export function messageWithTruncatedPart(
   return messageParts.join('');
 }
 
+/** Formats string using common successful result formatting. */
+export function formatSuccess(message: string) {
+  return chalk.cyan(message);
+}
+
+/** Formats string using common error message formatting. */
+export function formatError(message: string) {
+  return chalk.red(message);
+}
+
+/** Formats string using common notice formatting. */
+export function formatNotice(message: string) {
+  return chalk.yellow(message);
+}
+
 /** Outputs message to stdout using common successful result formatting. */
 export function outputSuccess(message: string): void {
-  console.log(chalk.cyan(message));
+  console.log(formatSuccess(message));
 }
 
 /** Outputs message to stderr using common error formatting. */
 export function outputError(message: string): void {
-  console.error(chalk.red(message));
+  console.error(formatError(message));
 }
 
-/** Outputs message to stdout using common message formatting. */
-export function outputMessage(message: string): void {
-  console.log(chalk.yellow(message));
+/** Outputs message to stdout using common notice formatting. */
+export function outputNotice(message: string): void {
+  console.log(formatNotice(message));
 }
 
 /** Outputs message to stdout without additional formatting. */

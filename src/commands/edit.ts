@@ -9,7 +9,7 @@ import promptToConfirm from '../common/promptToConfirm';
 import {
   messageWithTruncatedPart,
   outputError,
-  outputMessage,
+  outputNotice,
   outputSuccess,
   sideHeadingTextMultiple,
 } from '../common/outputFormatting';
@@ -146,7 +146,7 @@ async function confirmReplaceWithArgumentAndExit(
     { [`New ${field}`]: { modifiers: ['bold'] } }
   );
 
-  outputMessage(message);
+  outputNotice(message);
   const prompt = `Are you sure you want to replace the ${field}?`;
   if (await promptToConfirm(prompt)) {
     writeChanges(timesheetData, task, field, newValue);

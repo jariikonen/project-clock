@@ -2,7 +2,7 @@ import { Task } from '../types/ProjectClockData';
 import promptToConfirm from './promptToConfirm';
 import ProjectClockError from './ProjectClockError';
 import promptToSelectTask from './promptToSelectTask';
-import { outputMessage, sideHeadingText } from './outputFormatting';
+import { outputNotice, sideHeadingText } from './outputFormatting';
 import capitalize from './capitalize';
 import exitWithNothingToDo from './exitWithNothingToDo';
 
@@ -54,14 +54,14 @@ export default async function promptToConfirmOrSelectTask(
       false,
       { modifiers: ['bold'] }
     );
-    outputMessage(description);
+    outputNotice(description);
     if (await promptToConfirm(messageToUse)) {
       return tasks[0];
     }
     exitWithNothingToDo(verb);
   }
   if (tasks.length > 1) {
-    outputMessage(
+    outputNotice(
       `There are ${tasks.length} ${adjectiveToUse}tasks on the timesheet.`
     );
     const selectedTask = await promptToSelectTask(tasks, messageToUse);

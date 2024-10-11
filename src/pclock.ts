@@ -17,6 +17,7 @@ import {
   editNotes,
   editSubject,
 } from './commands/edit';
+import { formatError } from './common/outputFormatting';
 
 const program = new Command();
 
@@ -27,6 +28,10 @@ program
   .option('--no-color', 'turns off the color output');
 
 program.addHelpText('beforeAll', `pclock (Project Clock) v${version}\n`);
+
+program.configureOutput({
+  outputError: (str, write) => write(formatError(str)),
+});
 
 const commandNew = program.command('new');
 const commandStart = program.command('start');

@@ -8,7 +8,7 @@ import ProjectClockError from '../common/ProjectClockError';
 import {
   messageWithTruncatedPart,
   outputError,
-  outputMessage,
+  outputNotice,
   outputSuccess,
   sideHeadingText,
 } from '../common/outputFormatting';
@@ -21,7 +21,7 @@ type TaskDescriptorToUse = string | null;
 async function promptToCreateNewTask(
   reasonMessage: string
 ): Promise<TaskDescriptorToUse> {
-  outputMessage(reasonMessage);
+  outputNotice(reasonMessage);
   if (await promptToConfirm('Do you want to create a new task?')) {
     const descriptorFromUser = await input({
       message: 'Enter subject for the task:',
@@ -33,7 +33,7 @@ async function promptToCreateNewTask(
 }
 
 async function confirmTaskDescriptor(taskDescriptor: string) {
-  outputMessage(
+  outputNotice(
     sideHeadingText('Task descriptor argument received', taskDescriptor)
   );
   return promptToConfirm(
@@ -47,7 +47,7 @@ async function timesheetIsEmpty(
   let taskDescriptorToUse: TaskDescriptorToUse = null;
   try {
     if (taskDescriptor) {
-      outputMessage('Timesheet is empty.');
+      outputNotice('Timesheet is empty.');
       if (await confirmTaskDescriptor(taskDescriptor)) {
         return taskDescriptor;
       }
