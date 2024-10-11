@@ -92,7 +92,7 @@ async function getUnstartedTask(
   return [unstartedTask, taskDescriptorToUse];
 }
 
-async function getMathchingUnstartedTask(
+async function getMatchingUnstartedTask(
   tasks: Task[],
   taskDescriptor: string
 ): Promise<[TaskToUse, TaskDescriptorToUse]> {
@@ -236,7 +236,7 @@ export default async function start(taskDescriptor: string | undefined) {
   } else if (!taskDescriptor) {
     [taskToStart, taskDescriptorToUse] = await getUnstartedTask(tasks);
   } else {
-    [taskToStart, taskDescriptorToUse] = await getMathchingUnstartedTask(
+    [taskToStart, taskDescriptorToUse] = await getMatchingUnstartedTask(
       tasks,
       taskDescriptor
     );
