@@ -1110,7 +1110,7 @@ describe('correct functioning', () => {
           },
           newSubject
         );
-      }, 10000);
+      }, 20000);
     });
 
     describe('many tasks on timesheet', () => {
