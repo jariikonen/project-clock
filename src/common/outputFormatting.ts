@@ -548,6 +548,11 @@ export function formatNotice(message: string) {
   return chalk.yellow(message);
 }
 
+/** Formats string using common warning formatting. */
+export function formatWarning(message: string) {
+  return chalk.bgRed.whiteBright(message);
+}
+
 /** Outputs message to stdout using common successful result formatting. */
 export function outputSuccess(message: string): void {
   console.log(formatSuccess(message));
@@ -561,6 +566,11 @@ export function outputError(message: string): void {
 /** Outputs message to stdout using common notice formatting. */
 export function outputNotice(message: string): void {
   console.log(formatNotice(message));
+}
+
+/** Outputs message to stdout using common warning formatting. */
+export function outputWarning(message: string): void {
+  console.log(formatWarning(message));
 }
 
 /** Outputs message to stdout without additional formatting. */

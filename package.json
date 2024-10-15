@@ -41,12 +41,14 @@
   },
   "dependencies": {
     "@commander-js/extra-typings": "^12.1.0",
+    "@inquirer/checkbox": "^4.0.0",
     "@inquirer/confirm": "^5.0.0",
     "@inquirer/core": "^10.0.0",
     "@inquirer/editor": "^4.0.0",
     "@inquirer/input": "^4.0.0",
     "@inquirer/select": "^4.0.0",
     "chalk": "^4.1.2",
-    "commander": "^12.1.0"
+    "commander": "^12.1.0",
+    "figures": "^6.1.0"
   }
 }

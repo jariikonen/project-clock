@@ -24,6 +24,7 @@ export enum Command {
   Stop = 'stop',
   Suspend = 'suspend',
   Show = 'show',
+  Remove = 'remove',
 }
 
 /**
@@ -145,7 +146,9 @@ export function moreThanOneTimesheetFile(
 export async function forceStopped(
   testDirName: string,
   command: Command,
-  testFileDataObj: ProjectClockData
+  testFileDataObj: ProjectClockData,
+  inputs: string[] = [],
+  args = ''
 ) {
   const { testFilePath, subdirPath } = getTestPathsFromDirName(testDirName);
 
@@ -155,8 +158,8 @@ export async function forceStopped(
   let error = '';
   try {
     await execute(
-      `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js ${command}`,
-      ['^C']
+      `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js ${command} ${args}`,
+      [...inputs, '^C']
     );
   } catch (err) {
     const e = err as Error;

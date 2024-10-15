@@ -18,6 +18,7 @@ import {
   editSubject,
 } from './commands/edit';
 import { formatError } from './common/outputFormatting';
+import remove from './commands/remove';
 
 const program = new Command();
 
@@ -47,6 +48,8 @@ const commandEdit = program.command('edit');
 const subCommandEditSubject = commandEdit.command('subject');
 const subCommandEditDescription = commandEdit.command('description');
 const subCommandEditNotes = commandEdit.command('notes');
+
+const commandRemove = program.command('remove');
 
 commandNew
   .description(
@@ -183,5 +186,15 @@ subCommandEditNotes
   )
   .argument('[new_note]', 'a new note to the task')
   .action((taskDescriptor, newNote) => editNotes(taskDescriptor, newNote));
+
+commandRemove
+  .description('Remove a task from the timesheet.')
+  .alias('rm')
+  .alias('delete')
+  .argument(
+    '[task_descriptor]',
+    'task descriptor; a string that is expected to match a task subject'
+  )
+  .action((taskDescriptor) => remove(taskDescriptor));
 
 program.parse();

@@ -14,6 +14,7 @@ import {
 } from '../common/outputFormatting';
 import exitWithNothingToDo from '../common/exitWithNothingToDo';
 import status from './status';
+import handleProjectClockError from '../common/handleProjectClockError';
 
 type TaskToUse = Task | null;
 type TaskDescriptorToUse = string | null;
@@ -186,7 +187,11 @@ function writeNewTimesheet(
     taskToStart.begin = new Date().toISOString();
   }
 
-  writeTimesheet(timesheetData);
+  try {
+    writeTimesheet(timesheetData);
+  } catch (error) {
+    handleProjectClockError(error, 'Writing timesheet failed');
+  }
   if (newTaskCreated) {
     outputSuccess(
       messageWithTruncatedPart(

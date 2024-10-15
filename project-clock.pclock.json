@@ -889,7 +889,35 @@
       "end": "2024-10-11T05:52:21.376Z"
     },
     {
-      "subject": "Tasks can be removed from the timesheet"
+      "subject": "Tasks can be removed from the timesheet",
+      "begin": "2024-10-11T11:40:07.000Z",
+      "suspend": [
+        "2024-10-11T12:46:27.321Z",
+        "2024-10-12T04:07:03.717Z",
+        "2024-10-12T08:32:29.030Z",
+        "2024-10-13T08:07:48.948Z",
+        "2024-10-15T13:06:39.281Z"
+      ],
+      "resume": [
+        "2024-10-12T02:21:42.767Z",
+        "2024-10-12T06:35:44.211Z",
+        "2024-10-13T04:43:37.770Z",
+        "2024-10-15T10:44:06.039Z",
+        "2024-10-15T14:37:49.376Z"
+      ],
+      "end": "2024-10-15T15:57:46.979Z"
+    },
+    {
+      "subject": "Fix failed tests on Windows"
+    },
+    {
+      "subject": "Add tests for all the commands testing that they output friendly error messages when force stopped in any of their prompts"
+    },
+    {
+      "subject": "Make sure all tests using assertions in functions have expect.asserts(n) with correct n"
+    },
+    {
+      "subject": "Make sure all command are tested for the situation that there are no tasks on the timesheet"
     },
     {
       "subject": "Timesheet file can be selected using --timesheet | -t flag"
@@ -922,6 +950,9 @@
     {
       "subject": "Separate paddings for table row background and text",
       "description": "It looks weird especially on the header row that the background color starts only where the text starts. It should be possible to style the rows so that the background color starts earlier than the text."
+    },
+    {
+      "subject": "Prompts can be cancelled with ESC key"
     },
     {
       "subject": "Add a 'script mode' flag that prevents all commands from prompting the user for instructions"

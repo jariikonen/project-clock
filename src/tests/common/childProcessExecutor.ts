@@ -85,7 +85,7 @@ function writeToEditor(
 function parseNewPrompt(dataStr: string, lastPrompt: string) {
   const cleanedDataStr = stripPrettifiedColorAndModifiers(dataStr);
   const possiblePrompts = cleanedDataStr.match(
-    /\?(\s[A-Za-z();,'"-]+)+(\?|:)/g
+    /\?(\s[A-Za-z0-9();,'"-]+)+(\?|:)/g
   );
   const possibleNewPrompts = lastPrompt
     ? possiblePrompts?.filter((prompt) => !prompt.includes(lastPrompt))
