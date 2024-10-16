@@ -282,7 +282,7 @@ describe('Removing tasks', () => {
         let error = '';
         try {
           execSync(
-            `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js remove '${TASK_SUBJECT}'`,
+            `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js remove "${TASK_SUBJECT}"`,
             {
               encoding: 'utf8',
               stdio: 'pipe',
@@ -323,7 +323,7 @@ describe('Removing tasks', () => {
 
       test('the user is confirmed if the matching task is the correct task to remove', () => {
         const response = execSync(
-          `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js remove '${TASK_SUBJECT}'`,
+          `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js remove "${TASK_SUBJECT}"`,
           {
             encoding: 'utf8',
             stdio: 'pipe',
@@ -339,7 +339,7 @@ describe('Removing tasks', () => {
 
       test('the matching task is removed if user answers yes', async () => {
         const response = await execute(
-          `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js remove '${TASK_SUBJECT}'`,
+          `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js remove "${TASK_SUBJECT}"`,
           ['y\n'],
           { ...process.env, FORCE_COLOR: '0' },
           true
@@ -351,7 +351,7 @@ describe('Removing tasks', () => {
 
       test('nothing is removed if the user answers no', async () => {
         const response = await execute(
-          `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js remove '${TASK_SUBJECT}'`,
+          `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js remove "${TASK_SUBJECT}"`,
           ['n\n'],
           { ...process.env, FORCE_COLOR: '0' },
           true
@@ -391,7 +391,7 @@ describe('Removing tasks', () => {
 
       test('the user is confirmed if the matching task is the task to be removed when only one task matches the descriptor', () => {
         const response = execSync(
-          `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js remove '${TASK_SUBJECT_2}'`,
+          `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js remove "${TASK_SUBJECT_2}"`,
           {
             encoding: 'utf8',
             stdio: 'pipe',
@@ -407,7 +407,7 @@ describe('Removing tasks', () => {
 
       test('the correct task is removed if user answers yes', async () => {
         const response = await execute(
-          `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js remove '${TASK_SUBJECT_2}'`,
+          `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js remove "${TASK_SUBJECT_2}"`,
           ['y\n'],
           { ...process.env, FORCE_COLOR: '0' },
           true
@@ -422,7 +422,7 @@ describe('Removing tasks', () => {
 
       test('nothing is removed when the user answers no', async () => {
         const response = await execute(
-          `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js remove '${TASK_SUBJECT_2}'`,
+          `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js remove "${TASK_SUBJECT_2}"`,
           ['n\n'],
           { ...process.env, FORCE_COLOR: '0' },
           true
@@ -436,7 +436,7 @@ describe('Removing tasks', () => {
 
       test('the user is asked if they wish to modify the selection if more than one task matches the descriptor', () => {
         const response = execSync(
-          `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js remove '${MATCHES_TWO}'`,
+          `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js remove "${MATCHES_TWO}"`,
           {
             encoding: 'utf8',
             stdio: 'pipe',
@@ -453,7 +453,7 @@ describe('Removing tasks', () => {
 
       test('the user is confirmed whether to remove the tasks if they answer no and nothing is removed if the user then declines', async () => {
         const response = await execute(
-          `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js remove '${MATCHES_TWO}'`,
+          `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js remove "${MATCHES_TWO}"`,
           ['n\n', 'n\n'],
           { ...process.env, FORCE_COLOR: '0' },
           true
@@ -476,7 +476,7 @@ describe('Removing tasks', () => {
 
       test('correct tasks are removed if the user answers yes', async () => {
         const response = await execute(
-          `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js remove '${MATCHES_TWO}'`,
+          `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js remove "${MATCHES_TWO}"`,
           ['n\n', 'y\n'],
           { ...process.env, FORCE_COLOR: '0' },
           true
@@ -500,7 +500,7 @@ describe('Removing tasks', () => {
 
       test('the user is presented a correct list of tasks if they wish to modify the selection and nothing is removed if nothing is selected', async () => {
         const response = await execute(
-          `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js remove '${MATCHES_TWO}'`,
+          `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js remove "${MATCHES_TWO}"`,
           ['y\n', '\n'],
           { ...process.env, FORCE_COLOR: '0' },
           true
@@ -521,7 +521,7 @@ describe('Removing tasks', () => {
 
       test('user is confirmed whether to remove correct tasks if user selects one of them and nothing is removed if user answers no', async () => {
         const response = await execute(
-          `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js remove '${MATCHES_TWO}'`,
+          `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js remove "${MATCHES_TWO}"`,
           ['y\n', ' \n', 'n\n'],
           { ...process.env, FORCE_COLOR: '0' },
           true
@@ -544,7 +544,7 @@ describe('Removing tasks', () => {
 
       test('correct tasks are removed if the user answers yes', async () => {
         const response = await execute(
-          `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js remove '${MATCHES_TWO}'`,
+          `cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js remove "${MATCHES_TWO}"`,
           ['y\n', ' \n', 'y\n'],
           { ...process.env, FORCE_COLOR: '0' },
           true

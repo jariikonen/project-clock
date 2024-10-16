@@ -908,7 +908,9 @@
       "end": "2024-10-15T15:57:46.979Z"
     },
     {
-      "subject": "Fix failed tests on Windows"
+      "subject": "Fix failed tests on Windows",
+      "begin": "2024-10-16T05:57:48.919Z",
+      "end": "2024-10-16T06:12:59.853Z"
     },
     {
       "subject": "Add tests for all the commands testing that they output friendly error messages when force stopped in any of their prompts"
