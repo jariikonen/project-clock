@@ -142,6 +142,8 @@ export function moreThanOneTimesheetFile(
  * @param testFileDataObj A data object that is used for initializing the file
  *    used by the command. It has to be designed so that the command prompts
  *    the user for more information.
+ * @param inputs Inputs to the prompts (see childProcessExecutor.ts).
+ * @param argument Arguments to the command.
  */
 export async function forceStopped(
   testDirName: string,
@@ -175,6 +177,8 @@ export async function forceStopped(
  * when there is a faulty task in the timesheet file.
  * @param testDirName Name of the test directory.
  * @param command Command to test.
+ * @param inputs Inputs to the prompts (see childProcessExecutor.ts).
+ * @param argument Arguments to the command.
  */
 export async function faultyTask(
   testDirName: string,
