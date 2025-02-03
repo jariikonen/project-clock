@@ -9,6 +9,9 @@ import {
 
 export const DOWN = '\x1B\x5B\x42';
 export const UP = '\x1B\x5B\x41';
+export const SHIFT_AND_DOWN = '\x1B[1;2B';
+export const SHIFT_AND_UP = '\x1B[1;2A';
+export const SPACE = '\x20';
 export const SIGINT = 'SIGINT';
 export const SIGINT_VALUES = ['SIGINT', 'sigint', 'kill', '^C', '^c', '\x03'];
 

@@ -25,6 +25,7 @@ export enum Command {
   Suspend = 'suspend',
   Show = 'show',
   Remove = 'remove',
+  Reorder = 'reorder',
 }
 
 /**
@@ -198,6 +199,9 @@ export async function faultyTask(
           begin: '2024-01-01T01:00:00.000Z',
           end: '2024-01-01T00:00:00.000Z',
         },
+        {
+          subject: 'second task',
+        },
       ],
     },
     testFilePath
@@ -219,4 +223,37 @@ export async function faultyTask(
     "invalid time period '2024-01-01T01:00:00.000Z' => '2024-01-01T00:00:00.000Z' (faulty task); start date is later than end date"
   );
   expect(error).not.toMatch('throw');
+}
+
+/**
+ * Tests that command reports timesheet file errors in a user friendly manner,
+ * when the timesheet file is empty.
+ * @param testDirName Name of the test directory.
+ * @param command Command to test.
+ */
+export function emptyTimesheetFile(testDirName: string, command: Command) {
+  const { testFilePath, subdirPath } = getTestPathsFromDirName(testDirName);
+
+  // initialize test environment
+  createTestFile(
+    {
+      projectName: PROJECT_NAME,
+      tasks: [],
+    },
+    testFilePath
+  );
+
+  // test
+  let error = '';
+  try {
+    execSync(`cd ${subdirPath} && node ${ROOT_DIR}/bin/pclock.js ${command}`, {
+      stdio: 'pipe',
+    });
+  } catch (err) {
+    const e = err as Error;
+    error = e.message;
+  }
+  expect(error).toMatch('There are not enough tasks to reorder.');
+  expect(error).not.toMatch('throw');
+  expect(error).not.toMatch('ProjectClockError');
 }

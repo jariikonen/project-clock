@@ -6,7 +6,7 @@ import calculateTimes, {
 import TimePeriod, { TimeParams } from '../common/TimePeriod';
 import ProjectClockError from '../common/ProjectClockError';
 import calculateTotalTime from '../common/calculateTotalTime';
-import getTaskListString from '../common/getTaskListString';
+import { getTaskListString } from '../common/getTaskListStrings';
 import multiple from '../common/multiple';
 import {
   consoleWidth,

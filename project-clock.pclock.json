@@ -62,8 +62,14 @@
       "subject": "A new project timesheet can be created",
       "description": "Create tests for testing that the command 'new' works and edit the code so that the tests are passed. Use the commander library for the implementation and study how the library is used. Previous test for argumentless call had to be rewritten too.",
       "begin": "2024-07-05T10:24:35.655Z",
-      "suspend": ["2024-07-05T12:48:14.935Z", "2024-07-06T08:26:23.033Z"],
-      "resume": ["2024-07-06T05:42:52.001Z", "2024-07-06T08:45:43.944Z"],
+      "suspend": [
+        "2024-07-05T12:48:14.935Z",
+        "2024-07-06T08:26:23.033Z"
+      ],
+      "resume": [
+        "2024-07-06T05:42:52.001Z",
+        "2024-07-06T08:45:43.944Z"
+      ],
       "end": "2024-07-06T12:24:58.481Z"
     },
     {
@@ -155,7 +161,7 @@
     },
     {
       "subject": "Command 'status' prints current status report",
-      "description": "Command 'status' lists currently active tasks with the time spent on each task so far, total amount of time spent on tasks, and number of complete and incomplete tasks.\nI tried to implement the task duration reporting using FormatJS's Intl.DurationFormat polyfill (https://formatjs.io/docs/polyfills/intl-durationformat), but I didn't get it to work. I then decided to look at the localization of the app later, and implement a simple duration formatting in English only for now.\nI refactored the tests into their own folder, and divided them into different files. I added integration and unit tests for testing the 'status' command and the calculateTimes() function.\nI spent a long time trying to figure out how to get child_process.execSync() to output full status command output in the integration tests. For some reason it seems to replace the contents of the list created using cli-table3 with ellipses. Thus it is impossible to test that the listed contents are correct. Because of this, I decided to implement a simple list formatting functionality into getTaskListString() function, that makes it possible to test the list content using execSync() in an integration test. Currently the simpler fornatting is selectable using the 'listMode' argument of the getTaskListString(). I will decide later whether to use cli-table3 or my own simpler table implementation. If cli-table3 is used, it must be ensured (e.g., with unit tests) that the list contents are what they should be.",
+      "description": "Command 'status' lists the currently active tasks with the time spent on each task so far, the total amount of time spent on tasks, and the number of complete and incomplete tasks.",
       "begin": "2024-07-18T10:07:15.029Z",
       "suspend": [
         "2024-07-18T10:51:07.177Z",
@@ -225,13 +231,18 @@
         "2024-08-01T06:49:15.830Z",
         "2024-08-01T10:07:53.289Z"
       ],
-      "end": "2024-08-01T10:58:27.928Z"
+      "end": "2024-08-01T10:58:27.928Z",
+      "notes": "I tried to implement the task duration reporting using FormatJS's Intl.DurationFormat polyfill (https://formatjs.io/docs/polyfills/intl-durationformat), but I didn't get it to work. I then decided to look at the localization of the app later, and implement a simple duration formatting in English only for now.\nI refactored the tests into their own folder, and divided them into different files. I added integration and unit tests for testing the 'status' command and the calculateTimes() function.\nI spent a long time trying to figure out how to get child_process.execSync() to output full status command output in the integration tests. For some reason it seems to replace the contents of the list created using cli-table3 with ellipses. Thus it is impossible to test that the listed contents are correct. Because of this, I decided to implement a simple list formatting functionality into getTaskListString() function, that makes it possible to test the list content using execSync() in an integration test. Currently the simpler fornatting is selectable using the 'listMode' argument of the getTaskListString(). I will decide later whether to use cli-table3 or my own simpler table implementation. If cli-table3 is used, it must be ensured (e.g., with unit tests) that the list contents are what they should be."
     },
     {
       "subject": "Explore the i18n library options",
       "begin": "2024-07-20T08:35:19.321Z",
-      "suspend": ["2024-07-20T08:49:09.485Z"],
-      "resume": ["2024-07-20T09:03:44.690Z"],
+      "suspend": [
+        "2024-07-20T08:49:09.485Z"
+      ],
+      "resume": [
+        "2024-07-20T09:03:44.690Z"
+      ],
       "end": "2024-07-20T09:35:58.887Z"
     },
     {
@@ -263,8 +274,12 @@
       "subject": "Modify 'start' and 'stop' commands so that they report timesheet file errors in a user friendly manner",
       "description": "I created tests for testing that the file errors are handled and modified the functions so that the tests pass. I also removed the unnecessary 'ERROR:' marker from all error messages used with the ProjectClockError, and refactored the timesheet file read/write functions into the same file (timesheetReadWrite.ts).",
       "begin": "2024-08-02T03:44:31.810Z",
-      "suspend": ["2024-08-02T04:15:34.062Z"],
-      "resume": ["2024-08-02T05:28:37.452Z"],
+      "suspend": [
+        "2024-08-02T04:15:34.062Z"
+      ],
+      "resume": [
+        "2024-08-02T05:28:37.452Z"
+      ],
       "end": "2024-08-02T07:39:04.467Z"
     },
     {
@@ -410,15 +425,25 @@
       "description": "Edit command descriptions and prompts of 'start' and 'stop' commands to be clearer.",
       "notes": "After adding one more inquirer step to the command, the previous method of passing answers to inquirer questions in tests didn't work anymore. In addition to changing the operation of the commands, I had to create a new function execute() to make the tests work. It uses child_process.exec() instead of child_process.execSync(), and it took a while to learn how to use the asynchronous version of the function.",
       "begin": "2024-08-08T05:36:41.560Z",
-      "suspend": ["2024-08-08T07:36:48.845Z", "2024-08-08T13:12:33.365Z"],
-      "resume": ["2024-08-08T10:05:37.786Z", "2024-08-09T03:18:26.212Z"],
+      "suspend": [
+        "2024-08-08T07:36:48.845Z",
+        "2024-08-08T13:12:33.365Z"
+      ],
+      "resume": [
+        "2024-08-08T10:05:37.786Z",
+        "2024-08-09T03:18:26.212Z"
+      ],
       "end": "2024-08-09T03:53:48.720Z"
     },
     {
       "subject": "Rearrange tests for clarity",
       "begin": "2024-08-12T08:02:49.909Z",
-      "suspend": ["2024-08-12T09:19:19.186Z"],
-      "resume": ["2024-08-12T10:24:12.064Z"],
+      "suspend": [
+        "2024-08-12T09:19:19.186Z"
+      ],
+      "resume": [
+        "2024-08-12T10:24:12.064Z"
+      ],
       "end": "2024-08-12T10:36:36.151Z"
     },
     {
@@ -442,8 +467,14 @@
     {
       "subject": "Change task status 'not started' to 'unstarted'",
       "begin": "2024-08-19T09:35:38.537Z",
-      "suspend": ["2024-08-19T09:42:56.690Z", "2024-08-19T09:51:04.461Z"],
-      "resume": ["2024-08-19T09:46:34.210Z", "2024-08-19T10:08:25.601Z"],
+      "suspend": [
+        "2024-08-19T09:42:56.690Z",
+        "2024-08-19T09:51:04.461Z"
+      ],
+      "resume": [
+        "2024-08-19T09:46:34.210Z",
+        "2024-08-19T10:08:25.601Z"
+      ],
       "end": "2024-08-19T10:08:25.601Z"
     },
     {
@@ -479,8 +510,12 @@
     {
       "subject": "Make error reporting testing consistent in integration tests",
       "begin": "2024-08-20T09:45:50.426Z",
-      "suspend": ["2024-08-20T11:38:40.449Z"],
-      "resume": ["2024-08-20T11:39:32.078Z"],
+      "suspend": [
+        "2024-08-20T11:38:40.449Z"
+      ],
+      "resume": [
+        "2024-08-20T11:39:32.078Z"
+      ],
       "end": "2024-08-20T11:48:47.585Z"
     },
     {
@@ -753,8 +788,12 @@
       "subject": "Add VSCode settings to project",
       "description": "It is important to set project specific settings that the editor reads from the project directory. This includes tab (two spaces) and line ending (LF) settings, as well as getting the ESLint warnings and Prettier formatting working. This way the developers are automatically forced to comply with certain code standards.",
       "begin": "2024-09-25T07:04:43.180Z",
-      "suspend": ["2024-09-25T07:47:45.158Z"],
-      "resume": ["2024-09-25T09:06:25.193Z"],
+      "suspend": [
+        "2024-09-25T07:47:45.158Z"
+      ],
+      "resume": [
+        "2024-09-25T09:06:25.193Z"
+      ],
       "notes": "I added .vscode/settings.json and .vscode/extensions.json files to the project directory. Settings file contains directives for using LF as the line ending, spaces instead of tabs, and tab widths and code formatting settings for javascript and typescript. Extensions file contains recommendations for linter and code formatter extensions.",
       "end": "2024-09-25T10:11:20.220Z"
     },
@@ -830,8 +869,12 @@
     {
       "subject": "\"Start\", \"stop\", \"suspend\" and \"resume\" commands display the status information after successful operation",
       "begin": "2024-10-10T06:44:59.682Z",
-      "suspend": ["2024-10-10T08:00:52.208Z"],
-      "resume": ["2024-10-10T08:47:39.481Z"],
+      "suspend": [
+        "2024-10-10T08:00:52.208Z"
+      ],
+      "resume": [
+        "2024-10-10T08:47:39.481Z"
+      ],
       "end": "2024-10-10T09:16:06.196Z"
     },
     {
@@ -871,10 +914,32 @@
       "end": "2024-10-16T06:12:59.853Z"
     },
     {
-      "subject": "Add sequence numbers to tasks and allow referring to tasks using sequence numbers"
-    },
-    {
-      "subject": "Allow editing the order of the tasks"
+      "subject": "Allow editing the order of the tasks",
+      "begin": "2025-01-29T07:15:33.426Z",
+      "suspend": [
+        "2025-01-29T07:56:54.993Z",
+        "2025-01-29T09:01:59.143Z",
+        "2025-01-29T12:31:56.273Z",
+        "2025-01-30T11:33:31.039Z",
+        "2025-01-31T07:13:04.296Z",
+        "2025-02-01T07:00:41.314Z",
+        "2025-02-01T08:10:06.311Z",
+        "2025-02-02T04:23:20.426Z",
+        "2025-02-02T04:52:18.304Z",
+        "2025-02-02T11:13:59.575Z"
+      ],
+      "resume": [
+        "2025-01-29T08:00:37.892Z",
+        "2025-01-29T10:48:40.740Z",
+        "2025-01-30T11:16:57.174Z",
+        "2025-01-31T06:52:10.575Z",
+        "2025-02-01T06:43:15.075Z",
+        "2025-02-01T07:31:13.717Z",
+        "2025-02-02T02:17:26.743Z",
+        "2025-02-02T04:45:02.290Z",
+        "2025-02-02T10:54:58.415Z",
+        "2025-02-03T06:56:22.493Z"
+      ]
     },
     {
       "subject": "Add tests for all commands that test that they output friendly error messages when force stopped in any of their prompts"
@@ -893,6 +958,9 @@
     },
     {
       "subject": "A new project timesheet can be created by starting the clock"
+    },
+    {
+      "subject": "Project settings can be configured with a command"
     },
     {
       "subject": "Add unique identifiers to tasks",
@@ -996,7 +1064,9 @@
     {
       "subject": "Update and review README.md and command descriptions",
       "begin": "2024-08-22T11:40:55.379Z",
-      "suspend": ["2024-08-22T11:44:14.263Z"]
+      "suspend": [
+        "2024-08-22T11:44:14.263Z"
+      ]
     },
     {
       "subject": "Add missing TSDoc comments, combine related functions in common directory into the same files when necessary and remove unnecessary functions",
@@ -1042,7 +1112,8 @@
         "2024-09-08T06:16:25.037Z",
         "2024-10-08T06:37:11.739Z",
         "2024-10-08T07:10:56.637Z",
-        "2024-10-16T06:39:35.301Z"
+        "2024-10-16T06:39:35.301Z",
+        "2025-02-01T07:30:51.945Z"
       ],
       "resume": [
         "2024-08-02T08:51:55.636Z",
@@ -1064,20 +1135,82 @@
         "2024-09-08T06:04:50.060Z",
         "2024-10-08T06:21:53.812Z",
         "2024-10-08T06:47:04.044Z",
-        "2024-10-16T06:16:53.946Z"
+        "2024-10-16T06:16:53.946Z",
+        "2025-02-01T07:01:41.105Z"
       ]
     },
     {
       "subject": "Upgrade dependencies",
       "begin": "2024-10-11T07:57:14.470Z",
-      "suspend": ["2024-10-11T08:35:28.960Z", "2024-10-11T10:51:59.399Z"],
-      "resume": ["2024-10-11T10:17:12.604Z"]
+      "suspend": [
+        "2024-10-11T08:35:28.960Z",
+        "2024-10-11T10:51:59.399Z"
+      ],
+      "resume": [
+        "2024-10-11T10:17:12.604Z"
+      ]
     },
     {
       "subject": "Add a flag for all commands that arranges the list in alphabetical order"
     },
     {
       "subject": "Change the test runner to Vitest"
+    },
+    {
+      "subject": "Allow categorizing tasks into groups",
+      "description": "Tasks that have some connecting factor that ties them together can be given a group that allows to handle them together. It must, for example, be possible to list the tasks arranged by the group. On a software project timesheet, tasks related to a specific feature could form a group, and on a todo-list, tasks related to buying groceries could form a group.\nEach task can have only one group. If there are more than one factor that connects tasks and one wants to make this visible, it should be made possible to add tags to tasks.\nThe group could be displayed on the list as a short name in front of the subject, separated with a colon. One could add task to a group just by writing the group name followed by a colon in front of the subject, or with a specific command."
+    },
+    {
+      "subject": "Allow adding tags to tasks"
+    },
+    {
+      "subject": "Allow adjusting time events of a task",
+      "description": "Sometimes one does not remember to suspend or resume a task. It should, therefore, be possible to somehow adjust the time events of the tasks. For example, a command `adjust -b 5m` could adjust the last event 5 minutes backwards.\nIt is also possible that more comprehensive changes must be made. For example, if the computer clock has been set to the wrong time, or one has forgotten to record some work done earlier in the history. In these cases the times must be corrected for a period of time or new events must be created further back into the history."
+    },
+    {
+      "subject": "Task listing should show if a task has a description or notes"
+    },
+    {
+      "subject": "Weekly and daily worklists",
+      "description": "It should be possible to define weekly and daily worklists which would take next tasks from predefined projects for each day and hour. So, one could define that on a specific weekday one would do tasks from specific projects for specified amount of time. One could also specify projects for specific hours of the day."
+    },
+    {
+      "subject": "Sprint backlog",
+      "description": "Listing of all the tasks of the project can be considered as the project backlog. When tasks are assigned to a specific sprint, it should be possible to list these tasks based on the sprint."
+    },
+    {
+      "subject": "Assign tasks to sprints"
+    },
+    {
+      "subject": "Assign tasks scheduled start and finish dates"
+    },
+    {
+      "subject": "Edit the remove command warning to be clearer",
+      "description": "The current warning text, \"This task matches...\", is unclear in meaning. \"There is one task matching the task descriptor...\" would probably be better."
+    },
+    {
+      "subject": "Remove command should require that the user writes 'y' before the task is removed"
+    },
+    {
+      "subject": "Every other line on task listing should have slightly different color tone to make reading easier"
+    },
+    {
+      "subject": "Allow ordering the task list based on the status of the tasks"
+    },
+    {
+      "subject": "Add possibility for using automatic page size to reorder command",
+      "description": "The reorder function should be able to use the current console size to determine the page size of the prompt (i.e., the number of items displayed at once). In the future this feature should be possible to be selected using program settings, so it should be possible to turn it on and off."
+    },
+    {
+      "subject": "Function createRows() must style cell padding like the rest of the cell",
+      "description": "Currently the styles are only applied to text parts of the cells. The padding should also be styled like the rest of the cell, and the table padding must also be styled."
+    },
+    {
+      "subject": "Fix parentheses messing up the task descriptor matching in edit function",
+      "description": "The task descriptor matching does not work when there are parentheses in the descriptor. E.g, \"Function createRows() \" does not match to \"Function createRows() must ...\", while \"Function createRows()\" does. This probably also applies to other functions using similar matching. (Is this matching in its own function already? Should it be?)"
+    },
+    {
+      "subject": "Switch to vitest"
     }
   ]
 }

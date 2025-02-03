@@ -11,6 +11,7 @@ import suspend from './commands/suspend';
 import resume from './commands/resume';
 import add from './commands/add';
 import show from './commands/show';
+import reorder from './commands/reorder';
 import {
   edit as editCommand,
   editDescription,
@@ -44,6 +45,7 @@ const commandResume = program.command('resume');
 const commandAdd = program.command('add');
 const commandShow = program.command('show');
 const commandEdit = program.command('edit');
+const commandReorder = program.command('reorder');
 
 const subCommandEditSubject = commandEdit.command('subject');
 const subCommandEditDescription = commandEdit.command('description');
@@ -196,5 +198,10 @@ commandRemove
     'task descriptor; a string that is expected to match a task subject'
   )
   .action((taskDescriptor) => remove(taskDescriptor));
+
+commandReorder
+  .alias('ro')
+  .description('Allows reordering of tasks on the timesheet.\n\n')
+  .action(() => reorder());
 
 program.parse();

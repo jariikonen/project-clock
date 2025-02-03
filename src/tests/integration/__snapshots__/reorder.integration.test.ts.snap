@@ -1,0 +1,350 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`"Reorder" command displays correct items 1`] = `
+"? Arrange items of the test project project. (<?> help, <space> select, <a>
+toggle all, <i> invert selection, <ctrl/shift/meta + up/j, down/k, pgup/t or
+pgdown/b> move selected items, <ctrl/shift/meta + left/h or right/l> move single
+ items, <m or M> move selected above or below cursor, <enter> proceed)
+   Task                                                 Time       Status
+❯◯ First completed task                                 1h         completed
+ ◯ Second completed task                                2h         completed
+ ◯ First active task                                    1h         suspended
+ ◯ Second active task                                   1h 30min   suspended
+ ◯ Third active task                                    2h         started
+ ◯ First incomplete but not active task                 -          unstarted
+<hideCursor>
+<moveCursorToColumn77>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorToColumn1>
+✔ Arrange items of the test project project.
+<moveCursorToColumn45>
+<showCursor>
+"
+`;
+
+exports[`"Reorder" command reorders tasks correctly 1`] = `
+"? Arrange items of the test project project. (<?> help, <space> select, <a>
+toggle all, <i> invert selection, <ctrl/shift/meta + up/j, down/k, pgup/t or
+pgdown/b> move selected items, <ctrl/shift/meta + left/h or right/l> move single
+ items, <m or M> move selected above or below cursor, <enter> proceed)
+   Task                                                 Time       Status
+❯◯ First completed task                                 1h         completed
+ ◯ Second completed task                                2h         completed
+ ◯ First active task                                    1h         suspended
+ ◯ Second active task                                   1h 30min   suspended
+ ◯ Third active task                                    2h         started
+ ◯ First incomplete but not active task                 -          unstarted
+<hideCursor>
+<moveCursorToColumn77>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorToColumn1>
+? Arrange items of the test project project.
+   Task                                                 Time       Status
+ ◯ Second completed task                                2h         completed
+❯◯ First completed task                                 1h         completed
+ ◯ First active task                                    1h         suspended
+ ◯ Second active task                                   1h 30min   suspended
+ ◯ Third active task                                    2h         started
+ ◯ First incomplete but not active task                 -          unstarted
+<hideCursor>
+<moveCursorToColumn77>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorToColumn1>
+? Arrange items of the test project project.
+   Task                                                 Time       Status
+ ◯ Second completed task                                2h         completed
+ ◯ First completed task                                 1h         completed
+❯◯ First active task                                    1h         suspended
+ ◯ Second active task                                   1h 30min   suspended
+ ◯ Third active task                                    2h         started
+ ◯ First incomplete but not active task                 -          unstarted
+<hideCursor>
+<moveCursorToColumn77>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorToColumn1>
+? Arrange items of the test project project.
+   Task                                                 Time       Status
+ ◯ Second completed task                                2h         completed
+ ◯ First completed task                                 1h         completed
+ ◯ First active task                                    1h         suspended
+❯◯ Second active task                                   1h 30min   suspended
+ ◯ Third active task                                    2h         started
+ ◯ First incomplete but not active task                 -          unstarted
+<hideCursor>
+<moveCursorToColumn77>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorToColumn1>
+? Arrange items of the test project project.
+   Task                                                 Time       Status
+ ◯ Second completed task                                2h         completed
+ ◯ First completed task                                 1h         completed
+❯◯ Second active task                                   1h 30min   suspended
+ ◯ First active task                                    1h         suspended
+ ◯ Third active task                                    2h         started
+ ◯ First incomplete but not active task                 -          unstarted
+<hideCursor>
+<moveCursorToColumn77>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorToColumn1>
+? Arrange items of the test project project.
+   Task                                                 Time       Status
+ ◯ Second completed task                                2h         completed
+❯◯ First completed task                                 1h         completed
+ ◯ Second active task                                   1h 30min   suspended
+ ◯ First active task                                    1h         suspended
+ ◯ Third active task                                    2h         started
+ ◯ First incomplete but not active task                 -          unstarted
+<hideCursor>
+<moveCursorToColumn77>
+<moveCursorToColumn78>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorToColumn1>
+? Arrange items of the test project project.
+   Task                                                 Time       Status
+ ◯ Second completed task                                2h         completed
+❯◉ First completed task                                 1h         completed
+ ◯ Second active task                                   1h 30min   suspended
+ ◯ First active task                                    1h         suspended
+ ◯ Third active task                                    2h         started
+ ◯ First incomplete but not active task                 -          unstarted
+<hideCursor>
+<moveCursorToColumn77>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorToColumn1>
+? Arrange items of the test project project.
+   Task                                                 Time       Status
+❯◯ Second completed task                                2h         completed
+ ◉ First completed task                                 1h         completed
+ ◯ Second active task                                   1h 30min   suspended
+ ◯ First active task                                    1h         suspended
+ ◯ Third active task                                    2h         started
+ ◯ First incomplete but not active task                 -          unstarted
+<hideCursor>
+<moveCursorToColumn77>
+<moveCursorToColumn78>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorToColumn1>
+? Arrange items of the test project project.
+   Task                                                 Time       Status
+❯◉ Second completed task                                2h         completed
+ ◉ First completed task                                 1h         completed
+ ◯ Second active task                                   1h 30min   suspended
+ ◯ First active task                                    1h         suspended
+ ◯ Third active task                                    2h         started
+ ◯ First incomplete but not active task                 -          unstarted
+<hideCursor>
+<moveCursorToColumn77>
+<moveCursorToColumn78>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorToColumn1>
+? Arrange items of the test project project.
+   Task                                                 Time       Status
+ ◉ Second completed task                                2h         completed
+ ◉ First completed task                                 1h         completed
+ ◯ Second active task                                   1h 30min   suspended
+ ◯ First active task                                    1h         suspended
+ ◯ Third active task                                    2h         started
+❯◯ First incomplete but not active task                 -          unstarted
+<hideCursor>
+<moveCursorToColumn77>
+<moveCursorToColumn78>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorToColumn1>
+? Arrange items of the test project project.
+   Task                                                 Time       Status
+ ◯ Second active task                                   1h 30min   suspended
+ ◯ First active task                                    1h         suspended
+ ◯ Third active task                                    2h         started
+ ◉ Second completed task                                2h         completed
+ ◉ First completed task                                 1h         completed
+❯◯ First incomplete but not active task                 -          unstarted
+<hideCursor>
+<moveCursorToColumn77>
+<moveCursorToColumn73>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorUpBy1Row>
+<eraseLine>
+<moveCursorToColumn1>
+✔ Arrange items of the test project project.
+<moveCursorToColumn45>
+<showCursor>
+"
+`;

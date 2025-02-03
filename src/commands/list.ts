@@ -3,7 +3,7 @@ import calculateTimes, {
   TaskStatusInformation,
 } from '../common/calculateTimes';
 import calculateTotalTime from '../common/calculateTotalTime';
-import getTaskListString from '../common/getTaskListString';
+import { getTaskListString } from '../common/getTaskListStrings';
 import ProjectClockError from '../common/ProjectClockError';
 import TimePeriod, { TimeParams } from '../common/TimePeriod';
 import { readTimesheet } from '../common/timesheetReadWrite';
@@ -26,11 +26,12 @@ interface ListOptions {
 }
 
 function filterTasks(options: ListOptions, tasks: Task[]) {
+  // use the options that are set to true, or default to all
   const optionsToUse =
-    options.active ??
+    (options.active ??
     options.complete ??
     options.incomplete ??
-    options.unstarted
+    options.unstarted)
       ? options
       : { active: true, complete: true, incomplete: true, unstarted: true };
   return tasks.filter((task) => {
