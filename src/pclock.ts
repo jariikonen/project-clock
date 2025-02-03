@@ -62,7 +62,7 @@ commandNew
 
 commandStart
   .description(
-    'Start a task. If the command is called without the task descriptor argument, it will first look for any unstarted tasks. If a single such task is found, the user is asked if this is the one to be started. If more than one such task are found, user is asked which of the tasks to start. If no unstarted tasks are found, user is asked if a new task should be created. If user wants to create a new task, user is prompted for a subject for the new task and the current timestamp is provided as the default subject.\n\nIf task descriptor is provided, a task whose subject matches the descriptor is looked for. If such a task is found, the user is confirmed if it is the right task. If the task is correct, it is started. If such a task is not found, the user is confirmed whether to create a new task with the task descriptor as its subject. If many tasks match with the descriptor, user is prompted which of the tasks to start.\n\n'
+    'Start a task. If the command is called without the task descriptor argument, it will first look for any unstarted tasks. If a single such task is found, the user is asked if this is the one to be started. If more than one such task are found, user is asked which of the tasks to start. If no unstarted tasks are found, user is asked if a new task should be created. If user wants to create a new task, user is prompted for a subject for the new task and the current timestamp is provided as the default subject.\n\nIf a task descriptor is provided, a task whose subject matches the descriptor is looked for. If such a task is found, the user is confirmed if it is the right task. If the task is correct, it is started. If such a task is not found, the user is confirmed whether to create a new task with the task descriptor as its subject. If many tasks match with the descriptor, user is prompted which of the tasks to start.\n\n'
   )
   .argument(
     '[task_descriptor]',
@@ -72,7 +72,7 @@ commandStart
 
 commandStop
   .description(
-    'Stop the clock. If the command is called without the task descriptor argument, it will look for active tasks (i.e., a task that is started but not stopped). If one such task is found, the user is confirmed whether this is the correct task. If it is, the task is stopped by setting the "end" value of the task to current timestamp. If more than one such task are found, the user is prompted which one of the tasks to stop. If no such task is found, the command exits with an error.\n\nIf task descriptor is provided, a tasks whose subject matches the descriptor is looked for. If such a task is found the user is confirmed whether it is the correct task to stop. if it is, the task is stopped. If more than one such task is found, the user is prompted which one of the tasks to stop. If no such task is found, the command exits with an error.\n\n'
+    'Stop the clock. If the command is called without the task descriptor argument, it will look for active tasks (i.e., a task that is started but not stopped). If one such task is found, the user is confirmed whether this is the correct task. If it is, the task is stopped by setting the "end" value of the task to current timestamp. If more than one such task are found, the user is prompted which one of the tasks to stop. If no such task is found, the command exits with an error.\n\nIf a task descriptor is provided, a task whose subject matches the descriptor is looked for. If such a task is found the user is confirmed whether it is the correct task to stop. if it is, the task is stopped. If more than one such task is found, the user is prompted which one of the tasks to stop. If no such task is found, the command exits with an error.\n\n'
   )
   .argument(
     '[task_descriptor]',
@@ -190,7 +190,7 @@ subCommandEditNotes
   .action((taskDescriptor, newNote) => editNotes(taskDescriptor, newNote));
 
 commandRemove
-  .description('Remove a task from the timesheet.')
+  .description('Remove a task from the timesheet.\n\n')
   .alias('rm')
   .alias('delete')
   .argument(
@@ -201,7 +201,7 @@ commandRemove
 
 commandReorder
   .alias('ro')
-  .description('Allows reordering of tasks on the timesheet.\n\n')
+  .description('Reorder tasks on the timesheet.\n\n')
   .action(() => reorder());
 
 program.parse();
