@@ -4,9 +4,10 @@ import { readTimesheet, writeTimesheet } from '../common/timesheetReadWrite';
 import calculateTimes, {
   TaskStatusInformation,
 } from '../common/calculateTimes';
-import ProjectClockError from '../common/ProjectClockError';
 import { consoleWidth, outputError } from '../common/outputFormatting';
 import { getTaskListParts } from '../common/getTaskListStrings';
+import handleExitPrompError from '../common/handleExitPromptError';
+import handleProjectClockError from '../common/handleProjectClockError';
 
 async function getListReordering(
   projectName: string,
@@ -28,11 +29,7 @@ async function getListReordering(
     });
     return result;
   } catch (error) {
-    if (error instanceof Error && error.name === 'ExitPromptError') {
-      console.log('Exiting; user force closed the process.');
-    } else {
-      throw error;
-    }
+    handleExitPrompError(error);
   }
   return false;
 }
@@ -53,13 +50,10 @@ export default async function reorder() {
   try {
     taskData = calculateTimes(tasks);
   } catch (error) {
-    if (error instanceof ProjectClockError) {
-      outputError(
-        `An error occurred while inspecting the timesheet file (${error.message})`
-      );
-      process.exit(1);
-    }
-    throw error;
+    handleProjectClockError(
+      error,
+      'An error occurred while inspecting the timesheet file'
+    );
   }
 
   const includeSeconds = false;

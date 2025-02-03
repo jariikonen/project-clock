@@ -4,16 +4,16 @@ import calculateTimes, {
   TaskStatusInformation,
 } from '../common/calculateTimes';
 import TimePeriod, { TimeParams } from '../common/TimePeriod';
-import ProjectClockError from '../common/ProjectClockError';
 import calculateTotalTime from '../common/calculateTotalTime';
 import { getTaskListString } from '../common/getTaskListStrings';
 import multiple from '../common/multiple';
 import {
   consoleWidth,
-  outputError,
   outputPlain,
   sideHeadingText,
 } from '../common/outputFormatting';
+import handleProjectClockError from '../common/handleProjectClockError';
+import { ERROR_MESSAGE_TIMESHEET_INSPECTION } from '../common/constants';
 
 interface StatusOptions {
   verbose?: true | undefined;
@@ -75,13 +75,7 @@ export default function status(options: StatusOptions) {
     activeTimes = calculateTimes(activeTasks);
     allTimes = calculateTimes(tasks);
   } catch (error) {
-    if (error instanceof ProjectClockError) {
-      outputError(
-        `An error occurred while inspecting the timesheet file (${error.message})`
-      );
-      process.exit(1);
-    }
-    throw error;
+    handleProjectClockError(error, ERROR_MESSAGE_TIMESHEET_INSPECTION);
   }
   const includeSeconds = !!options.verbose;
   const totalTime = calculateTotalTime(allTimes);

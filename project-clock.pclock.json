@@ -945,6 +945,11 @@
       "end": "2025-02-03T08:28:25.188Z"
     },
     {
+      "subject": "Make all commands use common error handling functions",
+      "begin": "2025-02-03T09:14:50.841Z",
+      "end": "2025-02-03T09:39:20.618Z"
+    },
+    {
       "subject": "Make reorder command print the reordered list"
     },
     {
