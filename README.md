@@ -13,7 +13,7 @@ npm install -g project-clock
 ## Usage
 
 ```
-pclock (Project Clock) v0.0.0
+pclock (Project Clock) v0.1.0
 
 Usage: pclock [options] [command]
 
