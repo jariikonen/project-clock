@@ -955,11 +955,15 @@
       "end": "2025-02-04T08:27:34.607Z"
     },
     {
-      "subject": "Add a workflow for running the tests and creating releases",
+      "subject": "Add a workflows for running the tests and creating releases",
       "begin": "2025-02-04T07:53:10.653Z",
       "suspend": [
         "2025-02-04T08:06:51.259Z"
-      ]
+      ],
+      "resume": [
+        "2025-02-04T08:32:08.230Z"
+      ],
+      "end": "2025-02-04T09:01:19.025Z"
     },
     {
       "subject": "Make reorder command print the reordered list"
