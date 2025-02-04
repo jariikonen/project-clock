@@ -950,6 +950,18 @@
       "end": "2025-02-03T09:39:20.618Z"
     },
     {
+      "subject": "Add a pre-commit hook for running tests before accepting a commit",
+      "begin": "2025-02-04T08:09:45.131Z",
+      "end": "2025-02-04T08:27:34.607Z"
+    },
+    {
+      "subject": "Add a workflow for running the tests and creating releases",
+      "begin": "2025-02-04T07:53:10.653Z",
+      "suspend": [
+        "2025-02-04T08:06:51.259Z"
+      ]
+    },
+    {
       "subject": "Make reorder command print the reordered list"
     },
     {
@@ -964,11 +976,27 @@
       "description": "Currently the styles are only applied to text parts of the cells. The padding should also be styled like the rest of the cell, and the table padding must also be styled."
     },
     {
+      "subject": "Every other line on task listing should have slightly different color tone to make reading easier"
+    },
+    {
       "subject": "Fix parentheses messing up the task descriptor matching in edit function",
       "description": "The task descriptor matching does not work when there are parentheses in the descriptor. E.g, \"Function createRows() \" does not match to \"Function createRows() must ...\", while \"Function createRows()\" does. This probably also applies to other functions using similar matching. (Is this matching in its own function already? Should it be?)"
     },
     {
+      "subject": "Add command allows selecting where the new item is placed on the list"
+    },
+    {
+      "subject": "Add command allows user to also add description to the new task"
+    },
+    {
       "subject": "Switch to vitest"
+    },
+    {
+      "subject": "Edit the remove command warning to be clearer",
+      "description": "The current warning text, \"This task matches...\", is unclear in meaning. \"There is one task matching the task descriptor...\" would probably be better."
+    },
+    {
+      "subject": "Remove command should require that the user writes 'y' before the task is removed"
     },
     {
       "subject": "Add tests for all commands that test that they output friendly error messages when force stopped in any of their prompts"
@@ -1123,16 +1151,6 @@
     },
     {
       "subject": "Assign tasks scheduled start and finish dates"
-    },
-    {
-      "subject": "Edit the remove command warning to be clearer",
-      "description": "The current warning text, \"This task matches...\", is unclear in meaning. \"There is one task matching the task descriptor...\" would probably be better."
-    },
-    {
-      "subject": "Remove command should require that the user writes 'y' before the task is removed"
-    },
-    {
-      "subject": "Every other line on task listing should have slightly different color tone to make reading easier"
     },
     {
       "subject": "Allow ordering the task list based on the status of the tasks"

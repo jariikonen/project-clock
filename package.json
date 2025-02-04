@@ -8,7 +8,8 @@
     "test": "jest --runInBand",
     "build": "rollup -c rollup.config.js",
     "dev": "rollup -c rollup.config.js --watch",
-    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "prepare": "husky"
   },
   "author": "Jari Ikonen",
   "bin": {
