@@ -8,6 +8,7 @@ import { consoleWidth, outputError } from '../common/outputFormatting';
 import { getTaskListParts } from '../common/getTaskListStrings';
 import handleExitPrompError from '../common/handleExitPromptError';
 import handleProjectClockError from '../common/handleProjectClockError';
+import { ERROR_MESSAGE_TIMESHEET_INSPECTION } from '../common/constants';
 
 async function getListReordering(
   projectName: string,
@@ -50,10 +51,7 @@ export default async function reorder() {
   try {
     taskData = calculateTimes(tasks);
   } catch (error) {
-    handleProjectClockError(
-      error,
-      'An error occurred while inspecting the timesheet file'
-    );
+    handleProjectClockError(error, ERROR_MESSAGE_TIMESHEET_INSPECTION);
   }
 
   const includeSeconds = false;
