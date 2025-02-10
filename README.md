@@ -70,3 +70,12 @@ Commands:
 
   help [command]                              display help for command
 ```
+
+## Running tests on Windows
+
+Integration tests use a mock editor component, which on Windows must be built by running the PowerShell script `src/tests/common/executable/buildMockEditor.ps1`.
+```
+cd .\src\tests\common\executable\
+.\buildMockEditor.ps1\
+```
+This creates a single executable application (SEA) using experimental Node.js functions. The SAE `mockEditor.exe` can sometimes output warnings like this `(node:25072) ExperimentalWarning: Single executable application is an experimental feature and might change at any time`, which make the tests using it fail. Therefore, the tests using the mock editor should set environment variable `NODE_NO_WARNINGS` (at least when run on Windows).

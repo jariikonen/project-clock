@@ -972,7 +972,9 @@
       "end": "2025-02-10T08:25:34.693Z"
     },
     {
-      "subject": "Add documentation on how to build the mockeditor.exe on Windows"
+      "subject": "Add documentation on how to build the mockeditor.exe on Windows",
+      "begin": "2025-02-10T08:28:45.915Z",
+      "end": "2025-02-10T08:44:29.285Z"
     },
     {
       "subject": "Make reorder command print the reordered list"
