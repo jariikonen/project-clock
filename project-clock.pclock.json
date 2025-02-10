@@ -966,6 +966,15 @@
       "end": "2025-02-04T09:19:27.932Z"
     },
     {
+      "subject": "Fix Windows tests that require the mockeditor.exe",
+      "begin": "2025-02-10T07:51:38.618Z",
+      "description": "Mockeditor.exe SEA outputs warnings which make the edit integration tests fail on Windows. Warnings can be suppressed by setting environment variable NODE_NO_WARNINGS.",
+      "end": "2025-02-10T08:25:34.693Z"
+    },
+    {
+      "subject": "Add documentation on how to build the mockeditor.exe on Windows"
+    },
+    {
       "subject": "Make reorder command print the reordered list"
     },
     {
@@ -974,6 +983,9 @@
     {
       "subject": "Add possibility to maximize the page size of the list reorder prompt automatically based on the console size",
       "description": "The reorder function should be able to use the current console size to determine the page size of the prompt (i.e., the number of items displayed at once). In the future this feature should be possible to be selected using program settings, so it should be possible to turn it on and off."
+    },
+    {
+      "subject": "Add a settings file and read settings from that"
     },
     {
       "subject": "Function createRows() must style cell padding like the rest of the cell",
@@ -985,6 +997,22 @@
     {
       "subject": "Fix parentheses messing up the task descriptor matching in edit function",
       "description": "The task descriptor matching does not work when there are parentheses in the descriptor. E.g, \"Function createRows() \" does not match to \"Function createRows() must ...\", while \"Function createRows()\" does. This probably also applies to other functions using similar matching. (Is this matching in its own function already? Should it be?)"
+    },
+    {
+      "subject": "Allow creating timesheets locally (json file in current directory) or globally (json file in home directory)"
+    },
+    {
+      "subject": "Add unique identifiers to tasks",
+      "description": "Adding unique identifiers to tasks makes it possible to refer precisely to a specific task without writing the entire subject of the task as a task descriptor. This is especially important in script mode."
+    },
+    {
+      "subject": "Add user ids (many users can edit and record times)"
+    },
+    {
+      "subject": "Add creation date and creator to tasks"
+    },
+    {
+      "subject": "Add support for storing timesheets to external data stores"
     },
     {
       "subject": "Add command allows selecting where the new item is placed on the list"
@@ -1024,10 +1052,6 @@
       "subject": "Project settings can be configured with a command"
     },
     {
-      "subject": "Add unique identifiers to tasks",
-      "description": "Adding unique identifiers to tasks makes it possible to refer precisely to a specific task without writing the entire subject of the task as a task descriptor. This is especially important in script mode."
-    },
-    {
       "subject": "Allow showing the full task data of the next(/last) n number of active tasks (in the order of the sequence numbers)"
     },
     {
@@ -1035,10 +1059,6 @@
     },
     {
       "subject": "Allow showing the full task data of the (next/)last n number of completed tasks (in the order of the sequence numbers)"
-    },
-    {
-      "subject": "Separate paddings for table row background and text",
-      "description": "It looks weird especially on the header row that the background color starts only where the text starts. It should be possible to style the rows so that the background color starts earlier than the text."
     },
     {
       "subject": "Prompts can be cancelled with ESC key"
@@ -1081,12 +1101,6 @@
     },
     {
       "subject": "Better filtering algorithm (e.g., match-sorter) for filtering tasks"
-    },
-    {
-      "subject": "Add user ids (many users can edit and record times)"
-    },
-    {
-      "subject": "Add creation date and creator to tasks"
     },
     {
       "subject": "Tasks can be pushed to GitHub Projects"
@@ -1216,7 +1230,8 @@
         "2024-10-08T07:10:56.637Z",
         "2024-10-16T06:39:35.301Z",
         "2025-02-01T07:30:51.945Z",
-        "2025-02-03T08:37:55.508Z"
+        "2025-02-03T08:37:55.508Z",
+        "2025-02-04T11:38:32.141Z"
       ],
       "resume": [
         "2024-08-02T08:51:55.636Z",
@@ -1240,7 +1255,8 @@
         "2024-10-08T06:47:04.044Z",
         "2024-10-16T06:16:53.946Z",
         "2025-02-01T07:01:41.105Z",
-        "2025-02-03T08:29:03.194Z"
+        "2025-02-03T08:29:03.194Z",
+        "2025-02-04T11:12:12.679Z"
       ]
     },
     {

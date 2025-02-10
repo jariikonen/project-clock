@@ -153,6 +153,7 @@ describe('correct functioning', () => {
                 ...process.env,
                 FORCE_COLOR: '0',
                 EDITOR: editorPath,
+                NODE_NO_WARNINGS: '1',
               },
               true
             );
@@ -234,6 +235,7 @@ describe('correct functioning', () => {
                 ...process.env,
                 FORCE_COLOR: '0',
                 EDITOR: editorPath,
+                NODE_NO_WARNINGS: '1',
               },
               true
             );
@@ -295,6 +297,7 @@ describe('correct functioning', () => {
                 ...process.env,
                 FORCE_COLOR: '0',
                 EDITOR: editorPath,
+                NODE_NO_WARNINGS: '1',
               },
               true
             );
@@ -356,6 +359,7 @@ describe('correct functioning', () => {
                 ...process.env,
                 FORCE_COLOR: '0',
                 EDITOR: editorPath,
+                NODE_NO_WARNINGS: '1',
               }
             );
           } catch (error) {
@@ -450,6 +454,7 @@ describe('correct functioning', () => {
                 ...process.env,
                 FORCE_COLOR: '0',
                 EDITOR: editorPath,
+                NODE_NO_WARNINGS: '1',
               },
               true
             );
@@ -524,6 +529,7 @@ describe('correct functioning', () => {
                   ...process.env,
                   FORCE_COLOR: '0',
                   EDITOR: editorPath,
+                  NODE_NO_WARNINGS: '1',
                 },
                 true
               );
@@ -585,6 +591,7 @@ describe('correct functioning', () => {
                   ...process.env,
                   FORCE_COLOR: '0',
                   EDITOR: editorPath,
+                  NODE_NO_WARNINGS: '1',
                 },
                 true
               );
@@ -646,6 +653,7 @@ describe('correct functioning', () => {
                   ...process.env,
                   FORCE_COLOR: '0',
                   EDITOR: editorPath,
+                  NODE_NO_WARNINGS: '1',
                 }
               );
             } catch (error) {
@@ -1019,6 +1027,7 @@ describe('correct functioning', () => {
             ...process.env,
             FORCE_COLOR: '0',
             EDITOR: editorPath,
+            NODE_NO_WARNINGS: '1',
           },
           true,
           ['Edit subject of task']
@@ -1040,6 +1049,7 @@ describe('correct functioning', () => {
             ...process.env,
             FORCE_COLOR: '0',
             EDITOR: editorPath,
+            NODE_NO_WARNINGS: '1',
           },
           true,
           ['Edit description of task']
@@ -1063,6 +1073,7 @@ describe('correct functioning', () => {
             ...process.env,
             FORCE_COLOR: '0',
             EDITOR: editorPath,
+            NODE_NO_WARNINGS: '1',
           },
           true,
           ['Edit notes of task']
@@ -1086,6 +1097,7 @@ describe('correct functioning', () => {
             ...process.env,
             FORCE_COLOR: '0',
             EDITOR: editorPath,
+            NODE_NO_WARNINGS: '1',
           },
           true,
           [
@@ -1146,6 +1158,7 @@ describe('correct functioning', () => {
             ...process.env,
             FORCE_COLOR: '0',
             EDITOR: editorPath,
+            NODE_NO_WARNINGS: '1',
           }
         );
         expect(response).toMatch('There are 2 tasks on the timesheet.');
